@@ -1,0 +1,102 @@
+import type { Config } from "tailwindcss";
+
+/**
+ * BuidlOn "Technical Precision" design system.
+ * Ported from the Stitch design tokens. Utilitarian brutalism:
+ * sharp corners, 1px borders as gutters, no shadows/gradients.
+ */
+const config: Config = {
+  darkMode: "class",
+  content: ["./src/**/*.{ts,tsx}"],
+  theme: {
+    extend: {
+      colors: {
+        "surface-dim": "#121314",
+        "secondary-fixed": "#6ffbbe",
+        "primary-fixed": "#eaddff",
+        surface: "#121314",
+        "surface-container-highest": "#343535",
+        "primary-fixed-dim": "#d2bbff",
+        "secondary-container": "#00a572",
+        primary: "#d2bbff",
+        "secondary-fixed-dim": "#4edea3",
+        "on-tertiary-fixed": "#301400",
+        "on-tertiary-container": "#ffe0cd",
+        "on-surface-variant": "#ccc3d8",
+        "on-secondary-fixed-variant": "#005236",
+        "surface-bright": "#393939",
+        "surface-container-lowest": "#0d0e0f",
+        "tertiary-fixed-dim": "#ffb784",
+        tertiary: "#ffb784",
+        "on-background": "#e3e2e2",
+        "surface-variant": "#343535",
+        "inverse-surface": "#e3e2e2",
+        "tertiary-container": "#a15100",
+        "inverse-primary": "#732ee4",
+        "outline-variant": "#4a4455",
+        "on-primary-fixed-variant": "#5a00c6",
+        "on-error": "#690005",
+        "on-primary-container": "#ede0ff",
+        "surface-container-high": "#292a2a",
+        "on-surface": "#e3e2e2",
+        "on-secondary-fixed": "#002113",
+        "tertiary-fixed": "#ffdcc6",
+        "on-secondary": "#003824",
+        "on-tertiary-fixed-variant": "#713700",
+        "inverse-on-surface": "#303031",
+        error: "#ffb4ab",
+        "error-container": "#93000a",
+        "surface-container": "#1f2020",
+        "surface-container-low": "#1b1c1c",
+        "on-error-container": "#ffdad6",
+        outline: "#958da1",
+        background: "#121314",
+        secondary: "#4edea3",
+        "on-primary-fixed": "#25005a",
+        "primary-container": "#7c3aed",
+        "surface-tint": "#d2bbff",
+        "on-secondary-container": "#00311f",
+        "on-tertiary": "#4f2500",
+        "on-primary": "#3f008e",
+        // Technical borders used across the Stitch markup.
+        technical: "#262626",
+      },
+      borderRadius: {
+        DEFAULT: "0px",
+        sm: "0px",
+        md: "0px",
+        lg: "0px",
+        xl: "0px",
+        "2xl": "0px",
+        full: "9999px",
+      },
+      spacing: {
+        "gap-2": "0.5rem",
+        "gap-4": "1rem",
+        "gap-6": "1.5rem",
+        "gap-8": "2rem",
+        "gap-12": "3rem",
+        "container-padding": "2rem",
+        "section-margin": "4rem",
+      },
+      fontFamily: {
+        "page-title": ["var(--font-inter)", "Inter", "sans-serif"],
+        "section-heading": ["var(--font-inter)", "Inter", "sans-serif"],
+        caption: ["var(--font-inter)", "Inter", "sans-serif"],
+        body: ["var(--font-inter)", "Inter", "sans-serif"],
+        "mono-label": ["var(--font-jetbrains-mono)", "JetBrains Mono", "monospace"],
+        mono: ["var(--font-jetbrains-mono)", "JetBrains Mono", "monospace"],
+      },
+      fontSize: {
+        "page-title": ["36px", { lineHeight: "40px", letterSpacing: "-0.02em", fontWeight: "600" }],
+        "section-heading": ["24px", { lineHeight: "32px", letterSpacing: "-0.01em", fontWeight: "500" }],
+        caption: ["14px", { lineHeight: "20px", letterSpacing: "0em", fontWeight: "400" }],
+        body: ["16px", { lineHeight: "24px", letterSpacing: "0em", fontWeight: "400" }],
+        "mono-label": ["12px", { lineHeight: "16px", letterSpacing: "0.05em", fontWeight: "500" }],
+      },
+    },
+  },
+  plugins: [require("tailwindcss-animate")],
+};
+
+export default config;
