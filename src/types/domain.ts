@@ -22,6 +22,7 @@ export interface User {
   avatarUrl: string;
   bio: string | null;
   country: string | null;
+  website: string | null;
   skills: string[];
   walletAddress: string | null;
   role: UserRole;
@@ -76,6 +77,7 @@ export interface Issue {
   repository: Pick<Repository, "id" | "name" | "fullName">;
   difficulty: IssueDifficulty;
   basePoints: number;
+  language: string | null;
   labels: string[];
   status: ContributionStatus;
   claimedBy: Pick<User, "id" | "githubUsername" | "avatarUrl"> | null;
@@ -95,6 +97,8 @@ export interface Contribution {
   updatedAt: string;
 }
 
+export type RankTrend = "up" | "down" | "same";
+
 export interface LeaderboardEntry {
   rank: number;
   user: Pick<
@@ -104,6 +108,8 @@ export interface LeaderboardEntry {
   points: number;
   mergedPrs: number;
   rewardEstimate: number | null;
+  trend: RankTrend;
+  rankDelta: number;
 }
 
 export type SeasonStatus =
