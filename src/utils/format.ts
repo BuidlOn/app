@@ -33,6 +33,15 @@ export function truncateHash(hash: string, lead = 6, tail = 4): string {
   return `${hash.slice(0, lead)}...${hash.slice(-tail)}`;
 }
 
+/** Absolute date, e.g. "Oct 12, 2023". Display only. */
+export function formatDate(input: string | number | Date): string {
+  return new Intl.DateTimeFormat("en-US", {
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+  }).format(new Date(input));
+}
+
 const RELATIVE_UNITS: [Intl.RelativeTimeFormatUnit, number][] = [
   ["year", 60 * 60 * 24 * 365],
   ["month", 60 * 60 * 24 * 30],

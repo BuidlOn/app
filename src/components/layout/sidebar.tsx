@@ -27,7 +27,11 @@ export function Sidebar({
         open ? "translate-x-0" : "-translate-x-full",
       )}
     >
-      <div className="flex items-center gap-3 px-6 py-8">
+      <Link
+        href="/"
+        onClick={onNavigate}
+        className="flex items-center gap-3 px-6 py-8 transition-opacity hover:opacity-80"
+      >
         <div className="flex h-8 w-8 items-center justify-center bg-primary font-bold text-on-primary">
           B
         </div>
@@ -39,7 +43,7 @@ export function Sidebar({
             Dev Portal
           </p>
         </div>
-      </div>
+      </Link>
 
       <nav className="flex-1 space-y-1 overflow-y-auto px-4">
         {APP_NAV.map((item) => {
@@ -64,7 +68,7 @@ export function Sidebar({
         })}
       </nav>
 
-      <div className="mt-auto p-4">
+      <div className="mt-auto space-y-2 border-t border-outline-variant p-4">
         <Link
           href="/repositories/new"
           onClick={onNavigate}
@@ -72,6 +76,14 @@ export function Sidebar({
         >
           <Icon name="add" className="text-sm" />
           New Repository
+        </Link>
+        <Link
+          href="/"
+          onClick={onNavigate}
+          className="flex w-full items-center justify-center gap-2 border border-error/40 px-4 py-2.5 font-mono-label text-mono-label uppercase tracking-widest text-error transition-colors hover:bg-error/10"
+        >
+          <Icon name="logout" className="text-sm" />
+          Exit
         </Link>
       </div>
     </aside>
