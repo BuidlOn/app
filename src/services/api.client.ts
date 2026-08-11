@@ -46,10 +46,16 @@ export async function apiRequest<T>(
   path: string,
   { method = "GET", body, params, headers, ...rest }: RequestOptions = {},
 ): Promise<T> {
+  const token =
+    typeof window !== "undefined"
+      ? window.localStorage.getItem("buidlon.accessToken")
+      : null;
+
   const res = await fetch(buildUrl(path, params), {
     method,
     headers: {
       "Content-Type": "application/json",
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...headers,
     },
     body: body !== undefined ? JSON.stringify(body) : undefined,
