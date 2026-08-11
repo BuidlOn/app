@@ -13,8 +13,45 @@ export function getGithubOAuthUrl(): string {
   return `${API_BASE_URL.replace(/\/$/, "")}/auth/github`;
 }
 
+type BackendRole = "USER" | "MAINTAINER" | "ADMIN";
+
+interface MeResponse {
+  id: string;
+  username: string;
+  avatar: string | null;
+  role: BackendRole;
+  walletAddress: string | null;
+  createdAt: string;
+}
+
+const roleMap: Record<BackendRole, User["role"]> = {
+  USER: "contributor",
+  MAINTAINER: "maintainer",
+  ADMIN: "admin",
+};
+
 /** Current authenticated user (role, wallet + GitHub status, season). */
 export async function getCurrentUser(): Promise<User> {
   if (USE_MOCKS) return mockDelay(mockCurrentUser, 200);
-  return apiRequest<User>("/auth/me");
+  const me = await apiRequest<MeResponse>("/auth/me");
+  return {
+    id: me.id,
+    githubUsername: me.username,
+    name: me.username,
+    avatarUrl: me.avatar ?? "",
+    bio: null,
+    country: null,
+    website: null,
+    skills: [],
+    walletAddress: me.walletAddress,
+    role: roleMap[me.role] ?? "contributor",
+    reputationLevel: "Builder",
+    reputationScore: 0,
+    totalPoints: 0,
+    rank: null,
+    mergedPrs: 0,
+    acceptanceRate: 0,
+    githubConnected: true,
+    createdAt: me.createdAt,
+  };
 }
