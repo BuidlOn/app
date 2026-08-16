@@ -1,12 +1,13 @@
 import { cn } from "@/lib/utils";
 import { Icon } from "@/components/ui/icon";
+import { Card } from "@/components/ui/card";
 import type { Achievement } from "../types";
 
-const TONE: Record<Achievement["tone"], string> = {
-  primary: "text-primary group-hover:text-primary",
-  secondary: "text-secondary group-hover:text-secondary",
-  tertiary: "text-tertiary group-hover:text-tertiary",
-  neutral: "text-on-surface-variant group-hover:text-on-surface",
+const TONE_CLASSES: Record<Achievement["tone"], { bg: string; text: string }> = {
+  primary: { bg: "bg-tertiary/20", text: "text-tertiary-deep" },
+  secondary: { bg: "bg-secondary/15", text: "text-secondary-deep" },
+  tertiary: { bg: "bg-primary/30", text: "text-primary-deep" },
+  neutral: { bg: "bg-outline/5", text: "text-on-surface-variant" },
 };
 
 export function AchievementsCard({
@@ -19,35 +20,47 @@ export function AchievementsCard({
   total: number;
 }) {
   return (
-    <section className="border border-outline-variant bg-surface p-6">
-      <div className="mb-6 flex items-center justify-between">
-        <h2 className="font-section-heading text-section-heading text-on-surface">
+    <Card className="p-6">
+      <div className="mb-[18px] flex items-center justify-between">
+        <h3 className="m-0 font-page-title text-[16px] font-bold text-on-surface">
           Achievements
-        </h2>
-        <span className="font-mono-label text-primary">
+        </h3>
+        <span className="font-mono-label text-[13px] font-bold text-secondary">
           {earned}/{total}
         </span>
       </div>
 
-      <div className="grid grid-cols-2 gap-4">
-        {items.map((item) => (
-          <div
-            key={item.id}
-            className={cn(
-              "group flex flex-col items-center border border-outline-variant p-4 transition-colors hover:bg-surface-container-low",
-              !item.earned && "opacity-40",
-            )}
-            title={item.earned ? "Unlocked" : "Locked"}
-          >
-            <div className={cn("mb-3 flex h-12 w-12 items-center justify-center", TONE[item.tone])}>
-              <Icon name={item.icon} className="text-[40px]" filled={item.earned} />
+      <div className="grid grid-cols-2 gap-2.5">
+        {items.map((item) => {
+          const tone = TONE_CLASSES[item.tone];
+          return (
+            <div
+              key={item.id}
+              className={cn(
+                "flex flex-col items-center rounded-[14px] border-[1.5px] border-outline/15 p-3.5 text-center transition-colors",
+                item.earned ? tone.bg : "opacity-35",
+              )}
+              title={item.earned ? "Unlocked" : "Locked"}
+            >
+              <div
+                className={cn(
+                  "mb-1.5 flex h-[34px] w-[34px] items-center justify-center",
+                  item.earned ? tone.text : "text-on-surface-variant",
+                )}
+              >
+                <Icon
+                  name={item.icon}
+                  className="text-[28px]"
+                  filled={item.earned}
+                />
+              </div>
+              <span className="font-mono-label text-[9.5px] uppercase text-on-surface-muted">
+                {item.name}
+              </span>
             </div>
-            <span className="text-center font-mono-label text-[10px] uppercase tracking-tighter text-on-surface">
-              {item.name}
-            </span>
-          </div>
-        ))}
+          );
+        })}
       </div>
-    </section>
+    </Card>
   );
 }

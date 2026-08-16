@@ -13,9 +13,9 @@ import { TopPerformersCard } from "./top-performers-card";
 
 function ProfileSkeleton() {
   return (
-    <div className="mx-auto max-w-[1600px] space-y-8 p-4 sm:p-container-padding">
+    <div className="mx-auto flex max-w-[1400px] flex-col gap-6 p-4 sm:gap-8 sm:p-container-padding">
       <div className="flex flex-col gap-8 lg:flex-row">
-        <Skeleton className="h-44 w-44" />
+        <Skeleton className="h-[128px] w-[128px] rounded-[24px]" />
         <div className="flex-1 space-y-4">
           <Skeleton className="h-10 w-64" />
           <Skeleton className="h-5 w-96" />
@@ -41,23 +41,23 @@ export function ProfileView({ username }: { username: string }) {
     return (
       <div className="mx-auto flex min-h-[60vh] max-w-lg flex-col items-center justify-center gap-4 p-8 text-center">
         <Icon name="person_off" className="text-5xl text-error" />
-        <h2 className="font-section-heading text-section-heading text-on-surface">
+        <h2 className="font-page-title text-[24px] font-bold text-on-surface">
           Contributor not found
         </h2>
-        <p className="font-body text-on-surface-variant">
+        <p className="text-[14px] text-on-surface-variant">
           We couldn&apos;t find a contributor with the username @{username}.
         </p>
         <div className="flex gap-3">
           <button
             type="button"
             onClick={() => refetch()}
-            className="border border-outline-variant px-6 py-2 font-mono-label text-mono-label uppercase hover:bg-surface-container"
+            className="border-[1.5px] border-outline/15 px-6 py-2 font-mono-label text-[12px] uppercase hover:bg-outline/5"
           >
             Retry
           </button>
           <Link
             href="/leaderboard"
-            className="bg-primary-container px-6 py-2 font-mono-label text-mono-label uppercase text-on-primary-container"
+            className="bg-primary px-6 py-2 font-mono-label text-[12px] uppercase text-on-primary"
           >
             View leaderboard
           </Link>
@@ -67,19 +67,19 @@ export function ProfileView({ username }: { username: string }) {
   }
 
   return (
-    <div className="mx-auto max-w-[1600px] space-y-8 p-4 sm:p-container-padding">
+    <div className="mx-auto flex max-w-[1400px] flex-col gap-6 sm:gap-8">
       <ProfileHeader user={data.user} isSelf={data.isSelf} />
       <ProfileStatsRow stats={data.stats} />
 
-      <div className="grid grid-cols-1 gap-8 xl:grid-cols-3">
-        <div className="flex flex-col gap-8 xl:col-span-2">
+      <div className="grid grid-cols-1 items-start gap-6 xl:grid-cols-3">
+        <div className="flex flex-col gap-6 xl:col-span-2">
           <ContributionHeatmapCard heatmap={data.heatmap} loading={false} />
           <RecentContributions
             contributions={data.recentContributions}
             loading={false}
           />
         </div>
-        <div className="flex flex-col gap-8">
+        <div className="flex flex-col gap-5">
           <AchievementsCard
             items={data.achievements.items}
             earned={data.achievements.earned}

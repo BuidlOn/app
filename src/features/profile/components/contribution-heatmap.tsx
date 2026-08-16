@@ -1,26 +1,27 @@
 import { cn } from "@/lib/utils";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatNumber } from "@/utils/format";
+import { Card } from "@/components/ui/card";
 import type { ContributionHeatmap } from "../types";
 
 const LEVEL_CLASS = [
-  "bg-surface-container",
-  "bg-primary/20",
-  "bg-primary/40",
-  "bg-primary/70",
-  "bg-primary",
+  "bg-outline/5",
+  "bg-secondary/20",
+  "bg-secondary/40",
+  "bg-secondary/70",
+  "bg-secondary",
 ];
 
 function Legend() {
   return (
-    <div className="flex items-center gap-2">
-      <span className="font-caption text-caption text-on-surface-variant">Less</span>
-      <div className="flex gap-1">
+    <div className="flex items-center gap-1.5 text-[11px] text-on-surface-muted">
+      <span>Less</span>
+      <div className="flex gap-[3px]">
         {LEVEL_CLASS.map((cls, i) => (
-          <span key={i} className={cn("h-3 w-3", cls)} />
+          <span key={i} className={cn("h-2.5 w-2.5 rounded-[3px]", cls)} />
         ))}
       </div>
-      <span className="font-caption text-caption text-on-surface-variant">More</span>
+      <span>More</span>
     </div>
   );
 }
@@ -33,11 +34,11 @@ export function ContributionHeatmapCard({
   loading: boolean;
 }) {
   return (
-    <section className="border border-outline-variant bg-surface p-6">
-      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <h2 className="font-section-heading text-section-heading text-on-surface">
-          Contribution Activity
-        </h2>
+    <Card className="p-[26px]">
+      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h3 className="m-0 font-page-title text-[17px] font-bold text-on-surface">
+          Contribution activity
+        </h3>
         <Legend />
       </div>
 
@@ -45,14 +46,14 @@ export function ContributionHeatmapCard({
         <Skeleton className="h-28 w-full" />
       ) : (
         <div className="overflow-x-auto pb-2">
-          <div className="flex min-w-[640px] gap-1">
+          <div className="flex min-w-[640px] gap-[3px]">
             {heatmap.weeks.map((week, wi) => (
-              <div key={wi} className="flex flex-col gap-1">
+              <div key={wi} className="flex flex-col gap-[3px]">
                 {week.map((level, di) => (
                   <span
                     key={di}
                     className={cn(
-                      "h-3 w-3 transition-transform hover:scale-125",
+                      "h-2.5 w-2.5 rounded-[3px] transition-transform hover:scale-125",
                       LEVEL_CLASS[level],
                     )}
                     title={`${level * 2} contributions`}
@@ -64,13 +65,11 @@ export function ContributionHeatmapCard({
         </div>
       )}
 
-      <div className="mt-4 flex items-center justify-between">
-        <span className="font-caption text-caption text-on-surface-variant">
-          {heatmap
-            ? `Last year: ${formatNumber(heatmap.totalLastYear)} contributions`
-            : " "}
-        </span>
-      </div>
-    </section>
+      <p className="m-0 mt-4 text-[12px] text-on-surface-muted">
+        {heatmap
+          ? `Last year: ${formatNumber(heatmap.totalLastYear)} contributions`
+          : " "}
+      </p>
+    </Card>
   );
 }

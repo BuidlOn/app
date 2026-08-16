@@ -1,11 +1,11 @@
-import { Icon } from "@/components/ui/icon";
+import { Card } from "@/components/ui/card";
 import { formatNumber } from "@/utils/format";
 import type { ProfileStats } from "../types";
 
 export function ProfileStatsRow({ stats }: { stats: ProfileStats }) {
   const cells = [
     {
-      label: "Total Points",
+      label: "Total points",
       value: formatNumber(stats.totalPoints),
       accent: true,
       note: `+${formatNumber(stats.pointsThisWeek)} this wk`,
@@ -13,50 +13,48 @@ export function ProfileStatsRow({ stats }: { stats: ProfileStats }) {
     {
       label: "Merged PRs",
       value: formatNumber(stats.mergedPrs),
-      icon: "call_merge",
     },
     {
-      label: "Seasons Active",
+      label: "Seasons active",
       value: String(stats.seasonsActive),
-      note: "Consecutive",
     },
     {
-      label: "Global Rank",
+      label: "Global rank",
       value: stats.globalRank ? `#${stats.globalRank}` : "—",
-      icon: "trending_up",
-      iconTone: "text-secondary",
+      valueClass: "text-secondary",
     },
   ];
 
   return (
-    <section className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
+    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-4">
       {cells.map((cell) => (
-        <div
+        <Card
           key={cell.label}
-          className="flex flex-col gap-2 border border-outline-variant bg-surface p-6"
+          tone={cell.accent ? "primary" : "surface"}
+          border={cell.accent ? "ink" : "hairline"}
+          className="px-6 py-[22px]"
         >
-          <span className="font-mono-label text-[10px] uppercase tracking-widest text-on-surface-variant">
+          <div
+            className={`mb-2.5 font-mono-label text-[11px] uppercase tracking-widest ${cell.accent ? "text-primary-deep" : "text-on-surface-muted"}`}
+          >
             {cell.label}
-          </span>
-          <div className="flex items-end justify-between">
+          </div>
+          <div className="flex items-baseline gap-2">
             <span
-              className={`font-page-title text-[32px] leading-none ${cell.accent ? "text-primary" : "text-on-surface"}`}
+              className={`font-page-title text-[28px] font-bold ${cell.valueClass ?? (cell.accent ? "text-on-surface" : "text-on-surface")}`}
             >
               {cell.value}
             </span>
-            {cell.note ? (
-              <span className="font-mono-label text-[12px] text-on-surface-variant">
+            {cell.note && (
+              <span
+                className={`text-[12px] ${cell.accent ? "text-primary-deep" : "text-on-surface-variant"}`}
+              >
                 {cell.note}
               </span>
-            ) : cell.icon ? (
-              <Icon
-                name={cell.icon}
-                className={cell.iconTone ?? "text-on-surface-variant"}
-              />
-            ) : null}
+            )}
           </div>
-        </div>
+        </Card>
       ))}
-    </section>
+    </div>
   );
 }

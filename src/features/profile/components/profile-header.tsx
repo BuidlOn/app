@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { Avatar } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Icon } from "@/components/ui/icon";
 import { StatusPip } from "@/components/ui/status-pip";
 import { truncateHash } from "@/utils/format";
@@ -14,64 +13,64 @@ export function ProfileHeader({
   isSelf: boolean;
 }) {
   return (
-    <section className="flex flex-col items-start gap-8 lg:flex-row">
-      <div className="h-32 w-32 border border-outline-variant bg-surface p-1 lg:h-44 lg:w-44">
-        <Avatar
-          src={user.avatarUrl}
-          alt={user.name ?? user.githubUsername}
-          size={168}
-          className="h-full w-full border-0"
-        />
+    <div className="flex flex-col items-start gap-7 lg:flex-row">
+      <div className="flex h-32 w-32 shrink-0 items-center justify-center overflow-hidden rounded-[24px] border-[1.5px] border-outline bg-secondary font-page-title text-[40px] font-bold text-white">
+        {user.avatarUrl ? (
+          <Avatar
+            src={user.avatarUrl}
+            alt={user.name ?? user.githubUsername}
+            size={128}
+            className="h-full w-full rounded-none border-0"
+          />
+        ) : (
+          (user.name ?? user.githubUsername).slice(0, 2).toUpperCase()
+        )}
       </div>
 
-      <div className="flex flex-1 flex-col gap-4">
-        <div className="flex flex-col gap-3 md:flex-row md:items-end">
-          <h1 className="font-page-title text-page-title text-on-surface">
+      <div className="flex flex-1 flex-col">
+        <div className="mb-2.5 flex flex-wrap items-center gap-3">
+          <h1 className="m-0 font-page-title text-[28px] font-bold text-on-surface">
             {user.name ?? user.githubUsername}
           </h1>
-          <span className="font-mono-label text-primary md:mb-1.5">
+          <span className="font-mono-label text-[14px] text-secondary">
             @{user.githubUsername}
           </span>
-          <div className="md:mb-1">
-            <Badge variant="success">
-              <Icon name="verified" className="text-[14px]" filled />
-              Verified Contributor
-            </Badge>
-          </div>
+          <span className="flex items-center gap-1.5 rounded-full bg-secondary/15 px-3 py-1 text-[12px] font-bold text-secondary-deep">
+            ✓ Verified Contributor
+          </span>
           {isSelf && (
             <Link
               href="/settings"
-              className="md:mb-1 md:ml-auto inline-flex items-center gap-1 border border-outline-variant px-3 py-1 font-mono-label text-[11px] uppercase tracking-wider text-on-surface-variant transition-colors hover:border-primary hover:text-primary"
+              className="ml-auto flex items-center gap-1.5 rounded-full border-[1.5px] border-outline/15 px-4 py-1.5 font-mono-label text-[12px] font-semibold text-on-surface-variant transition-colors hover:border-outline/30"
             >
-              <Icon name="edit" className="text-sm" />
-              Edit Profile
+              Edit profile
             </Link>
           )}
         </div>
 
         {user.bio && (
-          <p className="max-w-2xl font-body text-body text-on-surface-variant">
+          <p className="m-0 mb-4 max-w-[560px] text-[14px] text-on-surface-variant">
             {user.bio}
           </p>
         )}
 
         <div className="flex flex-wrap items-center gap-4">
           {user.walletAddress && (
-            <div className="flex items-center gap-3 border border-outline-variant bg-surface-container-low px-3 py-1.5">
+            <div className="flex items-center gap-2 rounded-full border-[1.5px] border-outline/15 px-[14px] py-[7px]">
               <Icon
                 name="account_balance_wallet"
-                className="text-[18px] text-on-surface-variant"
+                className="text-[14px] text-on-surface"
               />
-              <span className="font-mono-label text-on-surface">
+              <span className="font-mono-label text-[12px] text-on-surface">
                 {truncateHash(user.walletAddress)}
               </span>
-              <StatusPip tone="success" />
+              <StatusPip tone="success" className="h-1.5 w-1.5" />
             </div>
           )}
           {user.country && (
-            <div className="flex items-center gap-1 text-on-surface-variant">
-              <Icon name="location_on" className="text-[18px]" />
-              <span className="font-caption">{user.country}</span>
+            <div className="flex items-center gap-1 text-[12.5px] text-on-surface-variant">
+              <span>📍</span>
+              <span>{user.country}</span>
             </div>
           )}
           {user.website && (
@@ -79,14 +78,13 @@ export function ProfileHeader({
               href={`https://${user.website}`}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-1 text-on-surface-variant transition-colors hover:text-primary"
+              className="flex items-center gap-1 text-[12.5px] text-secondary transition-colors hover:text-secondary-deep"
             >
-              <Icon name="link" className="text-[18px]" />
-              <span className="font-caption">{user.website}</span>
+              <span>{user.website}</span>
             </a>
           )}
         </div>
       </div>
-    </section>
+    </div>
   );
 }
