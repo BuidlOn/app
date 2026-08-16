@@ -3,6 +3,7 @@ import { MarketingFooter } from "@/components/layout/marketing-footer";
 import {
   Hero,
   StatsBand,
+  LiveTicker,
   Workflow,
   Workbench,
   FinalCta,
@@ -12,11 +13,12 @@ export default function LandingPage() {
   return (
     <>
       <MarketingNav />
-      <main className="grid-bg pt-16">
+      <main className="pt-16 bg-background">
         <Hero />
         <StatsBand />
         <Workflow />
         <Workbench />
+        <LiveTicker />
         <FinalCta />
       </main>
       <MarketingFooter />
