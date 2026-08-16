@@ -87,7 +87,7 @@ export function Sidebar({
       )}
     >
       <Link
-        href={variant === "admin" ? "/admin" : "/dashboard"}
+        href={variant === "admin" ? "/admin" : "/"}
         onClick={onNavigate}
         className="px-6 py-7 transition-opacity hover:opacity-80"
       >
