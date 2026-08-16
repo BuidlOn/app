@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
-import { Icon } from "@/components/ui/icon";
+import { Card, CardEyebrow } from "@/components/ui/card";
 import { Avatar } from "@/components/ui/avatar";
-import { formatDate, formatNumber } from "@/utils/format";
+import { formatDate, formatCompactNumber } from "@/utils/format";
 import type { IssueDetail } from "../types";
 
 function SidebarCard({
@@ -12,11 +12,26 @@ function SidebarCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="border border-outline-variant bg-surface p-6">
-      <h3 className="mb-4 font-mono-label text-mono-label uppercase tracking-wider text-on-surface-variant">
-        {title}
-      </h3>
+    <Card className="p-5 sm:p-[22px]">
+      <CardEyebrow className="mb-3.5 text-[10.5px]">{title}</CardEyebrow>
       {children}
+    </Card>
+  );
+}
+
+function RepoStat({
+  value,
+  label,
+  accent,
+}: {
+  value: string;
+  label: string;
+  accent?: boolean;
+}) {
+  return (
+    <div>
+      <div className={cn("font-bold", accent && "text-secondary")}>{value}</div>
+      <div className="text-[10px] uppercase text-on-surface-muted">{label}</div>
     </div>
   );
 }
@@ -25,34 +40,25 @@ export function IssueDetailSidebar({ issue }: { issue: IssueDetail }) {
   const repo = issue.repositoryDetail;
 
   return (
-    <div className="space-y-6 lg:col-span-4">
+    <div className="flex min-w-0 flex-col gap-4">
       <SidebarCard title="Repository">
-        <div className="mb-6 flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center border border-outline-variant">
-            <Icon name="token" className="text-primary" />
-          </div>
-          <div>
-            <p className="font-bold text-on-surface">{repo.fullName}</p>
-            <p className="font-caption text-caption text-outline">
+        <div className="mb-4 flex items-center gap-3">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-buidl-sm border-hairline border-outline bg-primary font-display font-bold">
+            {repo.name.charAt(0).toUpperCase()}
+          </span>
+          <div className="min-w-0">
+            <p className="truncate text-[14px] font-bold text-on-surface">
+              {repo.fullName}
+            </p>
+            <p className="truncate text-[12px] text-on-surface-muted">
               {repo.languages.join(" · ") || "—"}
             </p>
           </div>
         </div>
-        <div className="grid grid-cols-3 gap-4 border-t border-outline-variant pt-4 text-center">
-          <div>
-            <p className="font-bold text-primary">{formatNumber(repo.stars)}</p>
-            <p className="text-[10px] uppercase text-outline">Stars</p>
-          </div>
-          <div>
-            <p className="font-bold text-on-surface">{formatNumber(repo.forks)}</p>
-            <p className="text-[10px] uppercase text-outline">Forks</p>
-          </div>
-          <div>
-            <p className="font-bold text-on-surface">
-              {formatNumber(repo.contributors)}
-            </p>
-            <p className="text-[10px] uppercase text-outline">Contribs</p>
-          </div>
+        <div className="grid grid-cols-3 gap-2 border-t-hairline border-outline/10 pt-4 text-center">
+          <RepoStat value={formatCompactNumber(repo.stars)} label="Stars" accent />
+          <RepoStat value={formatCompactNumber(repo.forks)} label="Forks" />
+          <RepoStat value={formatCompactNumber(repo.contributors)} label="Contribs" />
         </div>
       </SidebarCard>
 
@@ -63,73 +69,78 @@ export function IssueDetailSidebar({ issue }: { issue: IssueDetail }) {
             alt={issue.maintainer.name ?? issue.maintainer.githubUsername}
             size={40}
           />
-          <div>
-            <p className="font-bold text-on-surface">
+          <div className="min-w-0">
+            <p className="truncate text-[14px] font-bold text-on-surface">
               {issue.maintainer.githubUsername}
             </p>
-            <p className="flex items-center gap-1 font-caption text-caption text-secondary">
-              <Icon name="verified" className="text-xs" filled />
-              Verified Maintainer
+            <p className="flex items-center gap-1.5 text-[12px] font-semibold text-points">
+              ✓ Verified maintainer
             </p>
           </div>
         </div>
       </SidebarCard>
 
-      <SidebarCard title="Points Breakdown">
-        <div className="space-y-3">
-          <div className="flex items-center justify-between text-body">
-            <span className="text-on-surface-variant">Base ({issue.difficulty})</span>
-            <span className="font-mono text-on-surface">{issue.basePoints} pts</span>
-          </div>
-          <div className="flex items-center justify-between text-body">
-            <span className="text-on-surface-variant">Multipliers</span>
-            <span className="font-mono text-secondary">at merge</span>
-          </div>
-          <div className="my-2 h-px bg-outline-variant" />
-          <div className="flex items-center justify-between text-lg font-bold">
-            <span className="text-on-surface">Base Total</span>
-            <span className="text-secondary">{issue.basePoints} pts</span>
-          </div>
-          <p className="font-caption text-[11px] text-on-surface-variant">
-            First-contribution and season bonuses are applied by the scoring engine
-            once your PR is merged.
-          </p>
+      <SidebarCard title="Points breakdown">
+        <div className="mb-2.5 flex justify-between text-[13.5px]">
+          <span className="text-on-surface-variant">Base ({issue.difficulty})</span>
+          <span className="font-mono-label">{issue.basePoints} pts</span>
         </div>
+        <div className="mb-2.5 flex justify-between text-[13.5px]">
+          <span className="text-on-surface-variant">Multipliers</span>
+          <span className="font-mono-label text-points">at merge</span>
+        </div>
+        <div className="my-3 h-[1.5px] bg-outline/10" />
+        <div className="mb-3 flex justify-between text-[16px] font-bold">
+          <span>Base total</span>
+          <span className="text-points">{issue.basePoints} pts</span>
+        </div>
+        <p className="text-[11.5px] leading-relaxed text-on-surface-muted">
+          First-contribution and season bonuses are applied by the scoring engine once
+          your PR is merged.
+        </p>
       </SidebarCard>
 
-      <SidebarCard title="Status Timeline">
-        <ol className="relative space-y-6 before:absolute before:bottom-2 before:left-[11px] before:top-2 before:w-px before:bg-outline-variant">
+      <SidebarCard title="Status timeline">
+        <ol className="flex flex-col gap-[18px] pl-1">
           {issue.timeline.map((step) => (
-            <li key={step.label} className="relative flex gap-4">
+            <li
+              key={step.label}
+              className={cn(
+                "flex items-start gap-3",
+                step.state === "pending" && "opacity-40",
+              )}
+            >
               <span
                 className={cn(
-                  "z-10 flex h-6 w-6 shrink-0 items-center justify-center rounded-full",
-                  step.state === "done" && "bg-secondary",
-                  step.state === "active" &&
-                    "border border-primary bg-surface-container-high",
-                  step.state === "pending" && "bg-surface-container-high",
+                  "flex h-[22px] w-[22px] shrink-0 items-center justify-center rounded-full text-[12px] font-bold",
+                  step.state === "done" && "bg-tertiary text-on-tertiary",
+                  step.state === "active" && "border-hairline border-secondary",
+                  step.state === "pending" && "bg-outline/10",
                 )}
               >
                 {step.state === "done" ? (
-                  <Icon name="check" className="text-sm text-background" filled />
-                ) : step.state === "active" ? (
-                  <span className="h-2 w-2 animate-pulse rounded-full bg-primary" />
+                  "✓"
                 ) : (
-                  <span className="h-2 w-2 rounded-full bg-outline" />
+                  <span
+                    className={cn(
+                      "h-[7px] w-[7px] rounded-full",
+                      step.state === "active" ? "bg-secondary" : "bg-on-surface-muted",
+                    )}
+                  />
                 )}
               </span>
               <div>
                 <p
                   className={cn(
-                    "text-sm font-medium",
+                    "text-[13px]",
                     step.state === "active"
-                      ? "font-bold text-primary"
-                      : "text-on-surface",
+                      ? "font-bold text-secondary"
+                      : "font-semibold text-on-surface",
                   )}
                 >
                   {step.label}
                 </p>
-                <p className="text-xs text-outline">
+                <p className="text-[11px] text-on-surface-muted">
                   {step.date ? formatDate(step.date) : "Pending"}
                 </p>
               </div>

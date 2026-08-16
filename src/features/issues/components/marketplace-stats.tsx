@@ -1,6 +1,7 @@
 "use client";
 
 import { usePlatformStats } from "@/features/marketing/hooks/use-platform-stats";
+import { StatTile } from "@/components/ui/stat";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatNumber, formatUsd } from "@/utils/format";
 
@@ -9,39 +10,45 @@ export function MarketplaceStats() {
 
   const cells = [
     {
-      label: "Open Issues",
+      label: "Open issues",
       value: data ? formatNumber(data.openIssues) : null,
       hint: "Across connected repositories",
     },
     {
-      label: "Total Rewards",
+      label: "Total rewards",
       value: data ? formatUsd(data.rewardsPaidUsd, true) : null,
       hint: "Paid to contributors",
+      // The money figure carries the Sunbeam field — it is why people are here.
+      highlight: true,
     },
     {
-      label: "Active Contributors",
+      label: "Active contributors",
       value: data ? formatNumber(data.contributors) : null,
       hint: "Verified developers",
     },
   ];
 
   return (
-    <section className="mb-gap-8 grid grid-cols-1 gap-6 md:grid-cols-3">
-      {cells.map((cell) => (
-        <div key={cell.label} className="border border-outline-variant bg-surface p-6">
-          <p className="mb-2 font-mono-label text-mono-label uppercase text-on-surface-variant">
-            {cell.label}
-          </p>
-          {isLoading || cell.value === null ? (
-            <Skeleton className="h-8 w-28" />
-          ) : (
-            <h3 className="font-page-title text-3xl font-bold">{cell.value}</h3>
-          )}
-          <p className="mt-2 font-caption text-xs text-on-surface-variant">
-            {cell.hint}
-          </p>
-        </div>
-      ))}
+    <section className="grid gap-2.5 sm:gap-4 md:grid-cols-3">
+      {cells.map((cell) =>
+        isLoading || cell.value === null ? (
+          <div
+            key={cell.label}
+            className="rounded-buidl-lg border-2 border-outline bg-surface p-6 shadow-[4px_4px_0_#161616] flex flex-col gap-1.5"
+          >
+            <Skeleton className="mb-1 h-4 w-28" />
+            <Skeleton className="h-8 w-24" />
+          </div>
+        ) : (
+          <StatTile
+            key={cell.label}
+            label={cell.label}
+            value={cell.value}
+            hint={cell.hint}
+            highlight={cell.highlight}
+          />
+        ),
+      )}
     </section>
   );
 }

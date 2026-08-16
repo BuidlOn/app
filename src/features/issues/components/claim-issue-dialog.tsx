@@ -43,44 +43,44 @@ export function ClaimIssueDialog({ issue }: { issue: IssueDetail }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="flex items-center gap-2 bg-primary-container px-8 py-3 font-bold text-on-primary-container transition-all hover:opacity-90 active:opacity-80">
-          Claim Issue
-          <Icon name="bolt" className="text-lg" filled />
+        <button className="flex items-center gap-[8px] rounded-full border-[2px] border-ink bg-ink px-[24px] py-[10px] font-mono-label text-[13px] font-bold text-white transition-all shadow-brutal-primary active:translate-x-[2px] active:translate-y-[2px] active:shadow-none">
+          Claim issue
+          <Icon name="bolt" className="text-[16px]" filled />
         </button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <div className="flex h-12 w-12 items-center justify-center border border-primary/20 bg-primary/10 text-primary">
-            <Icon name="task_alt" className="text-3xl" />
+          <div className="mb-[16px] flex h-[48px] w-[48px] items-center justify-center rounded-full border-[1.5px] border-primary-deep/60 bg-primary/10 text-primary-deep">
+            <Icon name="task_alt" className="text-[24px]" />
           </div>
           <div>
-            <DialogTitle>Confirm Claim</DialogTitle>
+            <DialogTitle>Confirm claim</DialogTitle>
             <DialogDescription>
               #{issue.githubNumber}: {issue.title}
             </DialogDescription>
           </div>
         </DialogHeader>
 
-        <div className="mb-8 space-y-3">
+        <div className="mb-[32px] flex flex-col gap-[12px]">
           {TERMS.map((term) => (
             <div
               key={term.title}
-              className="flex gap-3 border border-outline-variant bg-surface-container-low p-4"
+              className="flex gap-[16px] rounded-[12px] border-[1.5px] border-outline/15 bg-surface p-[16px]"
             >
-              <Icon name={term.icon} className="text-primary" />
+              <Icon name={term.icon} className="mt-[2px] text-[20px] text-primary-deep shrink-0" />
               <div>
-                <p className="text-sm font-bold text-on-surface">{term.title}</p>
-                <p className="text-xs text-on-surface-variant">{term.body}</p>
+                <p className="m-0 mb-1 text-[13.5px] font-bold text-on-surface">{term.title}</p>
+                <p className="m-0 text-[12.5px] leading-relaxed text-on-surface-variant">{term.body}</p>
               </div>
             </div>
           ))}
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex gap-[16px]">
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="flex-1 border border-outline-variant py-3 font-bold transition-colors hover:bg-surface-container"
+            className="flex-1 rounded-full border-[2px] border-ink bg-surface py-[12px] font-mono-label text-[13px] font-bold text-ink transition-all shadow-brutal-primary active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
           >
             Cancel
           </button>
@@ -88,9 +88,9 @@ export function ClaimIssueDialog({ issue }: { issue: IssueDetail }) {
             type="button"
             onClick={handleClaim}
             disabled={claim.isPending}
-            className="flex-1 bg-primary py-3 font-bold text-on-primary transition-opacity hover:opacity-90 active:opacity-80 disabled:opacity-60"
+            className="flex-1 rounded-full border-[2px] border-ink bg-ink py-[12px] font-mono-label text-[13px] font-bold text-white transition-all shadow-brutal-success active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-60"
           >
-            {claim.isPending ? "Claiming..." : "Agree & Claim"}
+            {claim.isPending ? "Claiming..." : "Agree & claim"}
           </button>
         </div>
       </DialogContent>

@@ -6,6 +6,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { StatusPip } from "@/components/ui/status-pip";
 import { DifficultyBadge } from "@/components/ui/status-badges";
+import { Card } from "@/components/ui/card";
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
 import { useIssueDetail } from "../hooks/use-issue-detail";
 import { useReleaseClaim } from "../hooks/use-claim-issue";
@@ -15,15 +16,15 @@ import type { IssueDetail } from "../types";
 
 function DetailSkeleton() {
   return (
-    <div className="mx-auto max-w-[1600px] p-4 sm:p-container-padding">
+    <div className="mx-auto max-w-[1400px] p-4 sm:p-container-padding">
       <Skeleton className="mb-4 h-4 w-48" />
       <Skeleton className="mb-4 h-10 w-2/3" />
       <Skeleton className="mb-8 h-6 w-80" />
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
-        <Skeleton className="h-96 lg:col-span-8" />
-        <div className="space-y-6 lg:col-span-4">
-          <Skeleton className="h-40" />
-          <Skeleton className="h-40" />
+        <Skeleton className="h-[400px] rounded-[20px] lg:col-span-8" />
+        <div className="flex flex-col gap-6 lg:col-span-4">
+          <Skeleton className="h-[200px] rounded-[20px]" />
+          <Skeleton className="h-[200px] rounded-[20px]" />
         </div>
       </div>
     </div>
@@ -38,16 +39,16 @@ function IssueActions({ issue, currentUserId }: { issue: IssueDetail; currentUse
 
   if (mineClaimed) {
     return (
-      <div className="flex flex-col items-stretch gap-2 sm:flex-row sm:items-center">
-        <span className="flex items-center justify-center gap-2 border border-primary px-6 py-3 font-mono-label text-sm font-bold uppercase tracking-widest text-primary">
-          <Icon name="check_circle" className="text-base" filled />
+      <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
+        <span className="flex items-center justify-center gap-2 rounded-full border-[1.5px] border-primary px-[20px] py-[10px] font-mono-label text-[12px] font-bold uppercase tracking-widest text-primary">
+          <Icon name="check_circle" className="text-[16px]" filled />
           Claimed by you
         </span>
         <button
           type="button"
           onClick={() => release.mutate()}
           disabled={release.isPending}
-          className="border border-outline-variant px-6 py-3 font-mono-label text-sm font-bold uppercase tracking-widest transition-colors hover:bg-surface-container disabled:opacity-60"
+          className="rounded-full border-[2px] border-ink bg-surface px-[24px] py-[10px] font-mono-label text-[13px] font-bold text-ink transition-all shadow-brutal-primary active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-60"
         >
           {release.isPending ? "Releasing..." : "Release"}
         </button>
@@ -56,7 +57,7 @@ function IssueActions({ issue, currentUserId }: { issue: IssueDetail; currentUse
   }
 
   return (
-    <span className="border border-outline-variant bg-surface-container-low px-6 py-3 font-mono-label text-sm font-bold uppercase tracking-widest text-on-surface-variant">
+    <span className="rounded-full border-[1.5px] border-outline/10 bg-outline/5 px-[20px] py-[10px] font-mono-label text-[12px] font-bold uppercase tracking-widest text-on-surface-variant">
       {issue.status.replace(/_/g, " ")}
     </span>
   );
@@ -70,25 +71,25 @@ export function IssueDetailView({ issueId }: { issueId: string }) {
 
   if (isError || !issue) {
     return (
-      <div className="mx-auto flex min-h-[60vh] max-w-lg flex-col items-center justify-center gap-4 p-8 text-center">
-        <Icon name="error_outline" className="text-5xl text-error" />
-        <h2 className="font-section-heading text-section-heading text-on-surface">
+      <div className="mx-auto flex min-h-[60vh] max-w-[720px] flex-col items-center justify-center gap-4 p-8 text-center">
+        <Icon name="error_outline" className="text-[48px] text-error" />
+        <h2 className="m-0 font-page-title text-[24px] font-bold text-on-surface">
           Issue not found
         </h2>
-        <p className="font-body text-on-surface-variant">
+        <p className="m-0 text-[15px] text-on-surface-variant">
           This issue may have been closed on GitHub or removed from the marketplace.
         </p>
-        <div className="flex gap-3">
+        <div className="mt-4 flex gap-3">
           <button
             type="button"
             onClick={() => refetch()}
-            className="border border-outline-variant px-6 py-2 font-mono-label text-mono-label uppercase hover:bg-surface-container"
+            className="rounded-full border-[2px] border-ink bg-surface px-6 py-3 font-mono-label text-[13px] font-bold transition-all shadow-brutal-primary active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
           >
             Retry
           </button>
           <Link
             href="/issues"
-            className="bg-primary-container px-6 py-2 font-mono-label text-mono-label uppercase text-on-primary-container"
+            className="inline-flex rounded-full bg-ink px-6 py-3 font-mono-label text-[13px] font-bold text-white transition-all shadow-brutal-primary active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
           >
             Back to marketplace
           </Link>
@@ -101,31 +102,31 @@ export function IssueDetailView({ issueId }: { issueId: string }) {
   const open = issue.status === "AVAILABLE";
 
   return (
-    <div className="mx-auto max-w-[1600px] p-4 sm:p-container-padding">
-      <nav aria-label="Breadcrumb" className="mb-4 flex items-center gap-2 font-caption text-caption">
-        <Link href="/issues" className="text-on-surface-variant hover:text-primary">
+    <div className="mx-auto max-w-[1400px] p-4 sm:p-container-padding">
+      <nav aria-label="Breadcrumb" className="mb-[16px] flex items-center gap-[8px] font-mono-label text-[11px] uppercase tracking-widest text-on-surface-muted">
+        <Link href="/issues" className="hover:text-primary">
           issues
         </Link>
-        <Icon name="chevron_right" className="text-xs text-outline" />
-        <span className="text-on-surface-variant">{owner}</span>
-        <Icon name="chevron_right" className="text-xs text-outline" />
-        <span className="text-on-surface-variant">{repoName}</span>
-        <Icon name="chevron_right" className="text-xs text-outline" />
-        <span className="text-primary">#{issue.githubNumber}</span>
+        <Icon name="chevron_right" className="text-[14px] text-outline/40" />
+        <span>{owner}</span>
+        <Icon name="chevron_right" className="text-[14px] text-outline/40" />
+        <span>{repoName}</span>
+        <Icon name="chevron_right" className="text-[14px] text-outline/40" />
+        <span className="text-primary-deep">#{issue.githubNumber}</span>
       </nav>
 
-      <div className="mb-8 flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-        <div className="max-w-4xl">
-          <h1 className="mb-4 font-page-title text-page-title text-on-surface">
+      <div className="mb-[32px] flex flex-col gap-[24px] lg:flex-row lg:items-start lg:justify-between">
+        <div className="max-w-[800px]">
+          <h1 className="m-0 mb-[16px] font-page-title text-[32px] font-bold leading-tight text-on-surface">
             {issue.title}
           </h1>
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="flex flex-wrap items-center gap-[12px]">
             <DifficultyBadge difficulty={issue.difficulty} />
             <Badge variant="primary">{issue.basePoints} pts</Badge>
             {issue.language && <Badge variant="outline">{issue.language}</Badge>}
-            <span className="ml-2 flex items-center gap-1.5">
+            <span className="ml-[8px] flex items-center gap-[6px]">
               <StatusPip tone={open ? "success" : "warning"} pulse={open} />
-              <span className="font-caption text-caption font-medium text-on-surface-variant">
+              <span className="font-mono-label text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">
                 {open ? "Open" : issue.status.replace(/_/g, " ")}
               </span>
             </span>
@@ -133,9 +134,9 @@ export function IssueDetailView({ issueId }: { issueId: string }) {
               href={issue.url}
               target="_blank"
               rel="noreferrer"
-              className="flex items-center gap-1 font-caption text-caption text-primary hover:underline"
+              className="ml-[8px] flex items-center gap-[4px] font-mono-label text-[11px] font-bold uppercase tracking-widest text-primary hover:underline"
             >
-              <Icon name="open_in_new" className="text-xs" />
+              <Icon name="open_in_new" className="text-[14px]" />
               View on GitHub
             </a>
           </div>
@@ -143,20 +144,20 @@ export function IssueDetailView({ issueId }: { issueId: string }) {
         <IssueActions issue={issue} currentUserId={user?.id} />
       </div>
 
-      <div className="grid grid-cols-1 items-start gap-8 lg:grid-cols-12">
-        <div className="space-y-8 lg:col-span-8">
-          <section className="border border-outline-variant bg-surface p-6 sm:p-8">
-            <h2 className="mb-4 border-b border-outline-variant pb-2 font-section-heading text-section-heading text-on-surface">
+      <div className="grid grid-cols-1 items-start gap-[32px] lg:grid-cols-12">
+        <div className="flex flex-col gap-[32px] lg:col-span-8">
+          <Card className="p-[24px] sm:p-[32px]">
+            <h2 className="m-0 mb-[16px] border-b-[1.5px] border-outline/10 pb-[12px] font-page-title text-[21px] font-bold text-on-surface">
               Summary
             </h2>
-            <p className="mb-6 font-body text-body text-on-surface-variant">
+            <p className="m-0 mb-[24px] text-[15px] leading-relaxed text-on-surface-variant">
               {issue.description}
             </p>
 
-            <h2 className="mb-4 font-section-heading text-section-heading text-on-surface">
+            <h2 className="m-0 mb-[16px] font-page-title text-[21px] font-bold text-on-surface">
               Objectives
             </h2>
-            <ul className="mb-6 list-disc space-y-2 pl-5 font-body text-body text-on-surface-variant">
+            <ul className="m-0 mb-[24px] flex list-disc flex-col gap-[8px] pl-[20px] text-[15px] text-on-surface-variant">
               {issue.objectives.map((objective) => (
                 <li key={objective}>{objective}</li>
               ))}
@@ -164,11 +165,11 @@ export function IssueDetailView({ issueId }: { issueId: string }) {
 
             {issue.acceptanceCriteria && (
               <>
-                <h2 className="mb-4 font-section-heading text-section-heading text-on-surface">
-                  Acceptance Criteria
+                <h2 className="m-0 mb-[16px] font-page-title text-[21px] font-bold text-on-surface">
+                  Acceptance criteria
                 </h2>
-                <div className="border-l-4 border-primary bg-primary-container/5 p-4">
-                  <p className="font-caption text-caption italic text-on-surface">
+                <div className="rounded-[12px] border-[1.5px] border-primary-deep/60 bg-primary/10 p-[16px]">
+                  <p className="m-0 text-[13.5px] italic text-on-surface">
                     {issue.acceptanceCriteria}
                   </p>
                 </div>
@@ -176,28 +177,28 @@ export function IssueDetailView({ issueId }: { issueId: string }) {
             )}
 
             {issue.labels.length > 0 && (
-              <div className="mt-6 flex flex-wrap gap-2 border-t border-outline-variant pt-6">
+              <div className="mt-[24px] flex flex-wrap gap-[8px] border-t-[1.5px] border-outline/10 pt-[24px]">
                 {issue.labels.map((label) => (
                   <Badge key={label} variant="outline">
                     {label}
-                  </Badge>
+               </Badge>
                 ))}
               </div>
             )}
-          </section>
+          </Card>
 
-          <section className="border border-outline-variant bg-surface p-6">
-            <div className="mb-4 flex items-center gap-2">
-              <Icon name="forum" className="text-on-surface-variant" />
-              <span className="font-section-heading leading-none text-on-surface">
+          <Card className="p-[24px]">
+            <div className="mb-[16px] flex items-center gap-[8px]">
+              <Icon name="forum" className="text-[20px] text-on-surface-variant" />
+              <span className="font-page-title text-[19px] font-bold leading-none text-on-surface">
                 Activity
               </span>
             </div>
-            <p className="font-caption text-caption text-on-surface-variant">
+            <p className="m-0 text-[13.5px] text-on-surface-variant">
               Discussion lives on GitHub. The contribution timeline updates here as
               your pull request moves through review.
             </p>
-          </section>
+          </Card>
         </div>
 
         <IssueDetailSidebar issue={issue} />

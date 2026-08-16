@@ -1,9 +1,38 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { Icon } from "@/components/ui/icon";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Glyph } from "@/components/ui/icons";
 import { DifficultyBadge } from "@/components/ui/status-badges";
 import { formatRelativeTime } from "@/utils/format";
-import type { Issue } from "@/types/domain";
+import type { Issue, IssueDifficulty } from "@/types/domain";
+
+/** The hover accent echoes the issue's difficulty tint. */
+const LIFT_BY_DIFFICULTY: Record<IssueDifficulty, "tertiary" | "secondary" | "primary"> = {
+  "Good First Issue": "tertiary",
+  Documentation: "primary",
+  "Bug Fix": "primary",
+  Feature: "secondary",
+  Architecture: "secondary",
+  "Critical Bug": "tertiary",
+  Security: "tertiary",
+};
+
+/** Flat status chip standing in for the Claim button when action isn't available. */
+function StateChip({
+  children,
+  icon,
+}: {
+  children: React.ReactNode;
+  icon?: boolean;
+}) {
+  return (
+    <div className="flex items-center justify-center gap-1.5 rounded-buidl-pill bg-outline/[0.06] px-4 py-2.5 font-mono-label text-[12px] font-bold text-on-surface-variant">
+      {icon && <Glyph name="issues" size={13} />}
+      {children}
+    </div>
+  );
+}
 
 function ClaimAction({
   issue,
@@ -14,36 +43,25 @@ function ClaimAction({
 }) {
   if (issue.status === "AVAILABLE") {
     return (
-      <Link
-        href={`/issues/${issue.id}`}
-        className="mt-6 block w-full bg-primary-container py-2 text-center font-mono-label text-sm font-bold uppercase tracking-widest text-on-primary-container transition-all hover:brightness-110"
-      >
-        Claim
-      </Link>
+      <Button asChild variant="primary" size="sm" className="w-full">
+        <Link href={`/issues/${issue.id}`}>Claim</Link>
+      </Button>
     );
   }
 
-  if (issue.claimedBy && issue.claimedBy.id === currentUserId) {
-    if (issue.claimExpiresAt) {
-      return (
-        <div className="mt-6 flex w-full items-center justify-center gap-2 border border-primary py-2 text-center font-mono-label text-sm font-bold uppercase tracking-widest text-primary">
-          <Icon name="schedule" className="text-sm" />
-          Claimed until {formatRelativeTime(issue.claimExpiresAt)}
-        </div>
-      );
-    }
-    return (
-      <div className="mt-6 w-full border border-outline-variant bg-surface-container-low py-2 text-center font-mono-label text-sm font-bold uppercase tracking-widest text-on-surface-variant">
-        Claimed by you
-      </div>
+  const mine = issue.claimedBy?.id === currentUserId;
+
+  if (mine) {
+    return issue.claimExpiresAt ? (
+      <StateChip icon>Claimed until {formatRelativeTime(issue.claimExpiresAt)}</StateChip>
+    ) : (
+      <StateChip>Claimed by you</StateChip>
     );
   }
 
-  return (
-    <div className="mt-6 w-full border border-outline-variant bg-surface-container-low py-2 text-center font-mono-label text-sm font-bold uppercase tracking-widest text-on-surface-variant">
-      {issue.status.replace(/_/g, " ")}
-    </div>
-  );
+  if (issue.claimedBy) return <StateChip>Claimed by another dev</StateChip>;
+
+  return <StateChip>{issue.status.replace(/_/g, " ")}</StateChip>;
 }
 
 export function IssueCard({
@@ -54,46 +72,43 @@ export function IssueCard({
   currentUserId?: string;
 }) {
   const claimedByOther =
-    issue.status !== "AVAILABLE" && issue.claimedBy?.id !== currentUserId;
+    issue.status !== "AVAILABLE" && !!issue.claimedBy && issue.claimedBy.id !== currentUserId;
 
   return (
-    <article
-      className={cn(
-        "flex flex-col border border-outline-variant bg-surface p-6 transition-colors hover:border-primary",
-        claimedByOther && "opacity-80",
-      )}
+    <Card
+      as="article"
+      lift={claimedByOther ? "none" : LIFT_BY_DIFFICULTY[issue.difficulty]}
+      className={cn("flex flex-col p-6", claimedByOther && "opacity-75")}
     >
-      <div className="mb-4 flex items-start justify-between gap-2">
-        <span className="font-mono-label text-[11px] text-on-surface-variant">
+      <div className="mb-4 flex items-start justify-between gap-3">
+        <span className="font-mono-label text-[11px] text-on-surface-muted">
           {issue.repository.fullName}
         </span>
-        <DifficultyBadge difficulty={issue.difficulty} />
+        <DifficultyBadge difficulty={issue.difficulty} size="sm" />
       </div>
 
-      <h3 className="mb-6 flex-1 font-body text-lg font-bold text-on-surface">
-        <Link href={`/issues/${issue.id}`} className="hover:text-primary">
-          {issue.title}
-        </Link>
+      <h3 className="mb-6 flex-1 text-[16px] font-bold leading-snug text-on-surface">
+        <Link href={`/issues/${issue.id}`}>{issue.title}</Link>
       </h3>
 
-      <div className="mt-auto flex items-center justify-between border-t border-outline-variant pt-6">
+      <div className="mb-4 flex items-center justify-between gap-4 border-t-[1.5px] border-outline/10 pt-4">
         <div>
-          <p className="font-mono-label text-[10px] uppercase text-on-surface-variant">
+          <div className="font-mono-label text-[10px] uppercase text-on-surface-muted">
             Reward
-          </p>
-          <p className="font-mono-label text-body font-bold text-primary">
+          </div>
+          <div className="font-mono-label text-[15px] font-bold text-points">
             {issue.basePoints} pts
-          </p>
+          </div>
         </div>
         <div className="text-right">
-          <p className="font-mono-label text-[10px] uppercase text-on-surface-variant">
+          <div className="font-mono-label text-[10px] uppercase text-on-surface-muted">
             Language
-          </p>
-          <p className="font-mono-label text-caption">{issue.language ?? "—"}</p>
+          </div>
+          <div className="font-mono-label text-[13px]">{issue.language ?? "—"}</div>
         </div>
       </div>
 
       <ClaimAction issue={issue} currentUserId={currentUserId} />
-    </article>
+    </Card>
   );
 }

@@ -2,44 +2,44 @@
 
 import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
-import { Badge, type BadgeProps } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatDate, formatUsd } from "@/utils/format";
+import { formatDate, formatNumber } from "@/utils/format";
 import { useRewards } from "../hooks/use-rewards";
 import { ClaimRewardDialog } from "./claim-reward-dialog";
 import type { Reward, RewardStatus } from "@/types/domain";
 
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+
 const STATUS_META: Record<
   RewardStatus,
-  { label: string; variant: NonNullable<BadgeProps["variant"]> }
+  { label: string; bg: string; text: string }
 > = {
-  Pending: { label: "Pending", variant: "warning" },
-  Validated: { label: "Validated", variant: "warning" },
-  Ready: { label: "Claimable", variant: "success" },
-  Sent: { label: "Sent", variant: "primary" },
-  Confirmed: { label: "Claimed", variant: "neutral" },
-  Failed: { label: "Failed", variant: "danger" },
-  Cancelled: { label: "Cancelled", variant: "neutral" },
+  Pending: { label: "Pending", bg: "bg-tertiary/15", text: "text-tertiary-deep" },
+  Validated: { label: "VALIDATED", bg: "bg-primary/25", text: "text-primary-deep" },
+  Ready: { label: "CLAIMABLE", bg: "bg-secondary/15", text: "text-secondary-deep" },
+  Sent: { label: "SENT", bg: "bg-outline/10", text: "text-on-surface-muted" },
+  Confirmed: { label: "CLAIMED", bg: "bg-outline/10", text: "text-on-surface-muted" },
+  Failed: { label: "FAILED", bg: "bg-error/15", text: "text-error" },
+  Cancelled: { label: "CANCELLED", bg: "bg-outline/10", text: "text-on-surface-muted" },
 };
 
 function RowAction({ reward, onClaim }: { reward: Reward; onClaim: (r: Reward) => void }) {
   if (reward.status === "Ready") {
     return (
-      <button
-        type="button"
+      <Button
+        variant="primary"
         onClick={() => onClaim(reward)}
-        className="bg-primary px-4 py-1.5 text-[11px] font-bold uppercase text-on-primary transition-all hover:brightness-110"
+        className="px-3.5 py-1.5 text-[11px] font-bold"
       >
         Claim
-      </button>
+      </Button>
     );
   }
   if (reward.status === "Confirmed" || reward.status === "Sent") {
-    return (
-      <Icon name="check_circle" className="text-outline-variant" filled />
-    );
+    return null; // The link icon is rendered separately in the row
   }
-  return <Icon name="schedule" className="text-outline-variant" />;
+  return <span className="text-[14px] text-on-surface-muted">⏱</span>;
 }
 
 export function SeasonRewardsTable() {
@@ -53,14 +53,14 @@ export function SeasonRewardsTable() {
   };
 
   return (
-    <div className="border border-outline-variant bg-surface">
-      <div className="flex items-center justify-between border-b border-outline-variant bg-surface-container-low px-6 py-4">
-        <h3 className="font-section-heading text-body font-bold uppercase tracking-widest text-on-surface">
-          Season Rewards
+    <Card className="overflow-hidden">
+      <div className="flex items-center justify-between border-b-[1.5px] border-outline/10 px-6 py-[18px]">
+        <h3 className="m-0 font-page-title text-[17px] font-bold text-on-surface">
+          Season rewards
         </h3>
         {data && (
-          <span className="bg-surface-container-highest px-2 py-1 font-mono-label text-[10px] uppercase text-on-surface-variant">
-            {data.length} Total
+          <span className="rounded-full bg-outline/5 px-3 py-1 font-mono-label text-[11px] text-on-surface-muted">
+            {data.length} total
           </span>
         )}
       </div>
@@ -68,67 +68,63 @@ export function SeasonRewardsTable() {
       {isError ? (
         <div className="flex flex-col items-center justify-center py-16 text-center">
           <Icon name="warning" className="mb-4 text-4xl text-error" />
-          <p className="mb-6 font-body font-bold uppercase text-on-surface">
+          <p className="mb-6 font-page-title text-[19px] font-bold text-on-surface">
             Failed to load rewards.
           </p>
-          <button
-            type="button"
-            onClick={() => refetch()}
-            className="bg-error px-6 py-2 font-mono-label text-sm font-bold uppercase text-on-error hover:brightness-110"
-          >
+          <Button variant="secondary" onClick={() => refetch()}>
             Retry
-          </button>
+          </Button>
         </div>
       ) : !isLoading && data && data.length === 0 ? (
         <div className="flex flex-col items-center justify-center px-4 py-24 text-center">
           <Icon
             name="account_balance_wallet"
-            className="mb-4 text-6xl text-outline-variant"
+            className="mb-4 text-[48px] text-outline/30"
           />
-          <h4 className="font-section-heading text-body font-bold text-on-surface">
+          <h4 className="font-page-title text-[19px] font-bold text-on-surface">
             No rewards yet
           </h4>
-          <p className="mt-2 max-w-xs font-body text-caption text-on-surface-variant">
+          <p className="mt-2 max-w-xs text-[13.5px] leading-relaxed text-on-surface-variant">
             Contribute to earn rewards and build your reputation in the ecosystem.
           </p>
         </div>
       ) : (
         <div className="overflow-x-auto">
-          <table className="w-full border-collapse text-left">
+          <table className="w-full table-fixed border-collapse text-left">
             <thead>
-              <tr className="border-b border-outline-variant bg-surface-container-lowest">
-                <th className="px-6 py-4 font-mono-label text-mono-label uppercase text-on-surface-variant">
-                  Season Name
+              <tr className="bg-outline/5">
+                <th className="w-[20%] py-3 pl-6 pr-1.5 font-mono-label text-[10.5px] uppercase tracking-widest text-on-surface-muted">
+                  Season
                 </th>
-                <th className="px-6 py-4 font-mono-label text-mono-label uppercase text-on-surface-variant">
+                <th className="w-[24%] py-3 px-1.5 font-mono-label text-[10.5px] uppercase tracking-widest text-on-surface-muted">
                   Status
                 </th>
-                <th className="px-6 py-4 text-right font-mono-label text-mono-label uppercase text-on-surface-variant">
+                <th className="w-[28%] py-3 px-1.5 text-right font-mono-label text-[10.5px] uppercase tracking-widest text-on-surface-muted">
                   Allocation
                 </th>
-                <th className="px-6 py-4 font-mono-label text-mono-label uppercase text-on-surface-variant">
+                <th className="w-[15%] py-3 px-1.5 font-mono-label text-[10.5px] uppercase tracking-widest text-on-surface-muted">
                   Date
                 </th>
-                <th className="px-6 py-4" />
+                <th className="w-[13%] py-3 pl-1.5 pr-6" />
               </tr>
             </thead>
             <tbody>
               {isLoading || !data
                 ? Array.from({ length: 3 }).map((_, i) => (
-                    <tr key={i} className="border-b border-outline-variant/30">
-                      <td className="px-6 py-4">
-                        <Skeleton className="h-4 w-32" />
-                      </td>
-                      <td className="px-6 py-4">
-                        <Skeleton className="h-4 w-16" />
-                      </td>
-                      <td className="px-6 py-4">
-                        <Skeleton className="ml-auto h-4 w-20" />
-                      </td>
-                      <td className="px-6 py-4">
+                    <tr key={i} className="border-t-[1.5px] border-outline/10">
+                      <td className="py-[15px] pl-6 pr-1.5">
                         <Skeleton className="h-4 w-24" />
                       </td>
-                      <td className="px-6 py-4" />
+                      <td className="py-[15px] px-1.5">
+                        <Skeleton className="h-5 w-20 rounded-full" />
+                      </td>
+                      <td className="py-[15px] px-1.5">
+                        <Skeleton className="ml-auto h-4 w-20" />
+                      </td>
+                      <td className="py-[15px] px-1.5">
+                        <Skeleton className="h-4 w-16" />
+                      </td>
+                      <td className="py-[15px] pl-1.5 pr-6" />
                     </tr>
                   ))
                 : data.map((reward) => {
@@ -138,33 +134,39 @@ export function SeasonRewardsTable() {
                     return (
                       <tr
                         key={reward.id}
-                        className="border-b border-outline-variant/30 transition-colors last:border-0 hover:bg-surface-container"
+                        className="border-t border-outline/10 transition-colors hover:bg-outline/5"
                       >
-                        <td className="px-6 py-4 font-body text-body font-semibold text-on-surface">
+                        <td className="overflow-hidden whitespace-nowrap py-[15px] pl-6 pr-1.5 text-[13px] font-bold text-on-surface">
                           {reward.season.name}
                         </td>
-                        <td className="px-6 py-4">
-                          <Badge variant={meta.variant}>{meta.label}</Badge>
+                        <td className="overflow-hidden whitespace-nowrap py-[15px] px-1.5">
+                          <span
+                            className={`whitespace-nowrap rounded-full px-2 py-[3px] text-[10.5px] font-bold ${meta.bg} ${meta.text}`}
+                          >
+                            {meta.label}
+                          </span>
                         </td>
-                        <td className="whitespace-nowrap px-6 py-4 text-right font-mono-label text-body text-on-surface">
+                        <td className="overflow-hidden whitespace-nowrap py-[15px] px-1.5 text-right font-mono-label text-[12.5px] font-bold text-on-surface">
                           {reward.amountUsd > 0
-                            ? `${formatUsd(reward.amountUsd)} USDC`
+                            ? `$${formatNumber(reward.amountUsd)} USDC`
                             : "-- USDC"}
                         </td>
-                        <td className="whitespace-nowrap px-6 py-4 font-mono-label text-caption text-on-surface-variant">
-                          {formatDate(reward.createdAt)}
+                        <td className="overflow-hidden whitespace-nowrap py-[15px] px-1.5 font-mono-label text-[11.5px] text-on-surface-muted">
+                          {reward.status === "Pending" || reward.status === "Validated"
+                            ? "Pending"
+                            : formatDate(reward.createdAt)}
                         </td>
-                        <td className="px-6 py-4 text-right">
+                        <td className="whitespace-nowrap py-[15px] pl-1.5 pr-6 text-right">
                           <div className="flex items-center justify-end gap-3">
                             {claimed && reward.txHash && (
                               <a
                                 href={`https://etherscan.io/tx/${reward.txHash}`}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="text-on-surface-variant hover:text-primary"
+                                className="text-on-surface-muted hover:text-primary"
                                 title="View transaction"
                               >
-                                <Icon name="open_in_new" className="text-base" />
+                                ↗
                               </a>
                             )}
                             <RowAction reward={reward} onClaim={openClaim} />
@@ -179,6 +181,6 @@ export function SeasonRewardsTable() {
       )}
 
       <ClaimRewardDialog reward={selected} open={open} onOpenChange={setOpen} />
-    </div>
+    </Card>
   );
 }

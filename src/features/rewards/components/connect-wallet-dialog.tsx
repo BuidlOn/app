@@ -43,25 +43,25 @@ export function ConnectWalletDialog({
           <DialogTitle>Connect Wallet</DialogTitle>
         </DialogHeader>
 
-        <div className="space-y-3">
+        <div className="flex flex-col gap-[12px]">
           {PROVIDERS.map((provider) => (
             <button
               key={provider.id}
               type="button"
               onClick={() => connect(provider.name)}
-              className="group flex w-full items-center justify-between border border-outline-variant p-4 transition-all hover:border-primary hover:bg-surface-container"
+              className="group flex w-full items-center justify-between rounded-[12px] border-[1.5px] border-outline/15 bg-white p-[16px] transition-all hover:border-primary-deep/60 hover:bg-primary/5"
             >
-              <div className="flex items-center gap-4">
-                <div className="flex h-10 w-10 items-center justify-center bg-surface-container-high">
-                  <Icon name={provider.icon} className="text-primary" />
+              <div className="flex items-center gap-[16px]">
+                <div className="flex h-[40px] w-[40px] items-center justify-center rounded-full bg-outline/5">
+                  <Icon name={provider.icon} className="text-[20px] text-primary-deep" />
                 </div>
-                <span className="font-body font-bold text-on-surface">
+                <span className="text-[15px] font-bold text-on-surface">
                   {provider.name}
                 </span>
               </div>
               <Icon
                 name="chevron_right"
-                className="text-on-surface-variant transition-colors group-hover:text-primary"
+                className="text-[20px] text-on-surface-variant transition-colors group-hover:text-primary-deep"
               />
             </button>
           ))}

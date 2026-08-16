@@ -34,42 +34,42 @@ export function ClaimRewardDialog({
           <DialogTitle>Confirm Claim</DialogTitle>
         </DialogHeader>
 
-        <div className="mb-8 border border-outline-variant bg-surface-container-lowest p-6">
-          <div className="mb-6 flex items-center justify-between">
-            <span className="font-mono-label text-mono-label uppercase text-on-surface-variant">
+        <div className="mb-[32px] rounded-[16px] border-[1.5px] border-outline/15 bg-white p-[24px]">
+          <div className="mb-[24px] flex items-center justify-between">
+            <span className="font-mono-label text-[11px] font-bold uppercase tracking-widest text-on-surface-muted">
               Source
             </span>
-            <span className="font-body font-bold text-on-surface">
+            <span className="text-[15px] font-bold text-on-surface">
               {reward?.season.name ?? "—"}
             </span>
           </div>
           <div className="flex items-center justify-between">
-            <span className="font-mono-label text-mono-label uppercase text-on-surface-variant">
+            <span className="font-mono-label text-[11px] font-bold uppercase tracking-widest text-on-surface-muted">
               Amount
             </span>
-            <span className="font-page-title text-3xl font-extrabold text-primary">
+            <span className="font-page-title text-[32px] font-bold text-primary-deep">
               {reward ? formatUsd(reward.amountUsd) : "—"}{" "}
-              <span className="font-section-heading text-body">USDC</span>
+              <span className="text-[15px]">USDC</span>
             </span>
           </div>
         </div>
 
-        <div className="mb-8 space-y-4">
-          <div className="flex justify-between font-caption text-caption">
-            <span className="text-on-surface-variant">Network Fee (Gas)</span>
-            <span className="text-on-surface">~0.0042 ETH</span>
+        <div className="mb-[32px] flex flex-col gap-[16px]">
+          <div className="flex justify-between font-mono-label text-[10.5px]">
+            <span className="uppercase text-on-surface-muted">Network Fee (Gas)</span>
+            <span className="font-bold text-on-surface">~0.0042 ETH</span>
           </div>
-          <div className="flex justify-between font-caption text-caption">
-            <span className="text-on-surface-variant">Estimated Time</span>
-            <span className="text-on-surface">&lt; 30 seconds</span>
+          <div className="flex justify-between font-mono-label text-[10.5px]">
+            <span className="uppercase text-on-surface-muted">Estimated Time</span>
+            <span className="font-bold text-on-surface">&lt; 30 seconds</span>
           </div>
         </div>
 
-        <div className="flex gap-4">
+        <div className="flex gap-[16px]">
           <button
             type="button"
             onClick={() => onOpenChange(false)}
-            className="flex-1 border border-outline-variant py-4 font-mono-label text-mono-label uppercase transition-colors hover:bg-surface-container"
+            className="flex-1 rounded-full border-[2px] border-ink bg-surface py-[12px] font-mono-label text-[13px] font-bold text-ink transition-all shadow-brutal-primary active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
           >
             Cancel
           </button>
@@ -77,9 +77,9 @@ export function ClaimRewardDialog({
             type="button"
             onClick={handleConfirm}
             disabled={claim.isPending}
-            className="flex-1 bg-primary-container py-4 font-mono-label text-mono-label font-bold uppercase tracking-widest text-on-primary-container transition-all hover:brightness-110 disabled:opacity-60"
+            className="flex-1 rounded-full border-[2px] border-ink bg-ink py-[12px] font-mono-label text-[13px] font-bold text-white transition-all shadow-brutal-success active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-60"
           >
-            {claim.isPending ? "Confirming..." : "Confirm Claim"}
+            {claim.isPending ? "Confirming..." : "Confirm claim"}
           </button>
         </div>
       </DialogContent>

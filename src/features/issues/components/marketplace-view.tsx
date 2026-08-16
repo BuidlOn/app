@@ -7,6 +7,8 @@ import { MarketplaceStats } from "./marketplace-stats";
 import { IssueFilterBar } from "./issue-filter-bar";
 import { IssueGrid } from "./issue-grid";
 import { Pagination } from "@/components/ui/pagination";
+import { PageHeader } from "@/components/layout/page-header";
+import { StatusFooter } from "@/components/layout/status-footer";
 import { DEFAULT_ISSUE_PAGE_SIZE } from "@/constants/issues";
 import type { IssueFilters } from "../types";
 
@@ -30,17 +32,11 @@ export function MarketplaceView() {
   const goToPage = (page: number) => setFilters((f) => ({ ...f, page }));
 
   return (
-    <div className="mx-auto max-w-[1600px] p-4 sm:p-container-padding">
-      <div className="mb-gap-8 flex items-end justify-between">
-        <div>
-          <h1 className="font-page-title text-page-title font-bold tracking-tight text-on-surface">
-            Issue Marketplace
-          </h1>
-          <p className="mt-1 font-body text-body text-on-surface-variant">
-            Claim verified issues and earn points toward this season&apos;s rewards.
-          </p>
-        </div>
-      </div>
+    <div className="mx-auto flex max-w-[1400px] flex-col gap-6 sm:gap-8">
+      <PageHeader
+        title="Issue Marketplace"
+        description="Claim verified issues and earn points toward this season's rewards."
+      />
 
       <MarketplaceStats />
 
@@ -56,7 +52,7 @@ export function MarketplaceView() {
       />
 
       {data && data.totalPages > 1 && (
-        <div className="mt-gap-12" aria-busy={isFetching}>
+        <div aria-busy={isFetching}>
           <Pagination
             page={data.page}
             totalPages={data.totalPages}
@@ -64,6 +60,8 @@ export function MarketplaceView() {
           />
         </div>
       )}
+
+      <StatusFooter />
     </div>
   );
 }
