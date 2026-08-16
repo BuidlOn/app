@@ -125,7 +125,7 @@ export function IssueDetailView({ issueId }: { issueId: string }) {
             <Badge variant="primary">{issue.basePoints} pts</Badge>
             {issue.language && <Badge variant="outline">{issue.language}</Badge>}
             <span className="ml-[8px] flex items-center gap-[6px]">
-              <StatusPip tone={open ? "success" : "warning"} pulse={open} />
+              <StatusPip tone={open ? "teal" : "amber"} pulse={open} />
               <span className="font-mono-label text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">
                 {open ? "Open" : issue.status.replace(/_/g, " ")}
               </span>

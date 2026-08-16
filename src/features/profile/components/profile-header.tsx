@@ -64,7 +64,7 @@ export function ProfileHeader({
               <span className="font-mono-label text-[12px] text-on-surface">
                 {truncateHash(user.walletAddress)}
               </span>
-              <StatusPip tone="success" className="h-1.5 w-1.5" />
+              <StatusPip tone="teal" className="h-1.5 w-1.5" />
             </div>
           )}
           {user.country && (

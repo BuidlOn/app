@@ -100,7 +100,7 @@ export function RepositoriesView() {
         <Card className="flex flex-col items-center px-6 py-16 text-center border-error bg-error/10">
           <Glyph name="shield" size={36} className="mb-4 text-error" />
           <h3 className="font-page-title text-[19px] font-bold text-on-surface">Failed to load repositories</h3>
-          <p className="mb-6 mt-1.5 max-w-sm text-[13.5px] text-on-surface-variant">The server didn't respond. Check your connection and try again.</p>
+          <p className="mb-6 mt-1.5 max-w-sm text-[13.5px] text-on-surface-variant">The server didn&apos;t respond. Check your connection and try again.</p>
           <Button type="button" variant="secondary" size="sm" onClick={() => refetch()}>
             Retry
           </Button>

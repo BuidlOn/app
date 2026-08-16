@@ -36,7 +36,7 @@ export function WalletStatusCard() {
             <div className="flex items-center justify-between text-[12.5px]">
               <span className="text-on-surface-muted">Network</span>
               <span className="flex items-center gap-1.5 font-mono-label text-[11px] font-bold">
-                <StatusPip tone="success" className="h-1.5 w-1.5" /> Ethereum Mainnet
+                <StatusPip tone="teal" className="h-1.5 w-1.5" /> Ethereum Mainnet
               </span>
             </div>
             <div className="flex items-center justify-between text-[12.5px]">

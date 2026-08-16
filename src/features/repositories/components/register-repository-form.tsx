@@ -57,7 +57,7 @@ export function RegisterRepositoryForm() {
           onClick={() => router.back()}
           className="mb-4 inline-flex items-center gap-1 font-mono-label text-[12px] uppercase text-on-surface-variant transition-colors hover:text-on-surface"
         >
-          <Glyph name="arrowLeft" size={14} />
+          <Glyph name="chevronLeft" size={14} className="rotate-180" />
           Back
         </button>
         <PageHeader
@@ -66,7 +66,7 @@ export function RegisterRepositoryForm() {
         />
       </div>
 
-      <Card as="form" onSubmit={onSubmit} noValidate className="p-6 sm:p-8">
+      <form onSubmit={onSubmit} noValidate className="rounded-buidl-lg bg-surface border-[1.5px] border-outline/15 p-6 sm:p-8">
         <div className="mb-6">
           <Label htmlFor="repo-url">GitHub Repository URL</Label>
           <Input
@@ -102,7 +102,7 @@ export function RegisterRepositoryForm() {
         >
           {register_.isPending ? "Verifying..." : "Connect Repository"}
         </Button>
-      </Card>
+      </form>
     </div>
   );
 }

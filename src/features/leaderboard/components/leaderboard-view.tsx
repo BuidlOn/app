@@ -64,9 +64,9 @@ export function LeaderboardView() {
                   ))}
                 </Select>
                 <Glyph
-                  name="expandMore"
+                  name="chevronLeft"
                   size={16}
-                  className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-on-surface"
+                  className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 rotate-90 text-on-surface"
                 />
               </div>
             )}

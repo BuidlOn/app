@@ -141,7 +141,7 @@ export function PersonalProfileView() {
           </div>
         </Card>
 
-        <Card tone="secondary" border="ink" className="flex flex-col justify-between p-8 md:col-span-4">
+        <Card border="ink" className="flex flex-col justify-between p-8 md:col-span-4">
           <div>
             <div className="mb-4 flex items-center justify-between">
               <h3 className="m-0 font-mono-label text-[12px] uppercase tracking-widest text-secondary-deep/80">
