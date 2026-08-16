@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { cn } from "@/lib/utils";
 import { Icon } from "@/components/ui/icon";
+import { Card } from "@/components/ui/card";
 import { useCreateSeason } from "../hooks/use-admin";
 
 function makeSchema(treasuryUsd: number) {
@@ -24,10 +25,9 @@ function makeSchema(treasuryUsd: number) {
     });
 }
 
-const labelClass =
-  "mb-1.5 block font-mono-label text-[11px] uppercase text-outline";
+const labelClass = "sr-only"; // Labels are hidden in the design but needed for accessibility
 const fieldClass =
-  "w-full border bg-surface-container-lowest px-3 py-2 text-sm outline-none transition-colors placeholder:text-outline-variant focus:border-primary";
+  "w-full rounded-[10px] border-[1.5px] border-outline/15 bg-white px-[12px] py-[9px] text-[12.5px] text-on-surface outline-none transition-colors placeholder:text-outline-variant focus:border-primary";
 
 export function CreateSeasonForm({ treasuryUsd }: { treasuryUsd: number }) {
   const schema = makeSchema(treasuryUsd);
@@ -57,29 +57,27 @@ export function CreateSeasonForm({ treasuryUsd }: { treasuryUsd: number }) {
   });
 
   return (
-    <section className="border border-outline-variant bg-surface">
-      <div className="border-b border-outline-variant px-6 py-4">
-        <h3 className="font-section-heading text-[18px]">Configure Next Season</h3>
-      </div>
-      <form className="space-y-4 p-6" onSubmit={onSubmit} noValidate>
+    <Card className="p-[22px]">
+      <h3 className="m-0 mb-[16px] font-page-title text-[15px] font-bold text-on-surface">Create new season</h3>
+      <form className="flex flex-col gap-[12px]" onSubmit={onSubmit} noValidate>
         <div>
           <label htmlFor="season-name" className={labelClass}>
             Season Name
           </label>
           <input
             id="season-name"
-            className={cn(fieldClass, errors.name ? "border-error" : "border-outline-variant")}
-            placeholder="e.g. Season 5: Expansion"
+            className={cn(fieldClass, errors.name ? "border-error focus:border-error" : "")}
+            placeholder="Season name"
             {...register("name")}
           />
           {errors.name && (
-            <p className="mt-1.5 font-caption text-[10px] text-error">
+            <p className="mt-1 font-mono-label text-[10px] uppercase text-error">
               {errors.name.message}
             </p>
           )}
         </div>
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-[12px]">
           <div>
             <label htmlFor="start-date" className={labelClass}>
               Start Date
@@ -87,11 +85,11 @@ export function CreateSeasonForm({ treasuryUsd }: { treasuryUsd: number }) {
             <input
               id="start-date"
               type="date"
-              className={cn(fieldClass, "[color-scheme:dark]", errors.startDate ? "border-error" : "border-outline-variant")}
+              className={cn(fieldClass, "[color-scheme:dark]", errors.startDate ? "border-error focus:border-error" : "")}
               {...register("startDate")}
             />
             {errors.startDate && (
-              <p className="mt-1.5 font-caption text-[10px] text-error">
+              <p className="mt-1 font-mono-label text-[10px] uppercase text-error">
                 {errors.startDate.message}
               </p>
             )}
@@ -103,11 +101,11 @@ export function CreateSeasonForm({ treasuryUsd }: { treasuryUsd: number }) {
             <input
               id="end-date"
               type="date"
-              className={cn(fieldClass, "[color-scheme:dark]", errors.endDate ? "border-error" : "border-outline-variant")}
+              className={cn(fieldClass, "[color-scheme:dark]", errors.endDate ? "border-error focus:border-error" : "")}
               {...register("endDate")}
             />
             {errors.endDate && (
-              <p className="mt-1.5 font-caption text-[10px] text-error">
+              <p className="mt-1 font-mono-label text-[10px] uppercase text-error">
                 {errors.endDate.message}
               </p>
             )}
@@ -122,32 +120,29 @@ export function CreateSeasonForm({ treasuryUsd }: { treasuryUsd: number }) {
             <input
               id="reward-pool"
               type="number"
-              className={cn(fieldClass, "font-mono-label", errors.rewardPool ? "border-error" : "border-outline-variant")}
-              placeholder="250000"
+              className={cn(fieldClass, "font-mono-label", errors.rewardPool ? "border-error focus:border-error" : "")}
+              placeholder="Reward pool (USDC)"
               {...register("rewardPool")}
             />
-            <span className="absolute right-3 top-1/2 -translate-y-1/2 font-mono-label text-[10px] text-outline">
-              USDC
-            </span>
           </div>
           {errors.rewardPool && (
-            <p className="mt-1.5 flex items-center gap-1 font-caption text-[10px] font-medium text-error">
-              <Icon name="error" className="text-[12px]" />
+            <p className="mt-1 flex items-center gap-1 font-mono-label text-[10px] uppercase text-error">
+              <Icon name="error" className="text-[14px]" />
               {errors.rewardPool.message}
             </p>
           )}
         </div>
 
-        <div className="pt-2">
+        <div className="mt-[4px]">
           <button
             type="submit"
             disabled={createSeason.isPending}
-            className="w-full border border-outline-variant bg-surface-container-high py-2 text-sm font-bold transition-all hover:border-primary hover:bg-primary hover:text-on-primary active:scale-95 disabled:opacity-60"
+            className="w-full rounded-full border-[2px] border-ink bg-ink py-[10px] font-mono-label text-[12px] font-bold text-white transition-all shadow-brutal-primary active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-60"
           >
-            {createSeason.isPending ? "SCHEDULING..." : "SCHEDULE SEASON"}
+            {createSeason.isPending ? "Launching..." : "Launch season"}
           </button>
         </div>
       </form>
-    </section>
+    </Card>
   );
 }

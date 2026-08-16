@@ -1,62 +1,59 @@
 import { Icon } from "@/components/ui/icon";
 import { formatDate, formatCompactNumber } from "@/utils/format";
+import { Card } from "@/components/ui/card";
 import type { ActiveSeasonSummary } from "../types";
 
 export function ActiveSeasonCard({ data }: { data: ActiveSeasonSummary }) {
   const { season, progressPercent, allocatedUsd } = data;
 
   return (
-    <div className="relative overflow-hidden border border-outline-variant bg-surface p-gap-6">
-      <div className="absolute right-0 top-0 p-2">
-        <Icon name="star" className="select-none text-[64px] text-primary/10" filled />
-      </div>
+    <Card className="relative overflow-hidden border-[2px] border-ink p-[24px]">
+      <div className="absolute right-[-30px] top-[-30px] h-[110px] w-[110px] rounded-full bg-primary/15" />
       <div className="relative z-10">
-        <div className="mb-4 flex items-center gap-2">
-          <span className="h-2 w-2 rounded-full bg-secondary" />
-          <span className="font-mono-label text-[10px] font-bold uppercase tracking-widest text-secondary">
-            Active Season
+        <div className="mb-[14px] flex items-center gap-[8px]">
+          <span className="h-[8px] w-[8px] rounded-full bg-secondary" />
+          <span className="font-mono-label text-[10.5px] font-bold uppercase tracking-widest text-secondary-deep">
+            Active season
           </span>
         </div>
-        <h4 className="mb-1 font-section-heading text-[24px]">{season.name}</h4>
-        <p className="mb-6 text-sm text-on-surface-variant">
+        <h4 className="m-0 mb-1 font-page-title text-[21px] font-bold text-on-surface">{season.name}</h4>
+        <p className="m-0 mb-[18px] text-[12.5px] text-on-surface-muted">
           Ends {formatDate(season.endDate)}
         </p>
 
-        <div className="space-y-4">
-          <div>
-            <div className="mb-1 flex justify-between font-mono-label text-[11px]">
-              <span className="uppercase text-outline">Progress</span>
-              <span className="text-on-surface">{progressPercent}%</span>
-            </div>
-            <div className="h-1 w-full bg-surface-container-high">
-              <div
-                className="h-full bg-primary"
-                style={{ width: `${progressPercent}%` }}
-              />
-            </div>
+        <div className="mb-[16px]">
+          <div className="mb-[6px] flex justify-between font-mono-label text-[11px] font-bold text-on-surface">
+            <span className="uppercase text-on-surface-muted">Progress</span>
+            <span>{progressPercent}%</span>
           </div>
-          <div className="grid grid-cols-2 gap-4 pt-2">
-            <div>
-              <p className="mb-1 font-mono-label text-[10px] uppercase text-outline">
-                Total Pool
-              </p>
-              <p className="font-mono-label text-lg font-bold">
-                {formatCompactNumber(season.rewardPool)}{" "}
-                <span className="text-xs font-normal">USDC</span>
-              </p>
-            </div>
-            <div>
-              <p className="mb-1 font-mono-label text-[10px] uppercase text-outline">
-                Allocated
-              </p>
-              <p className="font-mono-label text-lg font-bold">
-                {formatCompactNumber(allocatedUsd)}{" "}
-                <span className="text-xs font-normal">USDC</span>
-              </p>
-            </div>
+          <div className="h-[8px] w-full rounded-full border-[1.5px] border-ink bg-outline/10">
+            <div
+              className="h-full rounded-full bg-primary"
+              style={{ width: `${progressPercent}%` }}
+            />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-3 pt-1">
+          <div>
+            <p className="m-0 mb-1 font-mono-label text-[9.5px] uppercase text-on-surface-muted">
+              Total pool
+            </p>
+            <p className="m-0 text-[15px] font-bold text-on-surface">
+              ${formatCompactNumber(season.rewardPool)}{" "}
+              <span className="text-[11px] font-normal text-on-surface-muted">USDC</span>
+            </p>
+          </div>
+          <div>
+            <p className="m-0 mb-1 font-mono-label text-[9.5px] uppercase text-on-surface-muted">
+              Allocated
+            </p>
+            <p className="m-0 text-[15px] font-bold text-on-surface">
+              ${formatCompactNumber(allocatedUsd)}{" "}
+              <span className="text-[11px] font-normal text-on-surface-muted">USDC</span>
+            </p>
           </div>
         </div>
       </div>
-    </div>
+    </Card>
   );
 }

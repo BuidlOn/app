@@ -2,6 +2,7 @@ import { Icon } from "@/components/ui/icon";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { formatUsd } from "@/utils/format";
+import { Card } from "@/components/ui/card";
 import type { DistributionRow } from "../types";
 
 export function DistributionsTable({
@@ -12,63 +13,68 @@ export function DistributionsTable({
   loading: boolean;
 }) {
   return (
-    <section className="border border-outline-variant bg-surface">
-      <div className="flex items-center justify-between border-b border-outline-variant px-6 py-4">
-        <div className="flex items-center gap-3">
-          <Icon name="monetization_on" className="text-primary" />
-          <h3 className="font-section-heading text-[18px]">
-            Recent Reward Distributions
-          </h3>
-        </div>
+    <Card className="overflow-hidden">
+      <div className="flex items-center justify-between border-b-[1.5px] border-outline/10 px-[24px] py-[18px]">
+        <h3 className="m-0 flex items-center gap-2 font-page-title text-[17px] font-bold text-on-surface">
+          <Icon name="monetization_on" className="text-[20px] text-secondary" />
+          Recent reward distributions
+        </h3>
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full text-left">
+        <table className="w-full table-fixed border-collapse text-left">
           <thead>
-            <tr className="border-b border-outline-variant bg-surface-container-low">
-              {["Recipient", "Amount", "Source (Season)", "Status"].map((h) => (
-                <th
-                  key={h}
-                  className="px-6 py-3 font-mono-label text-[11px] uppercase tracking-wider text-outline"
-                >
-                  {h}
-                </th>
-              ))}
+            <tr className="bg-outline/5">
+              {["Recipient", "Amount", "Season", "Status"].map((h, i) => {
+                let wClass = "";
+                if (i === 0) wClass = "w-[32%] pl-[24px]";
+                if (i === 1) wClass = "w-[26%]";
+                if (i === 2) wClass = "w-[18%]";
+                if (i === 3) wClass = "w-[24%] pr-[24px]";
+
+                return (
+                  <th
+                    key={h}
+                    className={`py-3 px-1.5 font-mono-label text-[10.5px] uppercase tracking-widest text-on-surface-muted ${wClass}`}
+                  >
+                    {h}
+                  </th>
+                );
+              })}
             </tr>
           </thead>
           <tbody>
             {loading || !rows
               ? Array.from({ length: 3 }).map((_, i) => (
-                  <tr key={i} className="border-b border-outline-variant/50">
-                    <td className="px-6 py-4"><Skeleton className="h-4 w-32" /></td>
-                    <td className="px-6 py-4"><Skeleton className="h-4 w-20" /></td>
-                    <td className="px-6 py-4"><Skeleton className="h-4 w-28" /></td>
-                    <td className="px-6 py-4"><Skeleton className="h-4 w-14" /></td>
+                  <tr key={i} className="border-t-[1px] border-outline/10">
+                    <td className="py-3.5 px-1.5 pl-[24px]"><Skeleton className="h-4 w-32" /></td>
+                    <td className="py-3.5 px-1.5"><Skeleton className="h-4 w-20" /></td>
+                    <td className="py-3.5 px-1.5"><Skeleton className="h-4 w-28" /></td>
+                    <td className="py-3.5 px-1.5 pr-[24px]"><Skeleton className="h-4 w-14" /></td>
                   </tr>
                 ))
               : rows.map((row) => (
                   <tr
                     key={row.id}
-                    className="border-b border-outline-variant/50 transition-colors last:border-0 hover:bg-surface-container"
+                    className="border-t-[1px] border-outline/10 transition-colors hover:bg-outline/5"
                   >
-                    <td className="px-6 py-4">
+                    <td className="overflow-hidden whitespace-nowrap py-3.5 px-1.5 pl-[24px]">
                       <div className="flex items-center gap-2">
-                        <span className="h-6 w-6 rounded-full border border-outline-variant bg-surface-container-high" />
-                        <span className="text-sm">{row.recipient}</span>
+                        <span className="text-[12.5px]">{row.recipient}</span>
                       </div>
                     </td>
-                    <td className="whitespace-nowrap px-6 py-4 font-mono-label text-sm">
+                    <td className="overflow-hidden whitespace-nowrap py-3.5 px-1.5 font-mono-label text-[11.5px] font-bold text-on-surface">
                       {formatUsd(row.amountUsd)} USDC
                     </td>
-                    <td className="px-6 py-4 text-sm text-on-surface-variant">
+                    <td className="overflow-hidden whitespace-nowrap py-3.5 px-1.5 text-[12px] text-on-surface-variant">
                       {row.seasonName}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="overflow-hidden whitespace-nowrap py-3.5 px-1.5 pr-[24px]">
                       <span
                         className={cn(
-                          "border px-2 py-0.5 font-mono-label text-[10px]",
+                          "rounded-full border-[1.5px] px-2 py-[3px] font-mono-label text-[10px] font-bold uppercase",
                           row.status === "PAID"
-                            ? "border-secondary text-secondary"
-                            : "animate-pulse border-primary text-primary",
+                            ? "border-secondary-deep/60 text-secondary-deep"
+                            : "animate-pulse border-primary-deep/60 text-primary-deep",
                         )}
                       >
                         {row.status}
@@ -79,6 +85,6 @@ export function DistributionsTable({
           </tbody>
         </table>
       </div>
-    </section>
+    </Card>
   );
 }
