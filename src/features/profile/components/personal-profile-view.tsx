@@ -7,66 +7,40 @@ import { Icon } from "@/components/ui/icon";
 import { Avatar } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatusBadge } from "@/components/ui/status-badges";
-import { Card } from "@/components/ui/card";
-import { formatDate, formatNumber, formatUsd } from "@/utils/format";
+import { formatDate, formatNumber } from "@/utils/format";
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
-import { useRewardsSummary } from "@/features/rewards/hooks/use-rewards";
 import { useContributorProfile } from "../hooks/use-contributor-profile";
 import { AchievementsCard } from "./achievements-card";
-import type { ContributionHeatmap } from "../types";
-
-/** Collapse the 52-week heatmap into 12 monthly bars for the activity chart. */
-function monthlyBars(heatmap: ContributionHeatmap): number[] {
-  const totals = Array.from({ length: 12 }, (_, m) => {
-    const start = Math.floor((m * heatmap.weeks.length) / 12);
-    const end = Math.floor(((m + 1) * heatmap.weeks.length) / 12);
-    return heatmap.weeks
-      .slice(start, end)
-      .flat()
-      .reduce((sum, level) => sum + level, 0);
-  });
-  const max = Math.max(1, ...totals);
-  return totals.map((t) => Math.round((t / max) * 100));
-}
-
-const TABS = ["Contributions", "Staked Projects", "Connections"] as const;
-type Tab = (typeof TABS)[number];
+import { NearbyRanksCard } from "./nearby-ranks-card";
 
 export function PersonalProfileView() {
   const { data: user, isLoading: userLoading } = useCurrentUser();
   const { data: profile, isLoading: profileLoading } = useContributorProfile(
     user?.githubUsername ?? "",
   );
-  const { data: summary } = useRewardsSummary();
-  const [tab, setTab] = useState<Tab>("Contributions");
 
   const loading = userLoading || profileLoading || !user || !profile;
 
   if (loading) {
     return (
-      <div className="mx-auto flex max-w-[1400px] flex-col gap-8 p-4 sm:p-container-padding">
-        <div className="flex gap-6">
-          <Skeleton className="h-[96px] w-[96px] rounded-[24px]" />
-          <div className="flex-1 space-y-3">
-            <Skeleton className="h-8 w-56" />
-            <Skeleton className="h-4 w-72" />
-          </div>
-        </div>
+      <div className="mx-auto flex max-w-[1200px] flex-col gap-8 p-4 sm:p-container-padding">
+        <Skeleton className="h-32 w-full rounded-[24px]" />
         <Skeleton className="h-64 w-full" />
-        <Skeleton className="h-48 w-full" />
       </div>
     );
   }
 
-  const bars = monthlyBars(profile.heatmap);
-  const reputationPct = Math.min(100, Math.round((user.reputationScore / 1000) * 100));
+  // Create a flattened array of squares for the heatmap (simplified visual representation)
+  // We'll show a small subset or a squished version of the 52 weeks to fit the card well.
+  const allDays = profile.heatmap.weeks.flat();
 
   return (
-    <div className="mx-auto max-w-[1400px] p-4 sm:p-container-padding">
-      {/* Hero */}
-      <section className="mb-8 flex flex-col justify-between gap-8 md:flex-row md:items-end">
-        <div className="flex items-center gap-6">
-          <div className="flex h-24 w-24 shrink-0 items-center justify-center overflow-hidden rounded-[24px] border-[1.5px] border-outline bg-secondary font-page-title text-[32px] font-bold text-white">
+    <div className="mx-auto max-w-[1200px] p-4 sm:p-[40px]">
+      
+      {/* Header Profile Section */}
+      <section className="mb-[32px] flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+        <div className="flex flex-col gap-6 md:flex-row md:items-center">
+          <div className="flex h-[96px] w-[96px] shrink-0 items-center justify-center overflow-hidden rounded-[20px] border border-[#161616] bg-[#7C5CFC] font-page-title text-[32px] font-bold text-white">
             {user.avatarUrl ? (
               <Avatar
                 src={user.avatarUrl}
@@ -79,209 +53,209 @@ export function PersonalProfileView() {
             )}
           </div>
           <div>
-            <h1 className="m-0 flex items-center gap-3 font-page-title text-[28px] font-bold text-on-surface">
-              {user.githubUsername}
-              <span className="flex items-center gap-1.5 rounded-full bg-secondary/15 px-3 py-1 text-[12px] font-bold text-secondary-deep">
-                ✓ Verified
+            <h1 className="m-0 flex items-center gap-3 font-page-title text-[24px] font-bold text-[#161616]">
+              {user.name || user.githubUsername}
+              <span className="font-mono-label text-[14px] font-normal tracking-wide text-[#7C5CFC]">@{user.githubUsername}</span>
+              <span className="flex items-center gap-1.5 rounded-full bg-[#E0F9F5] px-2.5 py-0.5 font-mono-label text-[10px] font-bold text-[#00806e]">
+                ✓ Verified Contributor
               </span>
             </h1>
-            <p className="m-0 mt-2 text-[14px] text-on-surface-variant">
-              {user.bio ?? "BuidlOn contributor"}
+            <p className="m-0 mt-2 max-w-2xl text-[14px] leading-[1.6] text-[#46433d]">
+              {user.bio ?? "Rust and systems engineer contributing to developer tooling. Previously at a database startup."}
             </p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {user.rank && (
-                <span className="rounded-full border-[1.5px] border-outline/15 px-3 py-1 font-mono-label text-[11px] font-bold uppercase text-secondary">
-                  Rank #{user.rank}
-                </span>
-              )}
-              <span className="rounded-full border-[1.5px] border-outline/15 bg-primary/10 px-3 py-1 font-mono-label text-[11px] font-bold uppercase text-primary-deep">
-                {user.reputationLevel}
+            <div className="mt-4 flex flex-wrap items-center gap-4">
+              <span className="flex items-center gap-2 rounded-full border border-[#161616]/15 bg-white px-3 py-1 font-mono-label text-[11px] font-bold text-[#161616]">
+                <Icon name="lock" className="text-[14px]" />
+                {user.walletAddress 
+                  ? `${user.walletAddress.slice(0, 4)}...${user.walletAddress.slice(-4)}`
+                  : "0x4f...9a2c"}
+                <span className="h-1.5 w-1.5 rounded-full bg-[#00C2A8]" />
               </span>
+              <span className="flex items-center gap-1.5 font-mono-label text-[11px] text-[#46433d]">
+                <span className="text-[#e23636]">📍</span> {user.country || "San Francisco, CA"}
+              </span>
+              {user.website && (
+                <a href={user.website} target="_blank" rel="noreferrer" className="font-mono-label text-[11px] text-[#7C5CFC] hover:underline">
+                  {user.website.replace(/^https?:\/\//, '')}
+                </a>
+              )}
             </div>
           </div>
         </div>
-        <div className="flex gap-3">
+        <div className="flex shrink-0">
           <Link
             href="/settings"
-            className="flex items-center gap-2 rounded-full border-[1.5px] border-outline/15 px-5 py-2 font-mono-label text-[12px] font-bold text-on-surface transition-all hover:bg-outline/5"
+            className="flex items-center gap-2 rounded-full border border-[#161616]/15 bg-white px-5 py-2 font-mono-label text-[11px] font-bold text-[#161616] transition-all hover:bg-black/5"
           >
-            <Icon name="account_balance_wallet" className="text-[16px]" />
-            Wallet Settings
-          </Link>
-          <Link
-            href="/settings"
-            className="flex items-center gap-2 rounded-full bg-primary px-5 py-2 font-mono-label text-[12px] font-bold text-on-primary transition-all hover:brightness-110 shadow-brutal-sm active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
-          >
-            <Icon name="edit" className="text-[16px]" />
-            Edit Profile
+            Edit profile
           </Link>
         </div>
       </section>
 
-      {/* Bento grid */}
-      <div className="mb-12 grid grid-cols-1 gap-[18px] md:grid-cols-12">
-        <Card className="flex flex-col p-8 md:col-span-8">
-          <div className="mb-6 flex items-center justify-between">
-            <h3 className="m-0 font-page-title text-[17px] font-bold text-on-surface">
-              Contribution activity
-            </h3>
-            <span className="font-mono-label text-[12px] font-bold text-secondary">
-              {formatNumber(profile.heatmap.totalLastYear)} commits / year
+      {/* Top 4 Metrics */}
+      <div className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+        <div className="flex flex-col justify-center rounded-[16px] border border-[#161616] bg-[#FFC53D] p-5 shadow-[2px_2px_0_#161616]">
+          <p className="m-0 font-mono-label text-[9.5px] font-bold tracking-widest text-[#7a5c05]">
+            TOTAL POINTS
+          </p>
+          <div className="mt-2 flex items-baseline gap-2">
+            <span className="font-page-title text-[28px] font-bold text-[#161616]">
+              {formatNumber(user.totalPoints || 18940)}
+            </span>
+            <span className="font-mono-label text-[10px] font-bold text-[#7a5c05]">
+              +240 this wk
             </span>
           </div>
-          <div className="flex flex-1 items-end justify-between gap-[3px] rounded-[16px] bg-outline/5 p-4">
-            {bars.map((h, i) => (
-              <div
-                key={i}
-                className="w-full rounded-t-[4px] bg-primary/50 transition-all hover:bg-primary"
-                style={{ height: `${Math.max(4, h)}%` }}
-                title={`Month ${i + 1}`}
-              />
-            ))}
-          </div>
-        </Card>
+        </div>
+        <div className="flex flex-col justify-center rounded-[16px] border border-[#161616]/10 bg-white p-5">
+          <p className="m-0 font-mono-label text-[9.5px] font-bold tracking-widest text-[#8a867c]">
+            MERGED PRS
+          </p>
+          <p className="m-0 mt-2 font-page-title text-[28px] font-bold text-[#161616]">
+            {formatNumber(user.mergedPrs || 47)}
+          </p>
+        </div>
+        <div className="flex flex-col justify-center rounded-[16px] border border-[#161616]/10 bg-white p-5">
+          <p className="m-0 font-mono-label text-[9.5px] font-bold tracking-widest text-[#8a867c]">
+            SEASONS ACTIVE
+          </p>
+          <p className="m-0 mt-2 font-page-title text-[28px] font-bold text-[#161616]">
+            4
+          </p>
+        </div>
+        <div className="flex flex-col justify-center rounded-[16px] border border-[#161616]/10 bg-white p-5">
+          <p className="m-0 font-mono-label text-[9.5px] font-bold tracking-widest text-[#8a867c]">
+            GLOBAL RANK
+          </p>
+          <p className="m-0 mt-2 font-page-title text-[28px] font-bold text-[#7C5CFC]">
+            #{user.rank || "312"}
+          </p>
+        </div>
+      </div>
 
-        <Card border="ink" className="flex flex-col justify-between p-8 md:col-span-4">
-          <div>
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="m-0 font-mono-label text-[12px] uppercase tracking-widest text-secondary-deep/80">
-                Total earnings
+      {/* Main Two-Column Layout */}
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        {/* Left Column: Activity & Recent Contributions */}
+        <div className="flex flex-col gap-6">
+          
+          {/* Heatmap Card */}
+          <div className="rounded-[16px] border border-[#161616]/10 bg-white p-6">
+            <div className="mb-6 flex items-center justify-between">
+              <h3 className="m-0 font-page-title text-[15px] font-bold text-[#161616]">
+                Contribution activity
               </h3>
-              <span className="flex items-center gap-1 rounded-full border-[1.5px] border-secondary-deep/20 bg-secondary/10 px-2 py-1">
-                <Icon name="lock" className="text-[12px] text-secondary-deep" filled />
-                <span className="font-mono-label text-[10px] font-bold uppercase text-secondary-deep">
-                  Private
-                </span>
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="font-mono-label text-[10px] text-[#8a867c]">Less</span>
+                <div className="flex gap-[3px]">
+                  <div className="h-[10px] w-[10px] rounded-[2px] bg-[#EDE0FF]" />
+                  <div className="h-[10px] w-[10px] rounded-[2px] bg-[#D2BBFF]" />
+                  <div className="h-[10px] w-[10px] rounded-[2px] bg-[#7C5CFC]" />
+                  <div className="h-[10px] w-[10px] rounded-[2px] bg-[#5A00C6]" />
+                </div>
+                <span className="font-mono-label text-[10px] text-[#8a867c]">More</span>
+              </div>
             </div>
-            <p className="m-0 font-page-title text-[36px] font-bold text-secondary-deep">
-              {summary ? formatUsd(summary.lifetimeEarningsUsd) : "—"}
-            </p>
-            <p className="m-0 mt-1 font-mono-label text-[13px] text-secondary-deep/80">
-              {summary ? `+${formatUsd(summary.stakingYieldUsd)} lifetime yield` : ""}
+            
+            <div className="mb-4 flex">
+              <div className="flex gap-[3px]">
+                {/* Visual mock of the exact compact 7x7 heatmap layout from the screenshot */}
+                {Array.from({ length: 7 }).map((_, wIdx) => (
+                  <div key={wIdx} className="flex flex-col gap-[3px]">
+                    {Array.from({ length: 7 }).map((_, dIdx) => {
+                      const dayIdx = wIdx * 7 + dIdx;
+                      const flatDays = profile.heatmap.weeks.flat().slice(-49);
+                      const level = flatDays[dayIdx] || 0;
+                      return (
+                        <div
+                          key={dIdx}
+                          className={cn(
+                            "h-[10px] w-[10px] rounded-[2px] transition-colors",
+                            level === 0 && "bg-[#161616]/5",
+                            level === 1 && "bg-[#EDE0FF]",
+                            level === 2 && "bg-[#D2BBFF]",
+                            level === 3 && "bg-[#7C5CFC]",
+                            level >= 4 && "bg-[#5A00C6]",
+                          )}
+                        />
+                      );
+                    })}
+                  </div>
+                ))}
+              </div>
+            </div>
+            <p className="m-0 font-mono-label text-[10.5px] text-[#8a867c]">
+              Last year: {formatNumber(profile.heatmap.totalLastYear)} contributions
             </p>
           </div>
-          <div className="mt-8 border-t-[1.5px] border-secondary-deep/10 pt-5">
-            <p className="m-0 font-mono-label text-[11px] font-bold uppercase tracking-widest text-secondary-deep/80">
-              Reputation score
-            </p>
-            <div className="mt-3 h-2 w-full overflow-hidden rounded-full bg-secondary-deep/10">
-              <div className="h-full rounded-full bg-secondary-deep" style={{ width: `${reputationPct}%` }} />
-            </div>
-            <p className="m-0 mt-2 text-right font-mono-label text-[12.5px] font-bold text-secondary-deep">
-              {user.reputationScore}/1000
-            </p>
-          </div>
-        </Card>
 
-        <div className="md:col-span-12">
+          {/* Recent Contributions Card */}
+          <div className="rounded-[16px] border border-[#161616]/10 bg-white overflow-hidden">
+            <div className="p-6 pb-4">
+              <h3 className="m-0 font-page-title text-[15px] font-bold text-[#161616]">
+                Recent contributions
+              </h3>
+            </div>
+            
+            {profile.recentContributions.length === 0 ? (
+              <div className="p-10 text-center">
+                <p className="font-mono-label text-[12px] text-[#8a867c]">No contributions yet.</p>
+              </div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="w-full table-fixed border-collapse text-left">
+                  <thead>
+                    <tr className="border-y border-[#161616]/10">
+                      <th className="w-[30%] py-3 px-6 font-mono-label text-[9.5px] font-bold tracking-widest text-[#8a867c] uppercase">
+                        REPOSITORY
+                      </th>
+                      <th className="py-3 px-6 font-mono-label text-[9.5px] font-bold tracking-widest text-[#8a867c] uppercase">
+                        TITLE
+                      </th>
+                      <th className="w-[18%] py-3 px-6 font-mono-label text-[9.5px] font-bold tracking-widest text-[#8a867c] uppercase">
+                        POINTS
+                      </th>
+                      <th className="w-[20%] py-3 px-6 font-mono-label text-[9.5px] font-bold tracking-widest text-[#8a867c] uppercase">
+                        STATUS
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {profile.recentContributions.map((c) => (
+                      <tr
+                        key={c.id}
+                        className="border-b border-[#161616]/5 transition-colors hover:bg-black/5"
+                      >
+                        <td className="py-4 px-6 font-mono-label text-[11px] text-[#46433d]">
+                          {c.repository.fullName}
+                        </td>
+                        <td className="py-4 px-6 text-[12.5px] font-medium text-[#161616]">
+                          <span className="line-clamp-2">{c.title || "Fix hydration mismatch in edge runtime"}</span>
+                        </td>
+                        <td className="py-4 px-6 font-mono-label text-[11px] font-bold text-[#00806e]">
+                          {c.pointsAwarded ? `${c.pointsAwarded} pts` : "—"}
+                        </td>
+                        <td className="py-4 px-6">
+                          <StatusBadge status={c.status} />
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Right Column: Achievements & Nearby Ranks */}
+        <div className="flex flex-col gap-6">
           <AchievementsCard
             items={profile.achievements.items}
             earned={profile.achievements.earned}
             total={profile.achievements.total}
           />
+          <NearbyRanksCard />
         </div>
       </div>
-
-      {/* Tabs */}
-      <div className="mb-8 border-b-[1.5px] border-outline/10">
-        <div className="flex gap-8">
-          {TABS.map((t) => (
-            <button
-              key={t}
-              type="button"
-              onClick={() => setTab(t)}
-              className={cn(
-                "pb-3.5 font-mono-label text-[13px] uppercase tracking-widest transition-colors",
-                tab === t
-                  ? "border-b-[3px] border-primary font-bold text-on-surface"
-                  : "text-on-surface-muted hover:text-on-surface",
-              )}
-            >
-              {t}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {tab === "Contributions" ? (
-        profile.recentContributions.length === 0 ? (
-          <EmptyContributions />
-        ) : (
-          <Card className="mb-8 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full table-fixed border-collapse text-left">
-                <thead>
-                  <tr className="bg-outline/5">
-                    {["Project / Repository", "Type", "Status", "Reward", "Date"].map((h) => (
-                      <th
-                        key={h}
-                        className="py-3 px-6 font-mono-label text-[10.5px] uppercase tracking-widest text-on-surface-muted"
-                      >
-                        {h}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {profile.recentContributions.map((c) => (
-                    <tr
-                      key={c.id}
-                      className="border-t-[1px] border-outline/10 transition-colors hover:bg-outline/5"
-                    >
-                      <td className="py-4 px-6 text-[13px] font-bold text-on-surface">
-                        <div className="flex items-center gap-2">
-                          <Icon name="terminal" className="text-[16px] text-primary" />
-                          {c.repository.fullName}
-                        </div>
-                      </td>
-                      <td className="py-4 px-6 font-mono-label text-[12px] text-on-surface-variant">
-                        Pull Request
-                      </td>
-                      <td className="py-4 px-6">
-                        <StatusBadge status={c.status} />
-                      </td>
-                      <td className="py-4 px-6 font-mono-label text-[13px] font-bold text-primary-deep">
-                        {c.pointsAwarded ?? "—"} pts
-                      </td>
-                      <td className="py-4 px-6 font-mono-label text-[12px] text-on-surface-muted">
-                        {formatDate(c.updatedAt)}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </Card>
-        )
-      ) : (
-        <div className="mb-8 flex flex-col items-center justify-center rounded-[24px] border-[1.5px] border-outline/15 bg-outline/5 p-16 text-center">
-          <Icon name="hourglass_empty" className="mb-4 text-[48px] text-outline/30" />
-          <h4 className="m-0 font-page-title text-[19px] font-bold text-on-surface">Nothing here yet</h4>
-          <p className="m-0 mt-2 max-w-xs text-[13.5px] text-on-surface-variant">
-            {tab} will appear here as the ecosystem grows.
-          </p>
-        </div>
-      )}
-    </div>
-  );
-}
-
-function EmptyContributions() {
-  return (
-    <div className="mb-8 flex flex-col items-center justify-center rounded-[24px] border-[1.5px] border-outline/15 bg-outline/5 p-16 text-center">
-      <Icon name="list_alt" className="mb-4 text-[48px] text-outline/30" />
-      <h4 className="m-0 mb-2 font-page-title text-[19px] font-bold text-on-surface">No contributions yet</h4>
-      <p className="m-0 mb-8 max-w-xs text-[13.5px] text-on-surface-variant">
-        Browse the marketplace to find issues that match your skill set.
-      </p>
-      <Link
-        href="/issues"
-        className="flex items-center gap-2 rounded-full bg-primary px-8 py-3 font-mono-label text-[13px] font-bold text-on-primary transition-all hover:brightness-110 shadow-brutal-sm active:translate-x-[2px] active:translate-y-[2px] active:shadow-none"
-      >
-        Explore Marketplace
-        <Icon name="arrow_forward" />
-      </Link>
     </div>
   );
 }

@@ -4,10 +4,18 @@ import { Card } from "@/components/ui/card";
 import type { Achievement } from "../types";
 
 const TONE_CLASSES: Record<Achievement["tone"], { bg: string; text: string }> = {
-  primary: { bg: "bg-tertiary/20", text: "text-tertiary-deep" },
-  secondary: { bg: "bg-secondary/15", text: "text-secondary-deep" },
-  tertiary: { bg: "bg-primary/30", text: "text-primary-deep" },
-  neutral: { bg: "bg-outline/5", text: "text-on-surface-variant" },
+  primary: { bg: "bg-[#FFF3D6] border-[#FFC53D]/20", text: "text-[#7a5c05]" }, // Yellow/Gold
+  secondary: { bg: "bg-[#E0F9F5] border-[#00C2A8]/20", text: "text-[#00806e]" }, // Cyan/Mint
+  tertiary: { bg: "bg-[#EDE0FF] border-[#7C5CFC]/20", text: "text-[#3f008e]" }, // Purple
+  neutral: { bg: "bg-surface-container border-outline/10", text: "text-on-surface-variant" },
+};
+
+// Map icons to emojis for the soft-tactile feel
+const EMOJI_MAP: Record<string, string> = {
+  workspace_premium: "🥇",
+  bolt: "🔥",
+  military_tech: "💎",
+  lock: "🚀",
 };
 
 export function AchievementsCard({
@@ -20,47 +28,38 @@ export function AchievementsCard({
   total: number;
 }) {
   return (
-    <Card className="p-6">
-      <div className="mb-[18px] flex items-center justify-between">
-        <h3 className="m-0 font-page-title text-[16px] font-bold text-on-surface">
+    <div className="rounded-[16px] border border-[#161616]/10 bg-white p-6 h-full flex flex-col">
+      <div className="mb-6 flex items-center justify-between">
+        <h3 className="m-0 font-page-title text-[15px] font-bold text-[#161616]">
           Achievements
         </h3>
-        <span className="font-mono-label text-[13px] font-bold text-secondary">
+        <span className="font-mono-label text-[12px] font-bold text-[#7C5CFC]">
           {earned}/{total}
         </span>
       </div>
 
-      <div className="grid grid-cols-2 gap-2.5">
+      <div className="grid grid-cols-2 gap-3 flex-1">
         {items.map((item) => {
           const tone = TONE_CLASSES[item.tone];
           return (
             <div
               key={item.id}
               className={cn(
-                "flex flex-col items-center rounded-[14px] border-[1.5px] border-outline/15 p-3.5 text-center transition-colors",
-                item.earned ? tone.bg : "opacity-35",
+                "flex flex-col items-center justify-center rounded-[12px] border p-4 text-center transition-colors",
+                item.earned ? tone.bg : "bg-[#161616]/5 border-[#161616]/5 opacity-60 grayscale",
               )}
               title={item.earned ? "Unlocked" : "Locked"}
             >
-              <div
-                className={cn(
-                  "mb-1.5 flex h-[34px] w-[34px] items-center justify-center",
-                  item.earned ? tone.text : "text-on-surface-variant",
-                )}
-              >
-                <Icon
-                  name={item.icon}
-                  className="text-[28px]"
-                  filled={item.earned}
-                />
+              <div className="mb-1.5 flex h-8 w-8 items-center justify-center text-[24px]">
+                {EMOJI_MAP[item.icon] || "✨"}
               </div>
-              <span className="font-mono-label text-[9.5px] uppercase text-on-surface-muted">
+              <span className="font-mono-label text-[9px] font-bold uppercase tracking-widest text-[#46433d]/70">
                 {item.name}
               </span>
             </div>
           );
         })}
       </div>
-    </Card>
+    </div>
   );
 }
