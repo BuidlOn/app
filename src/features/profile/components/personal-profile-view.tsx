@@ -229,7 +229,7 @@ export function PersonalProfileView() {
                           {c.repository.fullName}
                         </td>
                         <td className="py-4 px-6 text-[12.5px] font-medium text-[#161616]">
-                          <span className="line-clamp-2">{c.title || "Fix hydration mismatch in edge runtime"}</span>
+                          <span className="line-clamp-2">{c.issue.title || "Fix hydration mismatch in edge runtime"}</span>
                         </td>
                         <td className="py-4 px-6 font-mono-label text-[11px] font-bold text-[#00806e]">
                           {c.pointsAwarded ? `${c.pointsAwarded} pts` : "—"}

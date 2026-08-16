@@ -39,7 +39,7 @@ export function NearbyRanksCard() {
               </span>
             </div>
             <span className={`font-mono-label text-[10px] ${user.current ? "text-[#7C5CFC] font-bold" : "text-[#8a867c]"}`}>
-              {formatNumber(user.points / 1000, 2).replace(/\.0+$/, '')}k
+              {formatNumber(user.points / 1000).replace(/\.0+$/, '')}k
             </span>
           </div>
         ))}
