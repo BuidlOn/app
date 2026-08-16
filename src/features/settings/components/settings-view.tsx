@@ -165,7 +165,7 @@ function SettingsForms({
                 <button
                   type="submit"
                   disabled={updateProfile.isPending}
-                  className="rounded-full bg-ink px-6 py-3 font-mono-label text-[13px] font-bold text-white transition-all shadow-brutal-primary active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-60"
+                  className="rounded-[12px] bg-[#161616] px-6 py-3 font-mono-label text-[13px] font-bold text-white transition-colors hover:bg-black/80 disabled:opacity-60"
                 >
                   {updateProfile.isPending ? "Saving..." : "Save profile"}
                 </button>
@@ -207,7 +207,7 @@ function SettingsForms({
                 <button
                   type="submit"
                   disabled={updateWallet.isPending}
-                  className="rounded-full bg-ink px-6 py-3 font-mono-label text-[13px] font-bold text-white transition-all shadow-brutal-success active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-60"
+                  className="rounded-[12px] bg-[#161616] px-6 py-3 font-mono-label text-[13px] font-bold text-white transition-colors hover:bg-black/80 disabled:opacity-60"
                 >
                   {updateWallet.isPending ? "Saving..." : "Save wallet"}
                 </button>
