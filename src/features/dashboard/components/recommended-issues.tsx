@@ -1,9 +1,38 @@
 import Link from "next/link";
-import { Icon } from "@/components/ui/icon";
-import { StatusPip } from "@/components/ui/status-pip";
+import { Badge } from "@/components/ui/badge";
+import { Card } from "@/components/ui/card";
+import { Glyph } from "@/components/ui/icons";
 import { DifficultyBadge } from "@/components/ui/status-badges";
 import { Skeleton } from "@/components/ui/skeleton";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { SectionHeading } from "@/components/layout/page-header";
 import type { Issue } from "@/types/domain";
+
+/** Rotate chip tints so the language filters read as distinct at a glance. */
+const LANGUAGE_TINTS = ["secondary", "accent", "tertiary", "primary"] as const;
+
+function LanguageChips({ issues }: { issues: Issue[] }) {
+  const languages = [...new Set(issues.map((i) => i.language).filter(Boolean))].slice(0, 2);
+  if (languages.length === 0) return null;
+
+  return (
+    <div className="hidden gap-2 sm:flex">
+      {languages.map((language, i) => (
+        <Badge key={language} variant={LANGUAGE_TINTS[i % LANGUAGE_TINTS.length]}>
+          {language}
+        </Badge>
+      ))}
+    </div>
+  );
+}
 
 export function RecommendedIssues({
   issues,
@@ -13,91 +42,85 @@ export function RecommendedIssues({
   loading: boolean;
 }) {
   return (
-    <div className="space-y-6 pt-4">
-      <div className="flex items-center justify-between">
-        <h3 className="flex items-center gap-2 font-section-heading text-section-heading text-on-surface">
-          <Icon name="auto_awesome" className="text-secondary" filled />
-          Recommended for You
-        </h3>
-        <div className="hidden gap-4 sm:flex">
-          <span className="flex items-center gap-1 font-mono-label text-mono-label text-on-surface-variant">
-            <StatusPip tone="primary" /> TypeScript
-          </span>
-          <span className="flex items-center gap-1 font-mono-label text-mono-label text-on-surface-variant">
-            <StatusPip tone="warning" /> Rust
-          </span>
-        </div>
-      </div>
+    <section>
+      <SectionHeading
+        title="Recommended for you"
+        icon="star"
+        iconTone="tertiary"
+        actions={issues && <LanguageChips issues={issues} />}
+      />
 
-      <div className="border border-outline-variant bg-surface">
-        {loading || !issues ? (
-          <div className="space-y-px p-4">
-            {Array.from({ length: 3 }).map((_, i) => (
-              <Skeleton key={i} className="h-12 w-full" />
-            ))}
-          </div>
-        ) : issues.length === 0 ? (
-          <div className="flex flex-col items-center justify-center px-4 py-20 text-center">
-            <Icon
-              name="filter_list_off"
-              className="mb-4 text-4xl text-outline-variant"
-            />
-            <p className="font-body text-body font-bold text-on-surface">
-              No issues match your filters
-            </p>
-            <p className="mt-1 font-caption text-caption text-on-surface-variant">
-              Try expanding your tech stack or clearing difficulty settings.
-            </p>
-          </div>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full border-collapse text-left">
-              <thead className="border-b border-outline-variant bg-surface-container-low">
+      {loading || !issues ? (
+        <Skeleton className="h-56 w-full rounded-buidl-lg" />
+      ) : issues.length === 0 ? (
+        <Card className="flex flex-col items-center px-6 py-14 text-center">
+          <Glyph name="search" size={32} className="mb-4 text-on-surface-muted" />
+          <p className="text-[15px] font-bold text-on-surface">
+            No issues match your filters
+          </p>
+          <p className="mt-1 max-w-sm text-[13px] text-on-surface-muted">
+            Try expanding your tech stack or clearing difficulty settings.
+          </p>
+        </Card>
+      ) : (
+        <>
+          {/* Desktop: dense table. */}
+          <TableContainer className="hidden md:block">
+            <Table>
+              <TableHeader>
                 <tr>
-                  <th className="px-4 py-3 font-mono-label text-mono-label uppercase text-on-surface-variant">
-                    Repository
-                  </th>
-                  <th className="px-4 py-3 font-mono-label text-mono-label uppercase text-on-surface-variant">
-                    Issue Title
-                  </th>
-                  <th className="px-4 py-3 text-center font-mono-label text-mono-label uppercase text-on-surface-variant">
-                    Difficulty
-                  </th>
-                  <th className="px-4 py-3 text-right font-mono-label text-mono-label uppercase text-on-surface-variant">
-                    Bounty
-                  </th>
+                  <TableHead>Repository</TableHead>
+                  <TableHead>Issue</TableHead>
+                  <TableHead className="text-center">Difficulty</TableHead>
+                  <TableHead className="text-right">Bounty</TableHead>
                 </tr>
-              </thead>
-              <tbody>
+              </TableHeader>
+              <TableBody>
                 {issues.map((issue) => (
-                  <tr
-                    key={issue.id}
-                    className="group border-b border-outline-variant transition-colors last:border-0 hover:bg-surface-container"
-                  >
-                    <td className="whitespace-nowrap px-4 py-4 font-mono-label text-xs text-on-surface-variant">
+                  <TableRow key={issue.id} className="group">
+                    <TableCell className="whitespace-nowrap font-mono-label text-[12px] text-on-surface-variant">
                       {issue.repository.fullName}
-                    </td>
-                    <td className="px-4 py-4">
-                      <Link
-                        href={`/issues/${issue.id}`}
-                        className="font-body text-sm font-medium text-on-surface group-hover:text-primary"
-                      >
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      <Link href={`/issues/${issue.id}`} className="text-on-surface">
                         {issue.title}
                       </Link>
-                    </td>
-                    <td className="px-4 py-4 text-center">
-                      <DifficultyBadge difficulty={issue.difficulty} />
-                    </td>
-                    <td className="whitespace-nowrap px-4 py-4 text-right font-mono-label text-sm text-secondary">
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <DifficultyBadge difficulty={issue.difficulty} size="sm" />
+                    </TableCell>
+                    <TableCell className="whitespace-nowrap text-right font-mono-label text-[13px] font-bold text-points">
                       {issue.basePoints} pts
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
+          </TableContainer>
+
+          {/* Mobile: the same rows as stacked cards. */}
+          <div className="flex flex-col gap-2.5 md:hidden">
+            {issues.map((issue) => (
+              <Card key={issue.id} className="p-4">
+                <Link href={`/issues/${issue.id}`} className="block text-on-surface">
+                  <div className="mb-2 font-mono-label text-[10.5px] text-on-surface-muted">
+                    {issue.repository.fullName}
+                  </div>
+                  <div className="mb-3 text-[13.5px] font-semibold leading-snug">
+                    {issue.title}
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <DifficultyBadge difficulty={issue.difficulty} size="sm" />
+                    <span className="font-mono-label text-[12.5px] font-bold text-points">
+                      {issue.basePoints} pts
+                    </span>
+                  </div>
+                </Link>
+              </Card>
+            ))}
           </div>
-        )}
-      </div>
-    </div>
+        </>
+      )}
+    </section>
   );
 }

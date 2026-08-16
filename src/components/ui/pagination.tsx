@@ -19,14 +19,22 @@ function buildRange(current: number, total: number): (number | "...")[] {
   return result;
 }
 
+/** All controls are 34px circles so the row reads as a strip of tokens. */
+const CELL =
+  "flex h-[34px] w-[34px] items-center justify-center rounded-buidl-pill font-mono-label text-[12px] transition-colors";
+
+const CONTROL = `${CELL} border-hairline border-line bg-surface text-on-surface hover:border-outline disabled:pointer-events-none disabled:opacity-40`;
+
 export function Pagination({
   page,
   totalPages,
   onPageChange,
+  className,
 }: {
   page: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  className?: string;
 }) {
   if (totalPages <= 1) return null;
   const range = buildRange(page, totalPages);
@@ -34,20 +42,24 @@ export function Pagination({
   return (
     <nav
       aria-label="Pagination"
-      className="flex items-center justify-center gap-2 font-mono-label text-sm"
+      className={cn("flex flex-wrap items-center justify-center gap-2", className)}
     >
       <button
         type="button"
         onClick={() => onPageChange(page - 1)}
         disabled={page <= 1}
-        className="border border-outline-variant px-4 py-2 uppercase transition-colors hover:border-primary disabled:opacity-30"
+        aria-label="Previous page"
+        className={CONTROL}
       >
-        Prev
+        ←
       </button>
 
       {range.map((item, i) =>
         item === "..." ? (
-          <span key={`gap-${i}`} className="px-2 text-on-surface-variant">
+          <span
+            key={`gap-${i}`}
+            className="px-1 font-mono-label text-[12px] text-on-surface-muted"
+          >
             …
           </span>
         ) : (
@@ -57,10 +69,10 @@ export function Pagination({
             onClick={() => onPageChange(item)}
             aria-current={item === page ? "page" : undefined}
             className={cn(
-              "px-4 py-2 transition-colors",
+              CELL,
               item === page
-                ? "bg-primary-container font-bold text-on-primary-container"
-                : "border border-outline-variant hover:border-primary",
+                ? "border-ink border-outline bg-outline font-bold text-background"
+                : "border-hairline border-line bg-surface text-on-surface hover:border-outline",
             )}
           >
             {item}
@@ -72,9 +84,10 @@ export function Pagination({
         type="button"
         onClick={() => onPageChange(page + 1)}
         disabled={page >= totalPages}
-        className="border border-outline-variant px-4 py-2 uppercase transition-colors hover:border-primary disabled:opacity-30"
+        aria-label="Next page"
+        className={CONTROL}
       >
-        Next
+        →
       </button>
     </nav>
   );

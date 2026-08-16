@@ -6,12 +6,13 @@ import { z } from "zod";
 import { cn } from "@/lib/utils";
 import { Icon } from "@/components/ui/icon";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Card } from "@/components/ui/card";
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
 import { useUpdateProfile, useUpdateWallet } from "../hooks/use-settings";
 
-const labelClass = "mb-1.5 block font-mono-label text-[11px] uppercase text-outline";
+const labelClass = "mb-2 block font-mono-label text-[10.5px] uppercase tracking-widest text-on-surface-muted";
 const fieldClass =
-  "w-full border bg-surface-container-lowest px-3 py-2.5 text-sm text-on-surface outline-none transition-colors placeholder:text-outline-variant focus:border-primary";
+  "w-full border-[1.5px] border-outline/15 bg-white px-[14px] py-[10px] text-[13.5px] text-on-surface outline-none transition-colors placeholder:text-outline-variant focus:border-primary";
 
 const profileSchema = z.object({
   name: z.string().max(80).optional(),
@@ -39,17 +40,17 @@ function SectionCard({
   children: React.ReactNode;
 }) {
   return (
-    <section className="border border-outline-variant bg-surface">
-      <div className="border-b border-outline-variant px-6 py-4">
-        <h2 className="font-section-heading text-section-heading text-on-surface">
+    <Card className="overflow-hidden">
+      <div className="border-b-[1.5px] border-outline/10 px-[28px] py-[20px]">
+        <h3 className="m-0 font-page-title text-[17px] font-bold text-on-surface">
           {title}
-        </h2>
-        <p className="mt-0.5 font-caption text-caption text-on-surface-variant">
+        </h3>
+        <p className="m-0 mt-1 text-[13px] text-on-surface-variant">
           {description}
         </p>
       </div>
-      <div className="p-6">{children}</div>
-    </section>
+      <div className="p-[28px]">{children}</div>
+    </Card>
   );
 }
 
@@ -58,10 +59,10 @@ export function SettingsView() {
 
   if (isLoading || !user) {
     return (
-      <div className="mx-auto max-w-3xl space-y-8 p-4 sm:p-container-padding">
+      <div className="mx-auto flex max-w-[720px] flex-col gap-8 p-4 sm:p-container-padding">
         <Skeleton className="h-10 w-48" />
-        <Skeleton className="h-72 w-full" />
-        <Skeleton className="h-48 w-full" />
+        <Skeleton className="h-[400px] w-full rounded-[20px]" />
+        <Skeleton className="h-[200px] w-full rounded-[20px]" />
       </div>
     );
   }
@@ -111,106 +112,110 @@ function SettingsForms({
   });
 
   return (
-    <div className="mx-auto max-w-3xl space-y-8 p-4 sm:p-container-padding">
-      <div>
-        <h1 className="font-page-title text-page-title font-bold tracking-tight text-on-surface">
+    <div className="mx-auto max-w-[720px] p-4 sm:p-container-padding">
+      <div className="mb-8">
+        <h1 className="m-0 font-page-title text-[32px] font-bold tracking-tight text-on-surface">
           Settings
         </h1>
-        <p className="mt-1 font-body text-body text-on-surface-variant">
+        <p className="m-0 mt-2 text-[15px] text-on-surface-variant">
           Manage your public profile and payout wallet.
         </p>
       </div>
 
-      <form onSubmit={onSubmitProfile} noValidate>
-        <SectionCard
-          title="Profile"
-          description="This information appears on your public contributor profile."
-        >
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div>
-                <label htmlFor="name" className={labelClass}>Display Name</label>
-                <input id="name" className={cn(fieldClass, "border-outline-variant")} {...profileForm.register("name")} />
+      <div className="flex flex-col gap-6">
+        <form onSubmit={onSubmitProfile} noValidate>
+          <SectionCard
+            title="Profile"
+            description="This information appears on your public contributor profile."
+          >
+            <div className="flex flex-col gap-[18px]">
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <label htmlFor="name" className={labelClass}>Display name</label>
+                  <input id="name" className={cn(fieldClass, "rounded-[12px]")} {...profileForm.register("name")} />
+                </div>
+                <div>
+                  <label htmlFor="country" className={labelClass}>Country</label>
+                  <input id="country" className={cn(fieldClass, "rounded-[12px]")} {...profileForm.register("country")} />
+                </div>
               </div>
               <div>
-                <label htmlFor="country" className={labelClass}>Country</label>
-                <input id="country" className={cn(fieldClass, "border-outline-variant")} {...profileForm.register("country")} />
+                <label htmlFor="website" className={labelClass}>Website</label>
+                <input id="website" placeholder="yoursite.dev" className={cn(fieldClass, "rounded-[12px]")} {...profileForm.register("website")} />
+              </div>
+              <div>
+                <label htmlFor="bio" className={labelClass}>Bio</label>
+                <textarea
+                  id="bio"
+                  rows={3}
+                  className={cn(fieldClass, "resize-none rounded-[12px]", profileForm.formState.errors.bio ? "border-error focus:border-error" : "")}
+                  {...profileForm.register("bio")}
+                />
+                {profileForm.formState.errors.bio && (
+                  <p className="mt-1.5 font-mono-label text-[10.5px] uppercase text-error">
+                    {profileForm.formState.errors.bio.message}
+                  </p>
+                )}
+              </div>
+              <div>
+                <label htmlFor="skills" className={labelClass}>Skills</label>
+                <input id="skills" placeholder="Rust, Solidity, TypeScript" className={cn(fieldClass, "rounded-[12px]")} {...profileForm.register("skills")} />
+              </div>
+              <div className="mt-2 flex justify-end">
+                <button
+                  type="submit"
+                  disabled={updateProfile.isPending}
+                  className="rounded-full bg-ink px-6 py-3 font-mono-label text-[13px] font-bold text-white transition-all shadow-brutal-primary active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-60"
+                >
+                  {updateProfile.isPending ? "Saving..." : "Save profile"}
+                </button>
               </div>
             </div>
+          </SectionCard>
+        </form>
+
+        <form onSubmit={onSubmitWallet} noValidate>
+          <SectionCard
+            title="Payout wallet"
+            description="Reward allocations are sent to this address. Never share your private keys."
+          >
             <div>
-              <label htmlFor="website" className={labelClass}>Website</label>
-              <input id="website" placeholder="yoursite.dev" className={cn(fieldClass, "border-outline-variant")} {...profileForm.register("website")} />
-            </div>
-            <div>
-              <label htmlFor="bio" className={labelClass}>Bio</label>
-              <textarea
-                id="bio"
-                rows={3}
-                className={cn(fieldClass, "resize-none", profileForm.formState.errors.bio ? "border-error" : "border-outline-variant")}
-                {...profileForm.register("bio")}
-              />
-              {profileForm.formState.errors.bio && (
-                <p className="mt-1.5 font-caption text-[11px] text-error">
-                  {profileForm.formState.errors.bio.message}
+              <label htmlFor="wallet" className={labelClass}>Wallet address</label>
+              <div className="relative">
+                <Icon
+                  name="account_balance_wallet"
+                  className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[18px] text-on-surface-variant opacity-50"
+                />
+                <input
+                  id="wallet"
+                  className={cn(
+                    fieldClass,
+                    "rounded-[12px] pl-[38px] font-mono-label text-[13px]",
+                    walletForm.formState.errors.walletAddress ? "border-error focus:border-error" : "",
+                  )}
+                  placeholder="0x..."
+                  {...walletForm.register("walletAddress")}
+                />
+              </div>
+              {walletForm.formState.errors.walletAddress && (
+                <p className="mt-1.5 flex items-center gap-1 font-mono-label text-[10.5px] uppercase text-error">
+                  <Icon name="error" className="text-[14px]" />
+                  {walletForm.formState.errors.walletAddress.message}
                 </p>
               )}
+              <div className="mt-5 flex justify-end">
+                <button
+                  type="submit"
+                  disabled={updateWallet.isPending}
+                  className="rounded-full bg-ink px-6 py-3 font-mono-label text-[13px] font-bold text-white transition-all shadow-brutal-success active:translate-x-[2px] active:translate-y-[2px] active:shadow-none disabled:opacity-60"
+                >
+                  {updateWallet.isPending ? "Saving..." : "Save wallet"}
+                </button>
+              </div>
             </div>
-            <div>
-              <label htmlFor="skills" className={labelClass}>Skills (comma separated)</label>
-              <input id="skills" placeholder="Rust, Solidity, TypeScript" className={cn(fieldClass, "border-outline-variant")} {...profileForm.register("skills")} />
-            </div>
-          </div>
-          <div className="mt-6 flex justify-end">
-            <button
-              type="submit"
-              disabled={updateProfile.isPending}
-              className="bg-primary-container px-6 py-2.5 font-mono-label text-mono-label font-bold uppercase tracking-widest text-on-primary-container transition-all hover:brightness-110 disabled:opacity-60"
-            >
-              {updateProfile.isPending ? "Saving..." : "Save Profile"}
-            </button>
-          </div>
-        </SectionCard>
-      </form>
-
-      <form onSubmit={onSubmitWallet} noValidate>
-        <SectionCard
-          title="Payout Wallet"
-          description="Reward allocations are sent to this address. Never share your private keys."
-        >
-          <label htmlFor="wallet" className={labelClass}>Wallet Address</label>
-          <div className="relative">
-            <Icon
-              name="account_balance_wallet"
-              className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-lg text-on-surface-variant"
-            />
-            <input
-              id="wallet"
-              className={cn(
-                fieldClass,
-                "pl-10 font-mono-label",
-                walletForm.formState.errors.walletAddress ? "border-error" : "border-outline-variant",
-              )}
-              placeholder="0x..."
-              {...walletForm.register("walletAddress")}
-            />
-          </div>
-          {walletForm.formState.errors.walletAddress && (
-            <p className="mt-1.5 flex items-center gap-1 font-caption text-[11px] text-error">
-              <Icon name="error" className="text-[12px]" />
-              {walletForm.formState.errors.walletAddress.message}
-            </p>
-          )}
-          <div className="mt-6 flex justify-end">
-            <button
-              type="submit"
-              disabled={updateWallet.isPending}
-              className="bg-primary-container px-6 py-2.5 font-mono-label text-mono-label font-bold uppercase tracking-widest text-on-primary-container transition-all hover:brightness-110 disabled:opacity-60"
-            >
-              {updateWallet.isPending ? "Saving..." : "Save Wallet"}
-            </button>
-          </div>
-        </SectionCard>
-      </form>
+          </SectionCard>
+        </form>
+      </div>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
 import { useContributorDashboard } from "../hooks/use-contributor-dashboard";
 import { DashboardStats } from "./dashboard-stats";
@@ -7,8 +8,10 @@ import { ContinueProgress } from "./continue-progress";
 import { RecommendedIssues } from "./recommended-issues";
 import { ActivityTimeline } from "./activity-timeline";
 import { SeasonProgressCard } from "./season-progress-card";
-import { StatusPip } from "@/components/ui/status-pip";
-import { truncateHash } from "@/utils/format";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import { PageHeader } from "@/components/layout/page-header";
+import { StatusFooter } from "@/components/layout/status-footer";
 
 export function DashboardView() {
   const { data: user } = useCurrentUser();
@@ -16,78 +19,66 @@ export function DashboardView() {
 
   if (isError) {
     return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center gap-4 p-8 text-center">
-        <p className="font-body text-body text-on-surface">
+      <Card className="mx-auto mt-10 flex max-w-md flex-col items-center gap-4 p-10 text-center">
+        <p className="text-[15px] text-on-surface">
           Something went wrong loading your dashboard.
         </p>
-        <button
-          type="button"
-          onClick={() => refetch()}
-          className="border border-outline-variant px-6 py-2 font-mono-label text-mono-label uppercase hover:bg-surface-container"
-        >
+        <Button type="button" variant="secondary" size="sm" onClick={() => refetch()}>
           Retry
-        </button>
-      </div>
+        </Button>
+      </Card>
     );
   }
 
+  const firstName = user?.name?.split(" ")[0];
+
   return (
-    <div className="mx-auto max-w-[1600px] space-y-8 p-4 sm:p-8">
-      <section className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
-        <div>
-          <h2 className="font-page-title text-page-title font-bold tracking-tight text-on-surface">
-            Contributor Dashboard
-          </h2>
-          <p className="mt-1 font-body text-body text-on-surface-variant">
-            Welcome back{user?.name ? `, ${user.name.split(" ")[0]}` : ""}. You&apos;re
-            in the top 5% this season.
-          </p>
-        </div>
-        <div className="flex gap-2">
-          <button className="border border-outline-variant px-4 py-2 font-mono-label text-mono-label uppercase transition-colors hover:bg-surface-container">
-            Export_Data
-          </button>
-          <button className="bg-primary-container px-4 py-2 font-bold text-on-primary-container transition-opacity hover:opacity-90">
-            Claim_All_Rewards
-          </button>
-        </div>
-      </section>
+    <div className="mx-auto flex max-w-[1400px] flex-col gap-6 sm:gap-8">
+      <PageHeader
+        title={
+          <>
+            <span className="lg:hidden">Hey, {firstName ?? "there"} 👋</span>
+            <span className="hidden lg:inline">Contributor Dashboard</span>
+          </>
+        }
+        description={
+          <>
+            <span className="hidden lg:inline">
+              Welcome back{firstName ? `, ${firstName}` : ""}.{" "}
+            </span>
+            You&apos;re in the <strong className="font-bold">top 5%</strong> this season.
+          </>
+        }
+        actions={
+          <>
+            <Button variant="secondary" size="sm" className="hidden sm:inline-flex">
+              Export data
+            </Button>
+            <Button asChild variant="ink" shadow="tertiary" size="sm">
+              <Link href="/rewards">Claim all rewards</Link>
+            </Button>
+          </>
+        }
+      />
 
       <DashboardStats stats={data?.stats} loading={isLoading} />
 
-      <div className="grid grid-cols-12 gap-8">
-        <div className="col-span-12 space-y-6 lg:col-span-8">
+      <div className="grid gap-6 lg:grid-cols-3 lg:items-start lg:gap-6">
+        <div className="flex min-w-0 flex-col gap-6 lg:col-span-2 lg:gap-7">
           <ContinueProgress
             contributions={data?.activeContributions}
             loading={isLoading}
           />
-          <RecommendedIssues
-            issues={data?.recommendedIssues}
-            loading={isLoading}
-          />
+          <RecommendedIssues issues={data?.recommendedIssues} loading={isLoading} />
         </div>
 
-        <div className="col-span-12 space-y-8 lg:col-span-4">
+        <div className="flex min-w-0 flex-col gap-6">
           <ActivityTimeline events={data?.activity} loading={isLoading} />
-          <SeasonProgressCard
-            progress={data?.seasonProgress}
-            loading={isLoading}
-          />
+          <SeasonProgressCard progress={data?.seasonProgress} loading={isLoading} />
         </div>
       </div>
 
-      <footer className="flex flex-col gap-4 border-t border-outline-variant pb-8 pt-12 font-mono-label text-[10px] uppercase text-outline sm:flex-row sm:items-center sm:justify-between">
-        <div className="flex flex-wrap gap-8">
-          <span className="flex items-center gap-2">
-            <StatusPip tone="success" pulse /> System_Online
-          </span>
-          <span>Latency: 24ms</span>
-          {user?.walletAddress && (
-            <span>Connected_As: {truncateHash(user.walletAddress, 4, 4)}</span>
-          )}
-        </div>
-        <div>© {new Date().getFullYear()} Buidlon_Protocol // Ver_4.2.0_Stable</div>
-      </footer>
+      <StatusFooter />
     </div>
   );
 }

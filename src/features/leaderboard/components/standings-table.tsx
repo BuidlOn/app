@@ -7,25 +7,22 @@ import { formatNumber } from "@/utils/format";
 import { RankTrendIndicator } from "./rank-trend";
 import type { LeaderboardEntry } from "@/types/domain";
 
-const MEDAL: Record<number, { bar: string; text: string }> = {
-  1: { bar: "bg-tertiary", text: "text-tertiary" },
-  2: { bar: "bg-outline", text: "text-on-surface" },
-  3: { bar: "bg-on-tertiary-fixed-variant", text: "text-on-tertiary-fixed-variant" },
+const MEDAL: Record<number, { bar: string; text: string; bg: string }> = {
+  1: { bar: "bg-primary", text: "text-primary", bg: "bg-primary/5" },
+  2: { bar: "bg-on-surface-muted", text: "text-on-surface-muted", bg: "" },
+  3: { bar: "bg-secondary", text: "text-secondary", bg: "" },
 };
 
 function RankCell({ rank }: { rank: number }) {
   const medal = MEDAL[rank];
   return (
-    <div className="relative flex items-center gap-3">
+    <div className="relative flex items-center">
       {medal && (
-        <span className={cn("absolute -left-6 top-1/2 h-8 w-1 -translate-y-1/2", medal.bar)} />
+        <span className={cn("absolute bottom-2 left-0 top-2 w-1 rounded-r-[4px]", medal.bar)} />
       )}
-      <span className={cn("font-mono-label", medal ? medal.text : "text-outline")}>
+      <span className="pl-3 font-mono-label font-bold text-on-surface">
         {String(rank).padStart(2, "0")}
       </span>
-      {medal && (
-        <Icon name="military_tech" className={cn("text-lg", medal.text)} filled />
-      )}
     </div>
   );
 }
@@ -37,14 +34,16 @@ function StandingRow({
   entry: LeaderboardEntry;
   isMe: boolean;
 }) {
+  const medal = MEDAL[entry.rank];
   return (
     <tr
       className={cn(
-        "border-b border-outline-variant/30 transition-colors hover:bg-surface-container",
-        isMe && "bg-primary/5",
+        "border-t border-outline/10 transition-colors hover:bg-outline/5",
+        medal?.bg,
+        isMe && "border-t-[1.5px] border-outline bg-tertiary/5 hover:bg-tertiary/10",
       )}
     >
-      <td className="px-6 py-4">
+      <td className="py-4 pl-0 pr-6 relative">
         <RankCell rank={entry.rank} />
       </td>
       <td className="px-6 py-4">
@@ -52,29 +51,36 @@ function StandingRow({
           <Avatar
             src={entry.user.avatarUrl}
             alt={entry.user.name ?? entry.user.githubUsername}
-            size={40}
+            size={36}
+            className={cn(
+              medal?.bar === "bg-primary" && "bg-primary",
+              medal?.bar === "bg-secondary" && "bg-secondary",
+              isMe && "bg-on-surface text-surface",
+            )}
           />
           <div className="min-w-0">
             <Link
               href={`/u/${entry.user.githubUsername}`}
-              className="block truncate font-bold text-on-surface hover:text-primary"
+              className="block truncate text-[13.5px] font-bold text-on-surface hover:text-primary"
             >
               {entry.user.githubUsername}
               {isMe && (
-                <span className="ml-2 font-mono-label text-[10px] uppercase text-primary">
-                  You
+                <span className="ml-1.5 font-mono-label text-[10px] text-tertiary">
+                  YOU
                 </span>
               )}
             </Link>
-            <p className="truncate font-mono-label text-xs text-outline">
+            <p className="truncate font-mono-label text-[11px] text-on-surface-muted">
               {entry.user.reputationLevel}
             </p>
           </div>
         </div>
       </td>
-      <td className="px-6 py-4 font-mono-label">{formatNumber(entry.points)}</td>
+      <td className="px-6 py-4 font-mono-label font-semibold text-on-surface">
+        {formatNumber(entry.points)}
+      </td>
       <td className="px-6 py-4">
-        <span className="border border-outline-variant bg-surface-container-highest px-2 py-0.5 text-xs">
+        <span className="rounded-full border-[1.5px] border-outline/15 px-2.5 py-1 text-[12px] font-semibold text-on-surface">
           {entry.mergedPrs} PRs
         </span>
       </td>
@@ -87,13 +93,13 @@ function StandingRow({
 
 function SkeletonRow() {
   return (
-    <tr className="border-b border-outline-variant/30">
+    <tr className="border-t border-outline/10">
       <td className="px-6 py-4">
         <Skeleton className="h-4 w-6" />
       </td>
       <td className="px-6 py-4">
         <div className="flex items-center gap-3">
-          <Skeleton className="h-10 w-10" />
+          <Skeleton className="h-9 w-9 rounded-full" />
           <div className="space-y-2">
             <Skeleton className="h-4 w-24" />
             <Skeleton className="h-3 w-16" />
@@ -104,7 +110,7 @@ function SkeletonRow() {
         <Skeleton className="h-4 w-12" />
       </td>
       <td className="px-6 py-4">
-        <Skeleton className="h-6 w-16" />
+        <Skeleton className="h-6 w-16 rounded-full" />
       </td>
       <td className="px-6 py-4">
         <Skeleton className="ml-auto h-4 w-4" />
@@ -126,16 +132,16 @@ export function StandingsTable({
     <div className="overflow-x-auto">
       <table className="w-full border-collapse text-left">
         <thead>
-          <tr className="border-b border-outline-variant bg-surface-container">
+          <tr className="bg-outline/5">
             {["Rank", "Contributor", "Points", "Contributions"].map((h) => (
               <th
                 key={h}
-                className="px-6 py-3 font-mono-label text-[10px] uppercase tracking-widest text-outline"
+                className="px-6 py-3 font-mono-label text-[10.5px] uppercase tracking-widest text-on-surface-muted"
               >
                 {h}
               </th>
             ))}
-            <th className="px-6 py-3 text-right font-mono-label text-[10px] uppercase tracking-widest text-outline">
+            <th className="px-6 py-3 text-right font-mono-label text-[10.5px] uppercase tracking-widest text-on-surface-muted">
               Trend
             </th>
           </tr>

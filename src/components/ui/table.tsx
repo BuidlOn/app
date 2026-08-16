@@ -2,22 +2,41 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 /**
- * Dense data table. Rows are 40px with a 1px bottom border only; hover shifts
- * the row background to the surface color to signal interactivity.
+ * Data tables live inside a hairline card that clips the corners. The header
+ * band is a barely-there ink wash; rows are separated by hairline rules and
+ * warm to the same wash on hover.
  */
+export function TableContainer({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) {
+  return (
+    <div
+      className={cn(
+        "overflow-hidden rounded-buidl-lg border-[1.5px] border-outline/15 bg-surface",
+        className,
+      )}
+      {...props}
+    />
+  );
+}
+
 export function Table({ className, ...props }: React.HTMLAttributes<HTMLTableElement>) {
   return (
     <div className="w-full overflow-x-auto">
       <table
-        className={cn("w-full border-collapse text-left text-body", className)}
+        className={cn("w-full border-collapse text-left", className)}
         {...props}
       />
     </div>
   );
 }
 
-export function TableHeader(props: React.HTMLAttributes<HTMLTableSectionElement>) {
-  return <thead {...props} />;
+export function TableHeader({
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLTableSectionElement>) {
+  return <thead className={cn("bg-outline/[0.03]", className)} {...props} />;
 }
 
 export function TableBody(props: React.HTMLAttributes<HTMLTableSectionElement>) {
@@ -31,7 +50,7 @@ export function TableRow({
   return (
     <tr
       className={cn(
-        "border-b border-technical transition-colors hover:bg-surface",
+        "border-t border-rule transition-colors hover:bg-outline/[0.03]",
         className,
       )}
       {...props}
@@ -46,7 +65,7 @@ export function TableHead({
   return (
     <th
       className={cn(
-        "h-10 px-4 font-mono-label text-mono-label uppercase tracking-wider text-on-surface-variant",
+        "px-5 py-3 font-mono-label text-[10.5px] font-medium uppercase tracking-[0.06em] text-on-surface-muted",
         className,
       )}
       {...props}
@@ -58,5 +77,10 @@ export function TableCell({
   className,
   ...props
 }: React.TdHTMLAttributes<HTMLTableCellElement>) {
-  return <td className={cn("h-10 px-4 align-middle", className)} {...props} />;
+  return (
+    <td
+      className={cn("px-5 py-3.5 align-middle text-[13.5px]", className)}
+      {...props}
+    />
+  );
 }

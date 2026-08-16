@@ -1,9 +1,13 @@
 "use client";
 
 import { useState } from "react";
-import { Icon } from "@/components/ui/icon";
 import { Pagination } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
+import { PageHeader } from "@/components/layout/page-header";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Glyph } from "@/components/ui/icons";
+import { Label, Select } from "@/components/ui/input";
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
 import {
   useLeaderboard,
@@ -30,69 +34,66 @@ export function LeaderboardView() {
   const rangeEnd = data ? Math.min(data.page * data.limit, data.total) : 0;
 
   return (
-    <div className="mx-auto max-w-[1600px] space-y-gap-8 p-4 sm:p-container-padding">
-      <section className="flex flex-col justify-between gap-4 md:flex-row md:items-end">
-        <div className="space-y-1">
-          <p className="font-mono-label text-[10px] uppercase tracking-[0.2em] text-primary">
-            Ecosystem Metrics
-          </p>
-          <h1 className="font-page-title text-page-title">Leaderboard</h1>
-        </div>
-        <div className="flex flex-col gap-1">
-          <label
-            htmlFor="season-select"
-            className="font-mono-label text-[10px] uppercase text-outline"
-          >
-            Active Season
-          </label>
-          {seasonsLoading || !seasons ? (
-            <Skeleton className="h-10 w-64" />
-          ) : (
-            <div className="relative inline-block w-full md:w-64">
-              <select
-                id="season-select"
-                value={activeSeasonId}
-                onChange={(e) => {
-                  setSeasonId(e.target.value);
-                  setPage(1);
-                }}
-                className="w-full appearance-none border border-outline-variant bg-surface-container-low px-4 py-2 pr-10 text-sm font-medium outline-none focus:border-primary"
-              >
-                {seasons.map((season) => (
-                  <option key={season.id} value={season.id}>
-                    {season.name}
-                  </option>
-                ))}
-              </select>
-              <Icon
-                name="expand_more"
-                className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-outline"
-              />
-            </div>
-          )}
-        </div>
-      </section>
+    <div className="mx-auto flex max-w-[1400px] flex-col gap-6 sm:gap-8">
+      <PageHeader
+        title="Leaderboard"
+        description="Ecosystem-wide standings for verified contributors."
+        actions={
+          <div className="w-full sm:w-[220px]">
+            <Label htmlFor="season-select" className="mb-2 block">
+              Active season
+            </Label>
+            {seasonsLoading || !seasons ? (
+              <Skeleton className="h-10 w-full" />
+            ) : (
+              <div className="relative">
+                <Select
+                  id="season-select"
+                  shape="pill"
+                  value={activeSeasonId}
+                  onChange={(e) => {
+                    setSeasonId(e.target.value);
+                    setPage(1);
+                  }}
+                  className="w-full font-mono-label text-[13px] font-semibold pr-10"
+                >
+                  {seasons.map((season) => (
+                    <option key={season.id} value={season.id}>
+                      {season.name}
+                    </option>
+                  ))}
+                </Select>
+                <Glyph
+                  name="expandMore"
+                  size={16}
+                  className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-on-surface"
+                />
+              </div>
+            )}
+          </div>
+        }
+      />
 
       <YourRankingCard seasonId={activeSeasonId} />
 
-      <section className="border border-outline-variant bg-surface-container-low">
-        <div className="flex items-center justify-between border-b border-outline-variant px-6 py-4">
-          <h2 className="font-section-heading text-lg">Global Standings</h2>
+      <Card as="section" className="overflow-hidden">
+        <div className="border-b-[1.5px] border-outline/10 px-6 py-5">
+          <h2 className="font-page-title text-[17px] font-bold">Global standings</h2>
         </div>
 
         {isError ? (
           <div className="p-12 text-center">
-            <Icon name="warning" className="mb-4 text-4xl text-error" />
-            <p className="mb-6 font-body font-bold uppercase text-on-surface">
+            <Glyph name="shield" size={36} className="mb-4 text-error" />
+            <p className="mb-6 font-page-title text-[19px] font-bold text-on-surface">
               Failed to load standings.
             </p>
-            <button
+            <Button
               type="button"
+              variant="secondary"
               onClick={() => refetch()}
-              className="bg-error px-6 py-2 font-mono-label text-sm font-bold uppercase text-on-error hover:brightness-110"
             >
               Retry
-            </button>
+            </Button>
           </div>
         ) : (
           <StandingsTable
@@ -103,9 +104,9 @@ export function LeaderboardView() {
         )}
 
         {data && (
-          <div className="flex flex-col items-center justify-between gap-4 border-t border-outline-variant px-6 py-4 sm:flex-row">
-            <p className="font-mono-label text-xs uppercase tracking-wider text-outline">
-              Showing {rangeStart}-{rangeEnd} of {data.total} Contributors
+          <div className="flex flex-col items-center justify-between gap-4 border-t-[1.5px] border-outline/10 px-6 py-4 sm:flex-row">
+            <p className="font-mono-label text-[11px] uppercase tracking-widest text-on-surface-muted">
+              SHOWING {rangeStart}-{rangeEnd} OF {data.total} CONTRIBUTORS
             </p>
             <Pagination
               page={data.page}
@@ -114,7 +115,7 @@ export function LeaderboardView() {
             />
           </div>
         )}
-      </section>
+      </Card>
     </div>
   );
 }

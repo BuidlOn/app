@@ -1,32 +1,85 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { Sidebar } from "./sidebar";
 import { DashboardHeader } from "./dashboard-header";
+import { MobileNav } from "./mobile-nav";
+import { Button } from "@/components/ui/button";
+import { StatusPip } from "@/components/ui/status-pip";
+import { APP_NAV } from "@/constants/navigation";
+import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
+import { truncateHash } from "@/utils/format";
+
+/** Sidebar footer: the New Repository CTA over a live wallet chip. */
+function SidebarFooter({ onNavigate }: { onNavigate?: () => void }) {
+  const { data: user } = useCurrentUser();
+  const wallet = user?.walletAddress ?? null;
+
+  return (
+    <>
+      <Link
+        href="/repositories/new"
+        onClick={onNavigate}
+        className="flex items-center justify-center gap-2 font-mono-label text-[12.5px] font-medium bg-primary text-on-background border-2 border-outline rounded-full py-[11px] shadow-[3px_3px_0_#161616] transition-all duration-120 hover:-translate-y-0.5 hover:-translate-x-0.5 hover:shadow-[4px_4px_0_#161616] active:translate-y-0.5 active:translate-x-0.5 active:shadow-[0_0_0_#161616] w-full"
+      >
+        + New Repository
+      </Link>
+
+      <Link
+        href="/settings"
+        onClick={onNavigate}
+        className="flex items-center gap-2.5 px-3 py-2.5 rounded-[12px] bg-surface border-[1.5px] border-outline/10 hover:bg-surface-dim transition-colors"
+      >
+        <span className={`w-2 h-2 rounded-full flex-shrink-0 ${wallet ? "bg-tertiary" : "bg-outline/20"}`}></span>
+        <span className="min-w-0">
+          <span className="block truncate font-mono-label text-[11px] font-medium text-on-background">
+            {wallet ? truncateHash(wallet, 4, 4) : "Not connected"}
+          </span>
+          <span className="block text-[10px] text-on-surface-muted">
+            {wallet ? "Wallet connected" : "Connect a wallet"}
+          </span>
+        </span>
+      </Link>
+    </>
+  );
+}
 
 /**
- * Authenticated app shell: fixed sidebar + header with a scrolling content
- * canvas. On mobile the sidebar becomes an off-canvas drawer with a scrim.
+ * Authenticated app shell: fixed sidebar and app bar around a scrolling
+ * canvas. Below `lg` the sidebar becomes a drawer and a tab bar takes over
+ * primary navigation, so the canvas leaves room for it.
  */
 export function AppShell({ children }: { children: React.ReactNode }) {
   const [navOpen, setNavOpen] = useState(false);
+  const close = () => setNavOpen(false);
 
   return (
     <div className="min-h-screen bg-background">
-      <Sidebar open={navOpen} onNavigate={() => setNavOpen(false)} />
+      <Sidebar
+        items={APP_NAV}
+        subtitle="Dev Portal"
+        open={navOpen}
+        onNavigate={close}
+        footer={<SidebarFooter onNavigate={close} />}
+      />
 
       {navOpen && (
         <button
           type="button"
           aria-label="Close navigation"
-          onClick={() => setNavOpen(false)}
-          className="fixed inset-0 z-40 bg-black/60 lg:hidden"
+          onClick={close}
+          className="fixed inset-0 z-40 bg-outline/40 lg:hidden"
         />
       )}
 
       <DashboardHeader onMenuClick={() => setNavOpen(true)} />
 
-      <main className="min-h-screen pt-16 lg:ml-64">{children}</main>
+      <main className="px-4 pb-28 pt-[calc(theme(spacing.header)+1.5rem)] sm:px-6 lg:ml-sidebar lg:px-10 lg:pb-16 lg:pt-[calc(theme(spacing.header)+2.25rem)]">
+        {children}
+      </main>
+
+      <MobileNav />
     </div>
   );
 }

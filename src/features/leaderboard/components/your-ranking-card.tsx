@@ -5,6 +5,8 @@ import { RankTrendIndicator } from "./rank-trend";
 import { useMyRanking } from "../hooks/use-leaderboard";
 import { formatNumber } from "@/utils/format";
 
+import { Card } from "@/components/ui/card";
+
 /** Parse "Top 5%" into the width of the accompanying percentile bar. */
 function percentileWidth(label: string): number {
   const match = label.match(/(\d+)%/);
@@ -16,59 +18,57 @@ export function YourRankingCard({ seasonId }: { seasonId: string }) {
   const { data, isLoading } = useMyRanking(seasonId);
 
   return (
-    <section className="relative grid grid-cols-1 overflow-hidden border border-primary/30 bg-surface-container-lowest md:grid-cols-3">
-      <div className="pointer-events-none absolute inset-0 opacity-5">
-        <div className="absolute right-0 top-0 h-64 w-64 -translate-y-32 translate-x-32 rotate-45 border-r border-t border-primary" />
-      </div>
+    <Card border="ink" className="relative grid grid-cols-1 overflow-hidden md:grid-cols-3">
+      <div className="pointer-events-none absolute right-[-40px] top-[-40px] h-[140px] w-[140px] rounded-full bg-primary/10" />
 
-      <div className="flex flex-col justify-center border-b border-outline-variant p-gap-6 md:border-b-0 md:border-r">
-        <p className="mb-2 font-mono-label text-[10px] uppercase tracking-wider text-outline">
-          Current Position
+      <div className="relative flex flex-col justify-center border-b-[1.5px] border-outline/10 px-8 py-6 md:border-b-0 md:border-r-[1.5px]">
+        <p className="mb-2 font-mono-label text-[10.5px] uppercase tracking-widest text-on-surface-muted">
+          Current position
         </p>
         {isLoading || !data ? (
           <Skeleton className="h-10 w-24" />
         ) : (
-          <div className="flex items-baseline gap-2">
-            <span className="text-4xl font-bold text-primary">#{data.rank}</span>
+          <div className="flex items-baseline gap-3">
+            <span className="font-page-title text-[34px] font-bold text-primary">#{data.rank}</span>
             <RankTrendIndicator trend={data.trend} delta={data.rankDelta} />
           </div>
         )}
       </div>
 
-      <div className="flex flex-col justify-center border-b border-outline-variant p-gap-6 md:border-b-0 md:border-r">
-        <p className="mb-2 font-mono-label text-[10px] uppercase tracking-wider text-outline">
-          Total Points Accumulated
+      <div className="relative flex flex-col justify-center border-b-[1.5px] border-outline/10 px-8 py-6 md:border-b-0 md:border-r-[1.5px]">
+        <p className="mb-2 font-mono-label text-[10.5px] uppercase tracking-widest text-on-surface-muted">
+          Total points
         </p>
         {isLoading || !data ? (
           <Skeleton className="h-10 w-28" />
         ) : (
           <div className="flex items-baseline gap-2">
-            <span className="text-4xl font-bold">{formatNumber(data.points)}</span>
-            <span className="font-mono-label text-xs uppercase text-outline">XP</span>
+            <span className="font-page-title text-[34px] font-bold text-on-surface">{formatNumber(data.points)}</span>
+            <span className="font-mono-label text-[11px] uppercase text-on-surface-muted">XP</span>
           </div>
         )}
       </div>
 
-      <div className="flex flex-col justify-center p-gap-6">
-        <p className="mb-2 font-mono-label text-[10px] uppercase tracking-wider text-outline">
-          Global Percentile
+      <div className="relative flex flex-col justify-center px-8 py-6">
+        <p className="mb-2 font-mono-label text-[10.5px] uppercase tracking-widest text-on-surface-muted">
+          Global percentile
         </p>
         {isLoading || !data ? (
           <Skeleton className="h-8 w-full" />
         ) : (
           <div className="flex flex-col gap-2">
-            <span className="text-2xl font-semibold text-secondary">
+            <span className="text-[20px] font-bold text-secondary">
               {data.percentileLabel}
             </span>
-            <div className="h-1 w-full bg-surface-container-highest">
+            <div className="h-2 w-full rounded-full border-[1.5px] border-outline bg-outline/10">
               <div
-                className="h-full bg-secondary"
+                className="h-full rounded-full bg-secondary"
                 style={{ width: `${percentileWidth(data.percentileLabel)}%` }}
               />
             </div>
           </div>
         )}
       </div>
-    </section>
+    </Card>
   );
 }

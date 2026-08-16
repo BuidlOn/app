@@ -1,26 +1,37 @@
+import type { GlyphName } from "@/components/ui/icons";
+
 export interface NavItem {
   label: string;
   href: string;
-  /** Material Symbols icon name. */
-  icon: string;
+  icon: GlyphName;
+  /** Shorter label for the mobile tab bar. */
+  shortLabel?: string;
 }
 
 /** Primary sidebar navigation for the authenticated app shell. */
 export const APP_NAV: NavItem[] = [
-  { label: "Dashboard", href: "/dashboard", icon: "dashboard" },
-  { label: "Repositories", href: "/repositories", icon: "code_blocks" },
-  { label: "Issues", href: "/issues", icon: "bug_report" },
-  { label: "Leaderboard", href: "/leaderboard", icon: "leaderboard" },
-  { label: "Rewards", href: "/rewards", icon: "workspace_premium" },
-  { label: "Profile", href: "/profile", icon: "person" },
+  { label: "Dashboard", href: "/dashboard", icon: "dashboard", shortLabel: "Home" },
+  { label: "Repositories", href: "/repositories", icon: "repositories" },
+  { label: "Issues", href: "/issues", icon: "issues" },
+  { label: "Leaderboard", href: "/leaderboard", icon: "leaderboard", shortLabel: "Ranks" },
+  { label: "Rewards", href: "/rewards", icon: "star" },
+  { label: "Profile", href: "/profile", icon: "user" },
   { label: "Settings", href: "/settings", icon: "settings" },
 ];
+
+/**
+ * Mobile tab bar — five destinations, matching the mobile designs. The rest of
+ * the sidebar stays reachable through the drawer.
+ */
+export const MOBILE_NAV: NavItem[] = APP_NAV.filter((item) =>
+  ["/dashboard", "/issues", "/leaderboard", "/rewards", "/profile"].includes(item.href),
+);
 
 /** Admin console sidebar navigation. */
 export const ADMIN_NAV: NavItem[] = [
   { label: "Dashboard", href: "/admin", icon: "dashboard" },
-  { label: "Seasons", href: "/admin/seasons", icon: "calendar_month" },
-  { label: "Rewards", href: "/admin/rewards", icon: "payments" },
-  { label: "Repositories", href: "/admin/repositories", icon: "inventory_2" },
+  { label: "Seasons", href: "/admin/seasons", icon: "calendar" },
+  { label: "Rewards", href: "/admin/rewards", icon: "star" },
+  { label: "Repositories", href: "/admin/repositories", icon: "repositories" },
   { label: "Settings", href: "/admin/settings", icon: "settings" },
 ];

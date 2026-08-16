@@ -1,42 +1,6 @@
-import { cn } from "@/lib/utils";
+import { StatTile } from "@/components/ui/stat";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { DashboardStat } from "../types";
-
-const DELTA_TONE: Record<NonNullable<DashboardStat["deltaTone"]>, string> = {
-  success: "text-secondary",
-  warning: "text-tertiary",
-  neutral: "text-on-surface-variant",
-};
-
-function StatCard({ stat }: { stat: DashboardStat }) {
-  return (
-    <div className="group border border-outline-variant bg-surface p-6 transition-colors hover:border-primary">
-      <p className="mb-2 font-mono-label text-mono-label uppercase text-on-surface-variant">
-        {stat.label}
-      </p>
-      <div className="flex items-baseline gap-2">
-        <span
-          className={cn(
-            "font-page-title text-page-title font-bold",
-            stat.accent ? "text-primary" : "text-on-surface",
-          )}
-        >
-          {stat.value}
-        </span>
-        {stat.delta && (
-          <span
-            className={cn(
-              "font-caption text-caption font-bold",
-              DELTA_TONE[stat.deltaTone ?? "neutral"],
-            )}
-          >
-            {stat.delta}
-          </span>
-        )}
-      </div>
-    </div>
-  );
-}
 
 export function DashboardStats({
   stats,
@@ -46,15 +10,27 @@ export function DashboardStats({
   loading: boolean;
 }) {
   return (
-    <section className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-4">
+    <section className="grid grid-cols-2 gap-2.5 sm:gap-4 lg:grid-cols-4">
       {loading || !stats
         ? Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="border border-outline-variant bg-surface p-6">
-              <Skeleton className="mb-3 h-4 w-24" />
-              <Skeleton className="h-9 w-20" />
+            <div
+              key={i}
+              className="rounded-buidl-lg border-2 border-outline bg-surface p-6 shadow-[4px_4px_0_#161616] flex flex-col gap-1.5"
+            >
+              <Skeleton className="mb-1 h-4 w-24" />
+              <Skeleton className="h-8 w-20" />
             </div>
           ))
-        : stats.map((stat) => <StatCard key={stat.key} stat={stat} />)}
+        : stats.map((stat) => (
+            <StatTile
+              key={stat.key}
+              label={stat.label}
+              value={stat.value}
+              delta={stat.delta}
+              deltaTone={stat.deltaTone === "neutral" ? "muted" : "positive"}
+              highlight={stat.accent}
+            />
+          ))}
     </section>
   );
 }

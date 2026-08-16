@@ -1,19 +1,26 @@
 import type { Metadata } from "next";
-import { Inter, JetBrains_Mono } from "next/font/google";
+import { Inter, Bricolage_Grotesque, Fragment_Mono } from "next/font/google";
 import { AppProviders } from "@/providers/app-providers";
 import "@/styles/globals.css";
 
 const inter = Inter({
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700", "800"],
+  weight: ["400", "500", "600", "700"],
   variable: "--font-inter",
   display: "swap",
 });
 
-const jetbrainsMono = JetBrains_Mono({
+const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
-  weight: ["500"],
-  variable: "--font-jetbrains-mono",
+  weight: ["700"],
+  variable: "--font-bricolage",
+  display: "swap",
+});
+
+const fragmentMono = Fragment_Mono({
+  subsets: ["latin"],
+  weight: ["400"],
+  variable: "--font-fragment-mono",
   display: "swap",
 });
 
@@ -39,10 +46,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`dark ${inter.variable} ${jetbrainsMono.variable}`}
+      className={`${inter.variable} ${bricolage.variable} ${fragmentMono.variable}`}
       suppressHydrationWarning
     >
-      <body className="font-body text-body selection:bg-primary-container selection:text-white">
+      <body className="font-body text-body selection:bg-primary selection:text-on-primary">
         <AppProviders>{children}</AppProviders>
       </body>
     </html>
