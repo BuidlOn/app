@@ -43,7 +43,7 @@ export function MarketingNav() {
               <Link
                 key={link.label}
                 href={link.href}
-                className="font-body text-[14px] font-medium text-on-surface-variant transition-colors duration-200 hover:text-ink"
+                className="px-4 py-2 rounded-full font-body text-[14px] font-medium text-on-surface-variant transition-colors duration-200 hover:text-ink hover:bg-outline/5"
               >
                 {link.label}
               </Link>
@@ -76,7 +76,7 @@ export function MarketingNav() {
                 key={link.label}
                 href={link.href}
                 onClick={() => setOpen(false)}
-                className="py-3 font-body text-[16px] text-on-surface-variant hover:text-ink"
+                className="px-4 py-3 rounded-[12px] font-body text-[16px] text-on-surface-variant hover:text-ink hover:bg-outline/5 transition-colors"
               >
                 {link.label}
               </Link>

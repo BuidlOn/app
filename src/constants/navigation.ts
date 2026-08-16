@@ -8,8 +8,8 @@ export interface NavItem {
   shortLabel?: string;
 }
 
-/** Primary sidebar navigation for the authenticated app shell. */
 export const APP_NAV: NavItem[] = [
+  { label: "Home", href: "/", icon: "home" },
   { label: "Dashboard", href: "/dashboard", icon: "dashboard", shortLabel: "Home" },
   { label: "Repositories", href: "/repositories", icon: "repositories" },
   { label: "Issues", href: "/issues", icon: "issues" },
@@ -29,6 +29,7 @@ export const MOBILE_NAV: NavItem[] = APP_NAV.filter((item) =>
 
 /** Admin console sidebar navigation. */
 export const ADMIN_NAV: NavItem[] = [
+  { label: "Home", href: "/", icon: "home" },
   { label: "Dashboard", href: "/admin", icon: "dashboard" },
   { label: "Seasons", href: "/admin/seasons", icon: "calendar" },
   { label: "Rewards", href: "/admin/rewards", icon: "star" },

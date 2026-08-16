@@ -13,12 +13,7 @@
   }
 
   a {
-    color: #7c5cfc;
     text-decoration: none;
-  }
-
-  a:hover {
-    color: #5b3ff0;
   }
 
   /* Slim ink-tinted scrollbars, per the app shell spec. */

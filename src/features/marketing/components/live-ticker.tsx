@@ -25,7 +25,7 @@ export function LiveTicker() {
   }, []);
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-center gap-[12px] border-[2px] border-ink rounded-full bg-ink px-[32px] py-[16px] w-fit mx-auto animate-slide-up mb-[120px]">
+    <div className="flex flex-col sm:flex-row items-center justify-center gap-[12px] border-[2px] border-[#161616] rounded-full bg-[#161616] px-[32px] py-[16px] w-fit mx-auto animate-slide-up mb-[120px]">
       <span className="w-[8px] h-[8px] rounded-full bg-tertiary shadow-[0_0_0_4px_rgba(0,194,168,0.2)] flex-shrink-0 animate-pulse"></span>
       <span className="font-mono-label text-[12px] tracking-[0.04em] text-white/60">
         Total rewards claimed this week
