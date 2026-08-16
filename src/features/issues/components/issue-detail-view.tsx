@@ -201,7 +201,9 @@ export function IssueDetailView({ issueId }: { issueId: string }) {
           </Card>
         </div>
 
-        <IssueDetailSidebar issue={issue} />
+        <div className="lg:col-span-4">
+          <IssueDetailSidebar issue={issue} />
+        </div>
       </div>
     </div>
   );
