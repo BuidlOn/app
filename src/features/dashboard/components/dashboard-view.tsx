@@ -54,9 +54,6 @@ export function DashboardView() {
             <Button variant="secondary" size="sm" className="hidden sm:inline-flex">
               Export data
             </Button>
-            <Button asChild variant="ink" shadow="tertiary" size="sm">
-              <Link href="/rewards">Claim all rewards</Link>
-            </Button>
           </>
         }
       />
