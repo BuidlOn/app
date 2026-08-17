@@ -44,22 +44,21 @@ function ClaimAction({
   if (issue.status === "AVAILABLE") {
     return (
       <Button asChild variant="primary" size="sm" className="w-full">
-        <Link href={`/issues/${issue.id}`}>Claim</Link>
+        <Link href={`/issues/${issue.id}`}>Apply</Link>
       </Button>
     );
   }
 
-  const mine = issue.claimedBy?.id === currentUserId;
-
-  if (mine) {
-    return issue.claimExpiresAt ? (
-      <StateChip icon>Claimed until {formatRelativeTime(issue.claimExpiresAt)}</StateChip>
-    ) : (
-      <StateChip>Claimed by you</StateChip>
+  if (issue.claimExpiresAt && issue.claimedBy?.id === currentUserId) {
+    return (
+      <StateChip icon>Applied until {formatRelativeTime(issue.claimExpiresAt)}</StateChip>
     );
   }
-
-  if (issue.claimedBy) return <StateChip>Claimed by another dev</StateChip>;
+  if (issue.claimedBy?.id === currentUserId)
+    return (
+      <StateChip>Applied by you</StateChip>
+    );
+  if (issue.claimedBy) return <StateChip>Applied by another dev</StateChip>;
 
   return <StateChip>{issue.status.replace(/_/g, " ")}</StateChip>;
 }

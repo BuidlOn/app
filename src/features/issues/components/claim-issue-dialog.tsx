@@ -44,7 +44,7 @@ export function ClaimIssueDialog({ issue }: { issue: IssueDetail }) {
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <button className="flex items-center gap-[8px] rounded-[12px] bg-[#161616] px-[24px] py-[10px] font-mono-label text-[13px] font-bold text-white transition-colors hover:bg-black/80">
-          Claim issue
+          Apply for issue
           <Icon name="bolt" className="text-[16px]" filled />
         </button>
       </DialogTrigger>
@@ -54,7 +54,7 @@ export function ClaimIssueDialog({ issue }: { issue: IssueDetail }) {
             <Icon name="task_alt" className="text-[24px]" />
           </div>
           <div>
-            <DialogTitle>Confirm claim</DialogTitle>
+            <DialogTitle>Confirm application</DialogTitle>
             <DialogDescription>
               #{issue.githubNumber}: {issue.title}
             </DialogDescription>
@@ -90,7 +90,7 @@ export function ClaimIssueDialog({ issue }: { issue: IssueDetail }) {
             disabled={claim.isPending}
             className="flex-1 rounded-[12px] bg-[#161616] py-[12px] font-mono-label text-[13px] font-bold text-white transition-colors hover:bg-black/80 disabled:opacity-60"
           >
-            {claim.isPending ? "Claiming..." : "Agree & claim"}
+            {claim.isPending ? "Applying..." : "Agree & apply"}
           </button>
         </div>
       </DialogContent>

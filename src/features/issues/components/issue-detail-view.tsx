@@ -42,7 +42,7 @@ function IssueActions({ issue, currentUserId }: { issue: IssueDetail; currentUse
       <div className="flex flex-col items-stretch gap-3 sm:flex-row sm:items-center">
         <span className="flex items-center justify-center gap-2 rounded-full border-[1.5px] border-primary px-[20px] py-[10px] font-mono-label text-[12px] font-bold uppercase tracking-widest text-primary">
           <Icon name="check_circle" className="text-[16px]" filled />
-          Claimed by you
+          Applied by you
         </span>
         <button
           type="button"

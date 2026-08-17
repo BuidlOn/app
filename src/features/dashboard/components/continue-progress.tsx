@@ -79,7 +79,7 @@ export function ContinueProgress({
           <Glyph name="issueOpen" size={32} className="mb-4 text-on-surface-muted" />
           <p className="text-[15px] font-bold text-on-surface">Nothing in progress</p>
           <p className="mt-1 max-w-sm text-[13px] text-on-surface-muted">
-            Claim an issue from the marketplace to start your contribution timer.
+            Apply for an issue from the marketplace to start your contribution timer.
           </p>
           <Button asChild variant="secondary" size="sm" className="mt-6">
             <Link href="/issues">Browse issues</Link>

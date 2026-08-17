@@ -35,7 +35,7 @@ export function MarketplaceView() {
     <div className="mx-auto flex max-w-[1400px] flex-col gap-6 sm:gap-8">
       <PageHeader
         title="Issue Marketplace"
-        description="Claim verified issues and earn points toward this season's rewards."
+        description="Apply for verified issues and earn points toward this season's rewards."
       />
 
       <MarketplaceStats />
