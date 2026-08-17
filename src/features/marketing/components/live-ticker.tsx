@@ -33,7 +33,7 @@ export function LiveTicker() {
       {isLoading && !data ? (
         <Skeleton className="h-6 w-24 rounded bg-surface-variant/20" />
       ) : (
-        <span className="font-mono-label text-[16px] font-bold text-primary">
+        <span className="font-mono-label text-[16px] font-bold text-[#FFC53D]">
           ${total.toLocaleString("en-US")}
         </span>
       )}
