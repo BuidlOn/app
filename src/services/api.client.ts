@@ -26,10 +26,16 @@ interface RequestOptions extends Omit<RequestInit, "body"> {
 }
 
 function buildUrl(path: string, params?: RequestOptions["params"]) {
-  const url = new URL(
-    path.replace(/^\//, ""),
-    API_BASE_URL.endsWith("/") ? API_BASE_URL : `${API_BASE_URL}/`,
-  );
+  // Using `new URL(relativePath, base)` drops any path segments that exist on
+  // the base (e.g. `new URL("issues", "https://api.example.com/v1/")` resolves
+  // to `https://api.example.com/issues`, silently losing `/v1`). Instead we
+  // do a manual join so the base-path prefix is always preserved.
+  const base = API_BASE_URL.replace(/\/+$/, ""); // strip trailing slashes
+  const endpoint = path.startsWith("/") ? path : `/${path}`; // ensure leading slash
+  const raw = `${base}${endpoint}`;
+
+  // Append query params via a URL object (handles encoding correctly).
+  const url = new URL(raw);
   if (params) {
     for (const [key, value] of Object.entries(params)) {
       if (value !== undefined) url.searchParams.set(key, String(value));
