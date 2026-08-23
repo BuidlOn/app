@@ -8,7 +8,8 @@ import { Icon } from "@/components/ui/icon";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
-import { useUpdateProfile, useUpdateWallet } from "../hooks/use-settings";
+import { useUpdateProfile } from "../hooks/use-settings";
+import { WalletConnectCard } from "./wallet-connect-card";
 
 const labelClass = "mb-2 block font-mono-label text-[10.5px] uppercase tracking-widest text-on-surface-muted";
 const fieldClass =
@@ -23,12 +24,7 @@ const profileSchema = z.object({
 });
 type ProfileForm = z.infer<typeof profileSchema>;
 
-const walletSchema = z.object({
-  walletAddress: z
-    .string()
-    .regex(/^0x[a-fA-F0-9]{40}$/, "Enter a valid EVM wallet address (0x + 40 hex chars)."),
-});
-type WalletForm = z.infer<typeof walletSchema>;
+
 
 function SectionCard({
   title,
@@ -76,7 +72,6 @@ function SettingsForms({
   initial: NonNullable<ReturnType<typeof useCurrentUser>["data"]>;
 }) {
   const updateProfile = useUpdateProfile();
-  const updateWallet = useUpdateWallet();
 
   const profileForm = useForm<ProfileForm>({
     resolver: zodResolver(profileSchema),
@@ -89,10 +84,6 @@ function SettingsForms({
     },
   });
 
-  const walletForm = useForm<WalletForm>({
-    resolver: zodResolver(walletSchema),
-    defaultValues: { walletAddress: initial.walletAddress ?? "" },
-  });
 
   const onSubmitProfile = profileForm.handleSubmit((values) => {
     updateProfile.mutate({
@@ -107,9 +98,6 @@ function SettingsForms({
     });
   });
 
-  const onSubmitWallet = walletForm.handleSubmit((values) => {
-    updateWallet.mutate(values.walletAddress);
-  });
 
   return (
     <div className="mx-auto max-w-[720px] p-4 sm:p-container-padding">
@@ -174,47 +162,7 @@ function SettingsForms({
           </SectionCard>
         </form>
 
-        <form onSubmit={onSubmitWallet} noValidate>
-          <SectionCard
-            title="Payout wallet"
-            description="Reward allocations are sent to this address. Never share your private keys."
-          >
-            <div>
-              <label htmlFor="wallet" className={labelClass}>Wallet address</label>
-              <div className="relative">
-                <Icon
-                  name="account_balance_wallet"
-                  className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[18px] text-on-surface-variant opacity-50"
-                />
-                <input
-                  id="wallet"
-                  className={cn(
-                    fieldClass,
-                    "rounded-[12px] pl-[38px] font-mono-label text-[13px]",
-                    walletForm.formState.errors.walletAddress ? "border-error focus:border-error" : "",
-                  )}
-                  placeholder="0x..."
-                  {...walletForm.register("walletAddress")}
-                />
-              </div>
-              {walletForm.formState.errors.walletAddress && (
-                <p className="mt-1.5 flex items-center gap-1 font-mono-label text-[10.5px] uppercase text-error">
-                  <Icon name="error" className="text-[14px]" />
-                  {walletForm.formState.errors.walletAddress.message}
-                </p>
-              )}
-              <div className="mt-5 flex justify-end">
-                <button
-                  type="submit"
-                  disabled={updateWallet.isPending}
-                  className="rounded-[12px] bg-[#161616] px-6 py-3 font-mono-label text-[13px] font-bold text-white transition-colors hover:bg-black/80 disabled:opacity-60"
-                >
-                  {updateWallet.isPending ? "Saving..." : "Save wallet"}
-                </button>
-              </div>
-            </div>
-          </SectionCard>
-        </form>
+        <WalletConnectCard currentAddress={initial.walletAddress} />
       </div>
     </div>
   );
