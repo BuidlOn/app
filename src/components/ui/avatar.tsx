@@ -9,7 +9,8 @@ const FILLS = [
   "bg-accent text-white",
 ] as const;
 
-function fillFor(seed: string) {
+function fillFor(seed?: string | null) {
+  if (!seed) return FILLS[0];
   let hash = 0;
   for (let i = 0; i < seed.length; i += 1) hash = (hash * 31 + seed.charCodeAt(i)) | 0;
   return FILLS[Math.abs(hash) % FILLS.length];
@@ -17,7 +18,7 @@ function fillFor(seed: string) {
 
 interface AvatarProps {
   src?: string | null;
-  alt: string;
+  alt?: string | null;
   /** Fallback initials shown when no image is available. */
   fallback?: string;
   size?: number;
@@ -52,7 +53,7 @@ export function Avatar({ src, alt, fallback, size = 34, className }: AvatarProps
       {src ? (
         <Image
           src={src}
-          alt={alt}
+          alt={alt ?? ""}
           width={size}
           height={size}
           className="h-full w-full object-cover"
