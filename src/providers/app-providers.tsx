@@ -2,6 +2,7 @@
 
 import { QueryProvider } from "./query-provider";
 import { ToastProvider } from "./toast-provider";
+import { NotificationProvider } from "./notification-provider";
 
 /**
  * Root-level provider stack. Auth/theme contexts get composed here as the
@@ -10,7 +11,11 @@ import { ToastProvider } from "./toast-provider";
 export function AppProviders({ children }: { children: React.ReactNode }) {
   return (
     <QueryProvider>
-      <ToastProvider>{children}</ToastProvider>
+      <ToastProvider>
+        <NotificationProvider>
+          {children}
+        </NotificationProvider>
+      </ToastProvider>
     </QueryProvider>
   );
 }
