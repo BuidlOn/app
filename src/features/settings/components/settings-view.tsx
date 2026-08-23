@@ -8,8 +8,7 @@ import { Icon } from "@/components/ui/icon";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
-import { useUpdateProfile } from "../hooks/use-settings";
-import { WalletConnectCard } from "./wallet-connect-card";
+import { useUpdateProfile, useUpdateWallet } from "../hooks/use-settings";
 
 const labelClass = "mb-2 block font-mono-label text-[10.5px] uppercase tracking-widest text-on-surface-muted";
 const fieldClass =
@@ -24,6 +23,13 @@ const profileSchema = z.object({
 });
 type ProfileForm = z.infer<typeof profileSchema>;
 
+const walletSchema = z.object({
+  walletAddress: z
+    .string()
+    .regex(/^0x[a-fA-F0-9]{40}$/, "Invalid EVM wallet address")
+    .or(z.literal("")),
+});
+type WalletForm = z.infer<typeof walletSchema>;
 
 
 function SectionCard({
@@ -72,6 +78,7 @@ function SettingsForms({
   initial: NonNullable<ReturnType<typeof useCurrentUser>["data"]>;
 }) {
   const updateProfile = useUpdateProfile();
+  const updateWallet = useUpdateWallet();
 
   const profileForm = useForm<ProfileForm>({
     resolver: zodResolver(profileSchema),
@@ -84,6 +91,12 @@ function SettingsForms({
     },
   });
 
+  const walletForm = useForm<WalletForm>({
+    resolver: zodResolver(walletSchema),
+    defaultValues: {
+      walletAddress: initial.walletAddress ?? "",
+    },
+  });
 
   const onSubmitProfile = profileForm.handleSubmit((values) => {
     updateProfile.mutate({
@@ -98,6 +111,9 @@ function SettingsForms({
     });
   });
 
+  const onSubmitWallet = walletForm.handleSubmit((values) => {
+    updateWallet.mutate(values.walletAddress.trim());
+  });
 
   return (
     <div className="mx-auto max-w-[720px] p-4 sm:p-container-padding">
@@ -162,8 +178,52 @@ function SettingsForms({
           </SectionCard>
         </form>
 
-        <WalletConnectCard currentAddress={initial.walletAddress} />
+        <form onSubmit={onSubmitWallet} noValidate>
+          <SectionCard
+            title="Payout Wallet"
+            description="Your rewards will be sent to this EVM address."
+          >
+            <div className="flex flex-col gap-[18px]">
+              <div>
+                <label htmlFor="walletAddress" className={labelClass}>
+                  Wallet Address
+                </label>
+                <div className="relative">
+                  <Icon
+                    name="Wallet"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant"
+                  />
+                  <input
+                    id="walletAddress"
+                    placeholder="0x..."
+                    className={cn(
+                      fieldClass,
+                      "rounded-[12px] pl-[42px]",
+                      walletForm.formState.errors.walletAddress ? "border-error focus:border-error" : ""
+                    )}
+                    {...walletForm.register("walletAddress")}
+                  />
+                </div>
+                {walletForm.formState.errors.walletAddress && (
+                  <p className="mt-1.5 font-mono-label text-[10.5px] uppercase text-error">
+                    {walletForm.formState.errors.walletAddress.message}
+                  </p>
+                )}
+              </div>
+              <div className="mt-2 flex justify-end">
+                <button
+                  type="submit"
+                  disabled={updateWallet.isPending}
+                  className="rounded-[12px] bg-[#161616] px-6 py-3 font-mono-label text-[13px] font-bold text-white transition-colors hover:bg-black/80 disabled:opacity-60"
+                >
+                  {updateWallet.isPending ? "Saving..." : "Save wallet"}
+                </button>
+              </div>
+            </div>
+          </SectionCard>
+        </form>
       </div>
     </div>
   );
 }
+
