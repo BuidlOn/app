@@ -92,6 +92,22 @@ export function RegisterRepositoryForm() {
               </span>
             </div>
           ))}
+          {process.env.NEXT_PUBLIC_GITHUB_APP_INSTALL_URL && (
+            <div className="flex items-center gap-3 text-on-surface-variant">
+              <Glyph name="github" size={16} className="text-primary-deep" />
+              <span className="text-[13.5px]">
+                Make sure the BuidlOn GitHub App is{" "}
+                <a 
+                  href={process.env.NEXT_PUBLIC_GITHUB_APP_INSTALL_URL} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="font-medium text-primary hover:underline"
+                >
+                  installed on your repository
+                </a>.
+              </span>
+            </div>
+          )}
         </div>
 
         <Button
