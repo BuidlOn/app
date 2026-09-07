@@ -23,6 +23,8 @@ export class ApiError extends Error {
 interface RequestOptions extends Omit<RequestInit, "body"> {
   body?: unknown;
   params?: Record<string, string | number | boolean | undefined>;
+  /** Internal: set on retry to avoid infinite refresh loops. */
+  _retried?: boolean;
 }
 
 function buildUrl(path: string, params?: RequestOptions["params"]) {
@@ -44,18 +46,78 @@ function buildUrl(path: string, params?: RequestOptions["params"]) {
   return url.toString();
 }
 
+const ACCESS_KEY = "buidlon.accessToken";
+const REFRESH_KEY = "buidlon.refreshToken";
+
+function getAccessToken(): string | null {
+  return typeof window !== "undefined"
+    ? window.localStorage.getItem(ACCESS_KEY)
+    : null;
+}
+
+/** Persist a fresh token pair (localStorage for fetch + cookie for Edge middleware). */
+export function persistAuthTokens(accessToken: string, refreshToken?: string): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(ACCESS_KEY, accessToken);
+  if (refreshToken) {
+    window.localStorage.setItem(REFRESH_KEY, refreshToken);
+  }
+  // Keep the middleware cookie in sync — it only guards /admin but must not go stale.
+  const maxAge = 15 * 60; // 15 minutes — matches backend access-token expiry
+  document.cookie = `buidlon_token=${accessToken}; path=/; max-age=${maxAge}; SameSite=Lax`;
+}
+
+/** Drop all local session state (used when refresh fails or user logs out). */
+export function clearAuthTokens(): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(ACCESS_KEY);
+  window.localStorage.removeItem(REFRESH_KEY);
+  document.cookie = "buidlon_token=; path=/; max-age=0; SameSite=Lax";
+}
+
+// Shared in-flight refresh so parallel 401s trigger only one /auth/refresh call.
+let refreshPromise: Promise<string | null> | null = null;
+
+function refreshAccessToken(): Promise<string | null> {
+  if (typeof window === "undefined") return Promise.resolve(null);
+  if (!refreshPromise) {
+    refreshPromise = (async () => {
+      try {
+        const rt = window.localStorage.getItem(REFRESH_KEY);
+        if (!rt) return null;
+        const res = await fetch(buildUrl("/auth/refresh", { token: rt }), {
+          method: "POST",
+        });
+        const payload = (await res.json()) as ApiResponse<{
+          accessToken: string;
+          refreshToken: string;
+        }>;
+        if (!res.ok || !payload.success) return null;
+        persistAuthTokens(payload.data.accessToken, payload.data.refreshToken);
+        return payload.data.accessToken;
+      } catch {
+        return null;
+      } finally {
+        refreshPromise = null;
+      }
+    })();
+  }
+  return refreshPromise;
+}
+
 /**
  * Thin wrapper over fetch that unwraps the backend's `{ success, data }`
  * envelope and throws a typed ApiError on failure.
+ *
+ * On 401 it silently tries the refresh token once (7-day lifetime) and
+ * retries the original request, so short-lived 15-minute access tokens
+ * don't force a full GitHub login on every return visit.
  */
 export async function apiRequest<T>(
   path: string,
-  { method = "GET", body, params, headers, ...rest }: RequestOptions = {},
+  { method = "GET", body, params, headers, _retried = false, ...rest }: RequestOptions = {},
 ): Promise<T> {
-  const token =
-    typeof window !== "undefined"
-      ? window.localStorage.getItem("buidlon.accessToken")
-      : null;
+  const token = getAccessToken();
 
   const res = await fetch(buildUrl(path, params), {
     method,
@@ -73,6 +135,22 @@ export async function apiRequest<T>(
     payload = (await res.json()) as ApiResponse<T>;
   } catch {
     throw new ApiError("Unexpected server response.", res.status);
+  }
+
+  // Access token expired? Try one silent refresh (never for the refresh call itself).
+  if (res.status === 401 && !_retried && path !== "/auth/refresh") {
+    const fresh = await refreshAccessToken();
+    if (fresh) {
+      return apiRequest<T>(path, {
+        method,
+        body,
+        params,
+        headers,
+        _retried: true,
+        ...rest,
+      });
+    }
+    clearAuthTokens();
   }
 
   if (!res.ok || !payload.success) {
