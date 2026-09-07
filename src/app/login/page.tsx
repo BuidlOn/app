@@ -42,7 +42,7 @@ export default function LoginPage() {
           </h1>
 
           <p className="mb-[28px] text-[14.5px] leading-[1.6] text-on-surface-variant">
-            Your GitHub account is your identity on BuidlOn. Claims, contributions, and rewards all trace back to verified activity.
+            Your GitHub account is your identity on BuidlOn. Claims, contributions, and rewards all trace back to verified activity. You&apos;ll be taken to github.com to sign in — no app installation required.
           </p>
 
           <a

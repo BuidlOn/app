@@ -22,6 +22,9 @@ const schema = z.object({
     ),
 });
 
+const GITHUB_APP_INSTALL_URL =
+  process.env.NEXT_PUBLIC_GITHUB_APP_INSTALL_URL ?? "";
+
 type FormValues = z.infer<typeof schema>;
 
 const REQUIREMENTS: { icon: GlyphName; text: string }[] = [
@@ -66,7 +69,43 @@ export function RegisterRepositoryForm() {
         />
       </div>
 
+      <Card className="p-6 sm:p-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-start gap-3">
+            <Glyph name="github" size={20} className="mt-[2px] text-primary-deep" />
+            <div>
+              <p className="text-[15px] font-semibold text-on-surface">
+                Step 1 — Install the BuidlOn GitHub App
+              </p>
+              <p className="mt-1 text-[13.5px] leading-[1.6] text-on-surface-variant">
+                Repository sync, webhooks, and contribution tracking require the
+                GitHub App. Sign-in alone (github.com/login) does not grant
+                repository access.
+              </p>
+            </div>
+          </div>
+          {GITHUB_APP_INSTALL_URL ? (
+            <a
+              href={GITHUB_APP_INSTALL_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full border-[2px] border-outline bg-outline px-[20px] py-[11px] font-mono-label text-[13px] font-bold text-background transition-colors hover:opacity-90"
+            >
+              <Glyph name="github" size={16} />
+              Install GitHub App
+            </a>
+          ) : (
+            <p className="shrink-0 text-[12.5px] text-on-surface-muted">
+              Set NEXT_PUBLIC_GITHUB_APP_INSTALL_URL to enable one-click install.
+            </p>
+          )}
+        </div>
+      </Card>
+
       <form onSubmit={onSubmit} noValidate className="rounded-buidl-lg bg-surface border-[1.5px] border-outline/15 p-6 sm:p-8">
+        <p className="mb-4 text-[15px] font-semibold text-on-surface">
+          Step 2 — Paste your repository URL
+        </p>
         <div className="mb-6">
           <Label htmlFor="repo-url">GitHub Repository URL</Label>
           <Input
@@ -92,22 +131,6 @@ export function RegisterRepositoryForm() {
               </span>
             </div>
           ))}
-          {process.env.NEXT_PUBLIC_GITHUB_APP_INSTALL_URL && (
-            <div className="flex items-center gap-3 text-on-surface-variant">
-              <Glyph name="github" size={16} className="text-primary-deep" />
-              <span className="text-[13.5px]">
-                Make sure the BuidlOn GitHub App is{" "}
-                <a 
-                  href={process.env.NEXT_PUBLIC_GITHUB_APP_INSTALL_URL} 
-                  target="_blank" 
-                  rel="noopener noreferrer"
-                  className="font-medium text-primary hover:underline"
-                >
-                  installed on your repository
-                </a>.
-              </span>
-            </div>
-          )}
         </div>
 
         <Button
