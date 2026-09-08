@@ -1,6 +1,8 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -11,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { PageHeader } from "@/components/layout/page-header";
 import { useRegisterRepository } from "../hooks/use-repositories";
+import { InstallationRepoPicker } from "./installation-repo-picker";
 
 const schema = z.object({
   url: z
@@ -34,7 +37,19 @@ const REQUIREMENTS: { icon: GlyphName; text: string }[] = [
 ];
 
 export function RegisterRepositoryForm() {
+  return (
+    <Suspense>
+      <RegisterRepositoryFormInner />
+    </Suspense>
+  );
+}
+
+function RegisterRepositoryFormInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  // Present after the GitHub App install round-trip (backend /github/setup
+  // bounces here with the installation the user just granted on GitHub).
+  const installationId = searchParams.get("installation_id");
   const register_ = useRegisterRepository();
   const {
     register,
@@ -75,33 +90,43 @@ export function RegisterRepositoryForm() {
             <Glyph name="github" size={20} className="mt-[2px] text-primary-deep" />
             <div>
               <p className="text-[15px] font-semibold text-on-surface">
-                Step 1 — Install the BuidlOn GitHub App
+                {installationId
+                  ? "GitHub App installed — now pick repositories"
+                  : "Step 1 — Install the BuidlOn GitHub App"}
               </p>
               <p className="mt-1 text-[13.5px] leading-[1.6] text-on-surface-variant">
-                Repository sync, webhooks, and contribution tracking require the
-                GitHub App. Sign-in alone (github.com/login) does not grant
-                repository access.
+                You only need to install the BuidlOn GitHub App if you
+                maintain an open-source project that you want to apply to be
+                part of a Campaign. If you&apos;re a contributor looking to
+                work on issues in a Campaign, explore current Campaigns on
+                the{" "}
+                <Link href="/" className="font-medium text-primary hover:underline">
+                  homepage
+                </Link>
+                .
               </p>
             </div>
           </div>
-          {GITHUB_APP_INSTALL_URL ? (
-            <a
-              href={GITHUB_APP_INSTALL_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full border-[2px] border-outline bg-outline px-[20px] py-[11px] font-mono-label text-[13px] font-bold text-background transition-colors hover:opacity-90"
-            >
-              <Glyph name="github" size={16} />
-              Install GitHub App
-            </a>
-          ) : (
-            <p className="shrink-0 text-[12.5px] text-on-surface-muted">
-              Set NEXT_PUBLIC_GITHUB_APP_INSTALL_URL to enable one-click install.
-            </p>
-          )}
+          {!installationId &&
+            (GITHUB_APP_INSTALL_URL ? (
+              <a
+                href={GITHUB_APP_INSTALL_URL}
+                className="inline-flex shrink-0 items-center justify-center gap-2 rounded-full border-[2px] border-outline bg-outline px-[20px] py-[11px] font-mono-label text-[13px] font-bold text-background transition-colors hover:opacity-90"
+              >
+                <Glyph name="github" size={16} />
+                Install GitHub App
+              </a>
+            ) : (
+              <p className="shrink-0 text-[12.5px] text-on-surface-muted">
+                Set NEXT_PUBLIC_GITHUB_APP_INSTALL_URL to enable one-click install.
+              </p>
+            ))}
         </div>
       </Card>
 
+      {installationId ? (
+        <InstallationRepoPicker installationId={installationId} />
+      ) : (
       <form onSubmit={onSubmit} noValidate className="rounded-buidl-lg bg-surface border-[1.5px] border-outline/15 p-6 sm:p-8">
         <p className="mb-4 text-[15px] font-semibold text-on-surface">
           Step 2 — Paste your repository URL
@@ -142,6 +167,7 @@ export function RegisterRepositoryForm() {
           {register_.isPending ? "Verifying..." : "Connect Repository"}
         </Button>
       </form>
+      )}
     </div>
   );
 }

@@ -52,11 +52,36 @@ export async function getRepositories(
   });
 }
 
-/** Register a repository by GitHub URL (maintainer ownership verified server-side). */
-export async function registerRepository(url: string): Promise<{ id: string }> {
+/** Register a repository by GitHub URL or owner/repo full name (maintainer ownership verified server-side). */
+export async function registerRepository(
+  input: string,
+): Promise<{ id: string }> {
   if (USE_MOCKS) return mockDelay({ id: `r_${Date.now()}` }, 800);
+  const isFullName = /^[\w.-]+\/[\w.-]+$/.test(input.trim());
   return apiRequest<{ id: string }>("/repositories", {
     method: "POST",
-    body: { url },
+    body: isFullName ? { fullName: input.trim() } : { url: input },
   });
+}
+
+export interface InstallationRepository {
+  githubId: number;
+  fullName: string;
+  private: boolean;
+  description: string | null;
+  language: string | null;
+  registered: boolean;
+}
+
+/**
+ * Repos the user granted on the GitHub App install screen for this
+ * installation (arrives via `?installation_id=` after the setup redirect).
+ */
+export async function getInstallationRepositories(
+  installationId: string,
+): Promise<InstallationRepository[]> {
+  if (USE_MOCKS) return mockDelay([], 400);
+  return apiRequest<InstallationRepository[]>(
+    `/github/installations/${installationId}/repositories`,
+  );
 }
