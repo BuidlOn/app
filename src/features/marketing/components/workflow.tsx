@@ -1,4 +1,3 @@
-import { Icon } from "@/components/ui/icon";
 
 const STEPS = [
   {

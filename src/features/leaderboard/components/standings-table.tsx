@@ -1,8 +1,9 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { Icon } from "@/components/ui/icon";
 import { Avatar } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/states";
 import { formatNumber } from "@/utils/format";
 import { RankTrendIndicator } from "./rank-trend";
 import type { LeaderboardEntry } from "@/types/domain";
@@ -128,6 +129,23 @@ export function StandingsTable({
   loading: boolean;
   currentUsername?: string;
 }) {
+  // A finished query with zero rows is a real answer, not a loading state.
+  if (!loading && entries && entries.length === 0) {
+    return (
+      <EmptyState
+        inCard
+        icon="leaderboard"
+        title="No standings yet"
+        body="Nobody has scored points in this season so far. Merge a pull request and you will be the first on the board."
+        action={
+          <Button asChild size="sm">
+            <Link href="/issues">Browse open issues</Link>
+          </Button>
+        }
+      />
+    );
+  }
+
   return (
     <div className="overflow-x-auto">
       <table className="w-full border-collapse text-left">

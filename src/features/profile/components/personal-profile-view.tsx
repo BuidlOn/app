@@ -1,13 +1,14 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { Icon } from "@/components/ui/icon";
 import { Avatar } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { EmptyState, ErrorState } from "@/components/ui/states";
 import { StatusBadge } from "@/components/ui/status-badges";
-import { formatDate, formatNumber } from "@/utils/format";
+import { formatNumber } from "@/utils/format";
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
 import { useContributorProfile } from "../hooks/use-contributor-profile";
 import { AchievementsCard } from "./achievements-card";
@@ -15,11 +16,28 @@ import { NearbyRanksCard } from "./nearby-ranks-card";
 
 export function PersonalProfileView() {
   const { data: user, isLoading: userLoading } = useCurrentUser();
-  const { data: profile, isLoading: profileLoading } = useContributorProfile(
-    user?.githubUsername ?? "",
-  );
+  const {
+    data: profile,
+    isLoading: profileLoading,
+    isError,
+    refetch,
+  } = useContributorProfile(user?.githubUsername ?? "");
 
-  const loading = userLoading || profileLoading || !user || !profile;
+  // The profile query is keyed on the username, so it cannot start until the
+  // session resolves. Only treat it as loading while something is in flight.
+  const loading = userLoading || (!!user && profileLoading);
+
+  if (isError) {
+    return (
+      <div className="mx-auto max-w-[1200px]">
+        <ErrorState
+          title="Couldn't load your profile"
+          body="Your contribution history didn't come back. Try again in a moment."
+          onRetry={() => refetch()}
+        />
+      </div>
+    );
+  }
 
   if (loading) {
     return (
@@ -30,9 +48,23 @@ export function PersonalProfileView() {
     );
   }
 
-  // Create a flattened array of squares for the heatmap (simplified visual representation)
-  // We'll show a small subset or a squished version of the 52 weeks to fit the card well.
-  const allDays = profile.heatmap.weeks.flat();
+  // Session resolved but no profile came back: nothing to render meaningfully.
+  if (!user || !profile) {
+    return (
+      <div className="mx-auto max-w-[1200px]">
+        <EmptyState
+          icon="user"
+          title="Profile unavailable"
+          body="We couldn't find a contributor profile for your account yet."
+          action={
+            <Button asChild size="sm">
+              <Link href="/settings">Complete your profile</Link>
+            </Button>
+          }
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto max-w-[1200px] p-4 sm:p-[40px]">

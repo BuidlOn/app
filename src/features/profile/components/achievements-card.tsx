@@ -1,6 +1,4 @@
 import { cn } from "@/lib/utils";
-import { Icon } from "@/components/ui/icon";
-import { Card } from "@/components/ui/card";
 import type { Achievement } from "../types";
 
 const TONE_CLASSES: Record<Achievement["tone"], { bg: string; text: string }> = {

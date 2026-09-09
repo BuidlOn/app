@@ -5,15 +5,14 @@ import { useState } from "react";
 import { Sidebar } from "./sidebar";
 import { DashboardHeader } from "./dashboard-header";
 import { MobileNav } from "./mobile-nav";
-import { Button } from "@/components/ui/button";
-import { StatusPip } from "@/components/ui/status-pip";
 import { APP_NAV } from "@/constants/navigation";
-import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
+import { Glyph } from "@/components/ui/icons";
+import { useAuth } from "@/features/auth/auth-context";
 import { truncateHash } from "@/utils/format";
 
-/** Sidebar footer: the New Repository CTA over a live wallet chip. */
+/** Sidebar footer: the New Repository CTA, the wallet chip, then sign out. */
 function SidebarFooter({ onNavigate }: { onNavigate?: () => void }) {
-  const { data: user } = useCurrentUser();
+  const { user, logout } = useAuth();
   const wallet = user?.walletAddress ?? null;
 
   return (
@@ -41,6 +40,18 @@ function SidebarFooter({ onNavigate }: { onNavigate?: () => void }) {
           </span>
         </span>
       </Link>
+
+      <button
+        type="button"
+        onClick={() => {
+          onNavigate?.();
+          logout();
+        }}
+        className="flex items-center gap-2.5 rounded-[12px] px-3 py-2.5 text-[13px] font-medium text-on-surface-variant transition-colors hover:bg-outline/[0.06] hover:text-on-surface"
+      >
+        <Glyph name="logout" size={16} />
+        Sign out
+      </button>
     </>
   );
 }

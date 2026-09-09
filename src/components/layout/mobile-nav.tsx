@@ -15,7 +15,7 @@ export function MobileNav() {
 
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-around border-t-ink border-outline bg-background px-2 pt-2.5 lg:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 flex items-center justify-around border-t-2 border-outline bg-background px-2 pt-2.5 lg:hidden"
       style={{ paddingBottom: "calc(0.625rem + env(safe-area-inset-bottom))" }}
     >
       {MOBILE_NAV.map((item) => {

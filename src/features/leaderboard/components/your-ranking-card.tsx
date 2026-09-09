@@ -1,6 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
+import { EmptyState, ErrorState } from "@/components/ui/states";
 import { RankTrendIndicator } from "./rank-trend";
 import { useMyRanking } from "../hooks/use-leaderboard";
 import { formatNumber } from "@/utils/format";
@@ -15,7 +18,41 @@ function percentileWidth(label: string): number {
 }
 
 export function YourRankingCard({ seasonId }: { seasonId: string }) {
-  const { data, isLoading } = useMyRanking(seasonId);
+  const { data, isLoading, isError, refetch } = useMyRanking(seasonId);
+
+  if (isError) {
+    return (
+      <Card border="ink">
+        <ErrorState
+          inCard
+          title="Couldn't load your ranking"
+          body="Your standing for this season didn't come back."
+          onRetry={() => refetch()}
+          className="py-10"
+        />
+      </Card>
+    );
+  }
+
+  // Unranked is a real answer: the season exists but this user has no entry yet.
+  if (!isLoading && !data) {
+    return (
+      <Card border="ink">
+        <EmptyState
+          inCard
+          icon="leaderboard"
+          title="You're not ranked yet"
+          body="Merge your first pull request this season to appear on the leaderboard."
+          action={
+            <Button asChild size="sm">
+              <Link href="/issues">Find an issue</Link>
+            </Button>
+          }
+          className="py-10"
+        />
+      </Card>
+    );
+  }
 
   return (
     <Card border="ink" className="relative grid grid-cols-1 overflow-hidden md:grid-cols-3">

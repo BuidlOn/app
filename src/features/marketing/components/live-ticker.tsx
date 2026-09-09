@@ -11,10 +11,10 @@ export function LiveTicker() {
   const baseTotal = data?.rewardsPaidUsd || 48210;
   const [total, setTotal] = useState(baseTotal);
 
+  // Functional update so the effect never has to read `total` from a closure.
   useEffect(() => {
-    if (data?.rewardsPaidUsd && data.rewardsPaidUsd > total) {
-      setTotal(data.rewardsPaidUsd);
-    }
+    const live = data?.rewardsPaidUsd;
+    if (live) setTotal((prev) => (live > prev ? live : prev));
   }, [data?.rewardsPaidUsd]);
 
   useEffect(() => {

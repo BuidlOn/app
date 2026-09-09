@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
 import { useContributorDashboard } from "../hooks/use-contributor-dashboard";
 import { DashboardStats } from "./dashboard-stats";

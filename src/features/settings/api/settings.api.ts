@@ -1,7 +1,13 @@
-import { apiRequest, mockDelay, USE_MOCKS } from "@/services/api.client";
-import { mockCurrentUser } from "@/services/mock/data";
+import { apiRequest } from "@/services/api.client";
 import type { User } from "@/types/domain";
 
+/**
+ * Editable profile fields.
+ *
+ * `null` means "clear this field" and the backend honours it, so a blank input
+ * must be sent as null rather than omitted — otherwise a user can set a value
+ * but never remove it.
+ */
 export interface ProfileUpdate {
   name: string | null;
   bio: string | null;
@@ -12,23 +18,10 @@ export interface ProfileUpdate {
 
 /** Update the current user's editable profile fields. */
 export async function updateProfile(update: ProfileUpdate): Promise<User> {
-  if (USE_MOCKS) {
-    Object.assign(mockCurrentUser, update);
-    return mockDelay({ ...mockCurrentUser }, 600);
-  }
   return apiRequest<User>("/users", { method: "PATCH", body: update });
 }
 
-/** Connect / update the wallet address on the current user (legacy plain-text path). */
+/** Connect or update the payout wallet on the current user. */
 export async function updateWallet(walletAddress: string): Promise<User> {
-  if (USE_MOCKS) {
-    mockCurrentUser.walletAddress = walletAddress;
-    return mockDelay({ ...mockCurrentUser }, 600);
-  }
-  return apiRequest<User>("/users", {
-    method: "PATCH",
-    body: { walletAddress },
-  });
+  return apiRequest<User>("/users", { method: "PATCH", body: { walletAddress } });
 }
-
-

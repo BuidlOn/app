@@ -26,6 +26,8 @@ const config: Config = {
         "on-primary": "#161616",
         /** Legible text/icon ink for use on top of a Sunbeam field. */
         "on-primary-deep": "#4D3F05",
+        /** The same deep amber used as a foreground accent on light fields. */
+        "primary-deep": "#4D3F05",
 
         secondary: "#7C5CFC", // Violet
         "secondary-dim": "#6E51DF",
@@ -39,6 +41,8 @@ const config: Config = {
         accent: "#FF5A3C", // Coral — hard difficulty / high urgency
         "on-accent-deep": "#C2491C",
 
+        /** The ink used for text, fills and heavy borders. */
+        ink: "#161616",
         outline: "#161616", // Ink
         "outline-variant": "#46433D",
         /** Standard card/input border colour, paired with `border-hairline`. */
@@ -62,7 +66,6 @@ const config: Config = {
       },
       borderWidth: {
         hairline: "1.5px",
-        ink: "2px",
       },
       borderRadius: {
         DEFAULT: "0.5rem",

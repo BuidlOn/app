@@ -71,7 +71,7 @@ export function Pagination({
             className={cn(
               CELL,
               item === page
-                ? "border-ink border-outline bg-outline font-bold text-background"
+                ? "border-2 border-outline bg-outline font-bold text-background"
                 : "border-hairline border-line bg-surface text-on-surface hover:border-outline",
             )}
           >
