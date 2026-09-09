@@ -9,27 +9,28 @@ export interface NavItem {
 }
 
 export const APP_NAV: NavItem[] = [
-  { label: "Home", href: "/", icon: "home" },
   { label: "Dashboard", href: "/dashboard", icon: "dashboard", shortLabel: "Home" },
   { label: "Repositories", href: "/repositories", icon: "repositories" },
   { label: "Issues", href: "/issues", icon: "issues" },
   { label: "Leaderboard", href: "/leaderboard", icon: "leaderboard", shortLabel: "Ranks" },
   { label: "Rewards", href: "/rewards", icon: "star" },
-  { label: "Profile", href: "/profile", icon: "user" },
-  { label: "Settings", href: "/settings", icon: "settings" },
 ];
 
 /**
- * Mobile tab bar — five destinations, matching the mobile designs. The rest of
- * the sidebar stays reachable through the drawer.
+ * Mobile tab bar — the five destinations from the mobile designs. Declared
+ * separately from APP_NAV because Profile belongs here (there is no room for
+ * an account menu on a tab bar) but not in the desktop sidebar.
  */
-export const MOBILE_NAV: NavItem[] = APP_NAV.filter((item) =>
-  ["/dashboard", "/issues", "/leaderboard", "/rewards", "/profile"].includes(item.href),
-);
+export const MOBILE_NAV: NavItem[] = [
+  { label: "Dashboard", href: "/dashboard", icon: "dashboard", shortLabel: "Home" },
+  { label: "Issues", href: "/issues", icon: "issues" },
+  { label: "Leaderboard", href: "/leaderboard", icon: "leaderboard", shortLabel: "Ranks" },
+  { label: "Rewards", href: "/rewards", icon: "star" },
+  { label: "Profile", href: "/profile", icon: "user" },
+];
 
 /** Admin console sidebar navigation. */
 export const ADMIN_NAV: NavItem[] = [
-  { label: "Home", href: "/", icon: "home" },
   { label: "Dashboard", href: "/admin", icon: "dashboard" },
   { label: "Seasons", href: "/admin/seasons", icon: "calendar" },
   { label: "Rewards", href: "/admin/rewards", icon: "star" },

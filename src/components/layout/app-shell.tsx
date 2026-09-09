@@ -6,27 +6,13 @@ import { Sidebar } from "./sidebar";
 import { DashboardHeader } from "./dashboard-header";
 import { MobileNav } from "./mobile-nav";
 import { APP_NAV } from "@/constants/navigation";
-import { Glyph } from "@/components/ui/icons";
-import { useQueryClient } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
-import { clearAuthTokens } from "@/services/api.client";
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
 import { truncateHash } from "@/utils/format";
 
-/** Sidebar footer: the New Repository CTA, the wallet chip, then sign out. */
+/** Sidebar footer: the New Repository CTA over a live wallet chip. */
 function SidebarFooter({ onNavigate }: { onNavigate?: () => void }) {
   const { data: user } = useCurrentUser();
-  const queryClient = useQueryClient();
-  const router = useRouter();
   const wallet = user?.walletAddress ?? null;
-
-  // Sign-out is purely local: the backend's /auth/logout is a client-side
-  // token discard, so drop the tokens and the cached session and go to login.
-  const logout = () => {
-    clearAuthTokens();
-    queryClient.clear();
-    router.replace("/login");
-  };
 
   return (
     <>
@@ -53,18 +39,6 @@ function SidebarFooter({ onNavigate }: { onNavigate?: () => void }) {
           </span>
         </span>
       </Link>
-
-      <button
-        type="button"
-        onClick={() => {
-          onNavigate?.();
-          logout();
-        }}
-        className="flex items-center gap-2.5 rounded-[12px] px-3 py-2.5 text-[13px] font-medium text-on-surface-variant transition-colors hover:bg-outline/[0.06] hover:text-on-surface"
-      >
-        <Glyph name="logout" size={16} />
-        Sign out
-      </button>
     </>
   );
 }
