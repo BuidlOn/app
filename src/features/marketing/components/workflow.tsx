@@ -46,7 +46,7 @@ export function Workflow() {
     <section className="mx-auto max-w-[1300px] px-container-padding relative z-10 text-center mb-[120px]">
       <div className="mb-[64px]">
         <div className="font-mono-label text-[11px] font-bold tracking-[0.1em] uppercase text-on-surface-muted mb-6">
-          WORKBENCH SECTION (3-STEP)
+          How it works
         </div>
         <h2 className="mb-[12px] font-page-title text-[48px] font-bold text-ink tracking-[-0.02em]">
           A frictionless workflow.

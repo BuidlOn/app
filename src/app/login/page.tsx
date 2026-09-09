@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Icon } from "@/components/ui/icon";
 import { getGithubOAuthUrl } from "@/services/auth.api";
 
 export const metadata: Metadata = {
@@ -9,11 +8,6 @@ export const metadata: Metadata = {
     "Sign in to BuidlOn with GitHub to claim issues and earn on-chain rewards for your contributions.",
 };
 
-const GUARANTEES = [
-  { icon: "verified_user", label: "GitHub is the only sign-in. No passwords." },
-  { icon: "bolt", label: "Instant payouts to your wallet after merge." },
-  { icon: "lock", label: "We never gain write access to your repositories." },
-];
 
 export default function LoginPage() {
   const oauthUrl = getGithubOAuthUrl();

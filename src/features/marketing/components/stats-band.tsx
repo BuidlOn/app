@@ -11,7 +11,7 @@ export function StatsBand() {
     <section className="relative z-20 mx-auto max-w-[1200px] px-container-padding mb-[120px] animate-slide-up" style={{ animationDelay: '200ms' }}>
       <div className="text-center">
         <div className="font-mono-label text-[11px] font-bold tracking-[0.1em] uppercase text-on-surface-muted mb-6">
-          STATS BAND
+          Live on the protocol
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/* Open Issues */}
