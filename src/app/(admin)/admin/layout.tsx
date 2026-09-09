@@ -1,14 +1,9 @@
 import { AdminShell } from "@/components/layout/admin-shell";
-import { RequireAuth } from "@/features/auth/components/require-auth";
 
 /**
- * Admin console layout. Access is role-based: the console is only reachable by
- * accounts the backend reports as `admin`.
+ * Admin console layout. Access is enforced server-side by `src/middleware.ts`,
+ * which verifies the JWT signature and the `ADMIN` role before this renders.
  */
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <AdminShell>
-      <RequireAuth role="admin">{children}</RequireAuth>
-    </AdminShell>
-  );
+  return <AdminShell>{children}</AdminShell>;
 }

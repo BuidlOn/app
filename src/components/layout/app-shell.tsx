@@ -7,13 +7,26 @@ import { DashboardHeader } from "./dashboard-header";
 import { MobileNav } from "./mobile-nav";
 import { APP_NAV } from "@/constants/navigation";
 import { Glyph } from "@/components/ui/icons";
-import { useAuth } from "@/features/auth/auth-context";
+import { useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
+import { clearAuthTokens } from "@/services/api.client";
+import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
 import { truncateHash } from "@/utils/format";
 
 /** Sidebar footer: the New Repository CTA, the wallet chip, then sign out. */
 function SidebarFooter({ onNavigate }: { onNavigate?: () => void }) {
-  const { user, logout } = useAuth();
+  const { data: user } = useCurrentUser();
+  const queryClient = useQueryClient();
+  const router = useRouter();
   const wallet = user?.walletAddress ?? null;
+
+  // Sign-out is purely local: the backend's /auth/logout is a client-side
+  // token discard, so drop the tokens and the cached session and go to login.
+  const logout = () => {
+    clearAuthTokens();
+    queryClient.clear();
+    router.replace("/login");
+  };
 
   return (
     <>

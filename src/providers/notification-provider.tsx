@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
 import { useToast } from "./toast-provider";
-import { API_BASE_URL, USE_MOCKS } from "@/services/api.client";
+import { API_BASE_URL } from "@/services/api.client";
 
 /**
  * Connects to the backend SSE endpoint to receive real-time notifications
@@ -16,7 +16,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (!user || USE_MOCKS) return;
+    if (!user) return;
 
     const token = window.localStorage.getItem("buidlon.accessToken");
     if (!token) return;
