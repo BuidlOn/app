@@ -1,5 +1,4 @@
-import { apiRequest, mockDelay, USE_MOCKS } from "@/services/api.client";
-import { mockRepositories } from "@/services/mock/data";
+import { apiRequest } from "@/services/api.client";
 import type { Repository } from "@/types/domain";
 import type { Paginated } from "@/types/api";
 
@@ -10,38 +9,10 @@ export interface RepositoryFilters {
   limit?: number;
 }
 
-const DEFAULT_LIMIT = 9;
-
+/** Paginated repository list. Search and filtering happen server-side. */
 export async function getRepositories(
   filters: RepositoryFilters = {},
 ): Promise<Paginated<Repository>> {
-  if (USE_MOCKS) {
-    const page = filters.page ?? 1;
-    const limit = filters.limit ?? DEFAULT_LIMIT;
-    const search = filters.search?.trim().toLowerCase();
-
-    const filtered = mockRepositories.filter((repo) => {
-      if (search) {
-        const haystack = `${repo.fullName} ${repo.description ?? ""}`.toLowerCase();
-        if (!haystack.includes(search)) return false;
-      }
-      if (filters.language && !repo.languages.includes(filters.language)) return false;
-      return true;
-    });
-
-    const start = (page - 1) * limit;
-    return mockDelay(
-      {
-        items: filtered.slice(start, start + limit),
-        page,
-        limit,
-        total: filtered.length,
-        totalPages: Math.max(1, Math.ceil(filtered.length / limit)),
-      },
-      450,
-    );
-  }
-
   return apiRequest<Paginated<Repository>>("/repositories", {
     params: {
       search: filters.search || undefined,
@@ -52,11 +23,8 @@ export async function getRepositories(
   });
 }
 
-/** Register a repository by GitHub URL or owner/repo full name (maintainer ownership verified server-side). */
-export async function registerRepository(
-  input: string,
-): Promise<{ id: string }> {
-  if (USE_MOCKS) return mockDelay({ id: `r_${Date.now()}` }, 800);
+/** Register a repository by GitHub URL or owner/repo full name (ownership verified server-side). */
+export async function registerRepository(input: string): Promise<{ id: string }> {
   const isFullName = /^[\w.-]+\/[\w.-]+$/.test(input.trim());
   return apiRequest<{ id: string }>("/repositories", {
     method: "POST",
@@ -80,7 +48,6 @@ export interface InstallationRepository {
 export async function getInstallationRepositories(
   installationId: string,
 ): Promise<InstallationRepository[]> {
-  if (USE_MOCKS) return mockDelay([], 400);
   return apiRequest<InstallationRepository[]>(
     `/github/installations/${installationId}/repositories`,
   );
