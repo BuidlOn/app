@@ -2,6 +2,15 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 
 /**
+ * A growth delta against a zero baseline is meaningless ("+12% of $0"), and the
+ * API currently sends one regardless. Suppress it rather than show nonsense.
+ */
+function isZeroish(value: React.ReactNode): boolean {
+  if (typeof value !== "string" && typeof value !== "number") return false;
+  return /^[^0-9]*0([.,]0+)?[^0-9]*$/.test(String(value).trim());
+}
+
+/**
  * Stat tile: mono eyebrow over a display-face figure, with an optional delta
  * riding the baseline. The `highlight` tone promotes one tile in a row to the
  * Sunbeam field — used for the reader's own rank.

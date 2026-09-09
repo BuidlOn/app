@@ -132,11 +132,13 @@ export function PersonalProfileView() {
           </p>
           <div className="mt-2 flex items-baseline gap-2">
             <span className="font-page-title text-[28px] font-bold text-[#161616]">
-              {formatNumber(user.totalPoints || 18940)}
+              {formatNumber(user.totalPoints)}
             </span>
-            <span className="font-mono-label text-[10px] font-bold text-[#7a5c05]">
-              +240 this wk
-            </span>
+            {profile.stats.pointsThisWeek > 0 && (
+              <span className="font-mono-label text-[10px] font-bold text-[#7a5c05]">
+                +{formatNumber(profile.stats.pointsThisWeek)} this wk
+              </span>
+            )}
           </div>
         </div>
         <div className="flex flex-col justify-center rounded-[16px] border border-[#161616]/10 bg-white p-5">
@@ -144,7 +146,7 @@ export function PersonalProfileView() {
             MERGED PRS
           </p>
           <p className="m-0 mt-2 font-page-title text-[28px] font-bold text-[#161616]">
-            {formatNumber(user.mergedPrs || 47)}
+            {formatNumber(user.mergedPrs)}
           </p>
         </div>
         <div className="flex flex-col justify-center rounded-[16px] border border-[#161616]/10 bg-white p-5">
@@ -152,7 +154,7 @@ export function PersonalProfileView() {
             SEASONS ACTIVE
           </p>
           <p className="m-0 mt-2 font-page-title text-[28px] font-bold text-[#161616]">
-            4
+            {formatNumber(profile.stats.seasonsActive)}
           </p>
         </div>
         <div className="flex flex-col justify-center rounded-[16px] border border-[#161616]/10 bg-white p-5">
@@ -160,7 +162,7 @@ export function PersonalProfileView() {
             GLOBAL RANK
           </p>
           <p className="m-0 mt-2 font-page-title text-[28px] font-bold text-[#7C5CFC]">
-            #{user.rank || "312"}
+            {user.rank ? `#${formatNumber(user.rank)}` : "—"}
           </p>
         </div>
       </div>

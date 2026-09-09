@@ -45,7 +45,7 @@ export function DashboardView() {
             <span className="hidden lg:inline">
               Welcome back{firstName ? `, ${firstName}` : ""}.{" "}
             </span>
-            You&apos;re in the <strong className="font-bold">top 5%</strong> this season.
+            Here&apos;s where your contributions stand.
           </>
         }
         actions={

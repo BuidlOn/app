@@ -44,6 +44,11 @@ export function ActivityTimeline({
             </div>
           ))}
         </div>
+      ) : events.length === 0 ? (
+        <p className="py-6 text-[13px] text-on-surface-muted">
+          No activity yet. Claiming an issue or merging a pull request will show
+          up here.
+        </p>
       ) : (
         <ol className="flex flex-col gap-5 border-l-2 border-outline/10 pl-[18px]">
           {events.map((event) => (

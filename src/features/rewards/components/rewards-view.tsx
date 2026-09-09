@@ -35,7 +35,8 @@ export function RewardsView() {
           <div className="rounded-r-[16px] border-l-[3px] border-tertiary bg-tertiary/10 p-5">
             <div className="mb-1 text-[13px] font-bold">Reward windows</div>
             <p className="m-0 text-[12px] leading-relaxed text-on-surface-variant">
-              Claims for the active season close in 14 days. Ensure you have enough gas to complete the transaction.
+              Allocations become claimable when a season closes and rewards are
+              calculated. Keep enough gas to complete the transaction.
             </p>
           </div>
         </div>

@@ -23,7 +23,7 @@ export function StatsBand() {
               <Skeleton className="h-[40px] w-24 rounded bg-surface-variant/40 mb-2" />
             ) : (
               <div className="font-page-title text-[36px] font-bold tracking-[-0.02em] text-ink">
-                {data ? `${formatCompactNumber(data.openIssues)}+` : "1,204"}
+                {formatCompactNumber(data?.openIssues ?? 0)}
               </div>
             )}
             <div className="font-mono-label text-[12px] text-on-surface-muted mt-2">Open issues</div>
@@ -38,7 +38,7 @@ export function StatsBand() {
               <Skeleton className="h-[40px] w-32 rounded bg-surface-variant/40 mb-2" />
             ) : (
               <div className="font-page-title text-[36px] font-bold tracking-[-0.02em] text-ink">
-                {data ? formatUsd(data.rewardsPaidUsd, true) : "$2.4M"}
+                {formatUsd(data?.rewardsPaidUsd ?? 0, true)}
               </div>
             )}
             <div className="font-mono-label text-[12px] text-on-surface-muted mt-2">Rewards paid</div>
@@ -53,7 +53,7 @@ export function StatsBand() {
               <Skeleton className="h-[40px] w-24 rounded bg-surface-variant/40 mb-2" />
             ) : (
               <div className="font-page-title text-[36px] font-bold tracking-[-0.02em] text-ink">
-                {data ? formatCompactNumber(data.contributors) : "8,940"}
+                {formatCompactNumber(data?.contributors ?? 0)}
               </div>
             )}
             <div className="font-mono-label text-[12px] text-on-surface-muted mt-2">Contributors</div>

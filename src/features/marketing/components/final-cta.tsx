@@ -1,15 +1,24 @@
+"use client";
+
 import Link from "next/link";
+import { usePlatformStats } from "../hooks/use-platform-stats";
+import { formatNumber } from "@/utils/format";
 
 export function FinalCta() {
+  const { data } = usePlatformStats();
+  const contributors = data?.contributors ?? 0;
+
   return (
     <section className="px-container-padding animate-slide-up mb-[120px]">
       <div className="mx-auto max-w-[640px] text-center flex flex-col items-center">
-        <div className="flex items-center gap-2 mb-4">
-          <span className="w-1.5 h-1.5 rounded-full bg-[#00C2A8]" />
-          <span className="font-mono-label text-[10px] font-bold text-[#7C5CFC] uppercase tracking-[0.1em]">
-            8,940+ DEVELOPERS ALREADY BUILDING
-          </span>
-        </div>
+        {contributors > 0 && (
+          <div className="flex items-center gap-2 mb-4">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#00C2A8]" />
+            <span className="font-mono-label text-[10px] font-bold text-[#7C5CFC] uppercase tracking-[0.1em]">
+              {formatNumber(contributors)} developers already building
+            </span>
+          </div>
+        )}
         
         <h2 className="font-page-title text-[44px] font-bold tracking-[-0.02em] text-[#161616] mb-4">
           Ready to start <span className="relative inline-block">
