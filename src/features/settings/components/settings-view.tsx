@@ -37,7 +37,9 @@ const walletSchema = z.object({
   walletAddress: z
     .string()
     .trim()
-    .regex(/^0x[a-fA-F0-9]{40}$/, "Enter a valid EVM wallet address (0x + 40 hex chars)."),
+    .regex(/^0x[a-fA-F0-9]{40}$/, "Enter a valid EVM wallet address (0x + 40 hex chars).")
+    // An empty value is allowed so a saved address can be removed.
+    .or(z.literal("")),
 });
 type WalletForm = z.infer<typeof walletSchema>;
 
@@ -133,7 +135,7 @@ function SettingsForms({ initial }: { initial: User }) {
   );
 
   const onSubmitWallet = walletForm.handleSubmit((values) =>
-    updateWallet.mutate(values.walletAddress),
+    updateWallet.mutate(values.walletAddress.trim()),
   );
 
   return (
@@ -209,7 +211,7 @@ function SettingsForms({ initial }: { initial: User }) {
       <form onSubmit={onSubmitWallet} noValidate>
         <SectionCard
           title="Payout wallet"
-          description="Reward allocations are sent to this address. Never share your private keys."
+          description="Your rewards will be sent to this EVM address. Never share your private keys."
         >
           <FormField
             label="Wallet address"
