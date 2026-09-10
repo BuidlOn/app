@@ -235,7 +235,31 @@ export function PersonalProfileView() {
                 <p className="font-mono-label text-[12px] text-[#8a867c]">No contributions yet.</p>
               </div>
             ) : (
-              <div className="overflow-x-auto">
+              <>
+              {/* Stacked cards below md. */}
+              <ul className="flex list-none flex-col gap-2 p-4 md:hidden">
+                {profile.recentContributions.map((c) => (
+                  <li
+                    key={c.id}
+                    className="rounded-[14px] border-[1.5px] border-[#161616]/15 bg-white p-3.5"
+                  >
+                    <div className="mb-1.5 truncate font-mono-label text-[11px] text-[#46433d]">
+                      {c.repository.fullName}
+                    </div>
+                    <div className="mb-2.5 text-[13px] font-semibold leading-snug text-[#161616]">
+                      {c.issue.title}
+                    </div>
+                    <div className="flex items-center justify-between gap-3">
+                      <StatusBadge status={c.status} size="sm" />
+                      <span className="font-mono-label text-[12px] font-bold text-[#00806e]">
+                        {c.pointsAwarded ? `${c.pointsAwarded} pts` : "—"}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+
+              <div className="hidden overflow-x-auto md:block">
                 <table className="w-full table-fixed border-collapse text-left">
                   <thead>
                     <tr className="border-y border-[#161616]/10">
@@ -263,7 +287,7 @@ export function PersonalProfileView() {
                           {c.repository.fullName}
                         </td>
                         <td className="py-4 px-6 text-[12.5px] font-medium text-[#161616]">
-                          <span className="line-clamp-2">{c.issue.title || "Fix hydration mismatch in edge runtime"}</span>
+                          <span className="line-clamp-2">{c.issue.title}</span>
                         </td>
                         <td className="py-4 px-6 font-mono-label text-[11px] font-bold text-[#00806e]">
                           {c.pointsAwarded ? `${c.pointsAwarded} pts` : "—"}
@@ -276,6 +300,7 @@ export function PersonalProfileView() {
                   </tbody>
                 </table>
               </div>
+              </>
             )}
           </div>
         </div>

@@ -38,7 +38,52 @@ export function ApprovalQueue({
           </p>
         </div>
       ) : (
-        <div className="overflow-x-auto">
+        <>
+        {/* Stacked cards below md; the approve/reject controls stay reachable. */}
+        <ul className="flex list-none flex-col gap-2 p-4 md:hidden">
+          {loading || !items
+            ? Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className="h-[86px] rounded-[14px]" />
+              ))
+            : items.map((repo) => (
+                <li
+                  key={repo.id}
+                  className="rounded-[14px] border-[1.5px] border-outline/15 bg-surface p-3.5"
+                >
+                  <div className="mb-1 flex items-center gap-2">
+                    <Icon name="folder" className="text-[16px] text-outline/40" />
+                    <span className="truncate text-[13px] font-bold">{repo.name}</span>
+                  </div>
+                  <div className="mb-3 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11.5px] text-on-surface-variant">
+                    <span className="truncate">{repo.owner}</span>
+                    <span className="font-mono-label">★ {formatNumber(repo.stars)}</span>
+                    <span className="font-mono-label text-on-surface-muted">
+                      {formatRelativeTime(repo.submittedAt)}
+                    </span>
+                  </div>
+                  <div className="flex gap-2">
+                    <button
+                      type="button"
+                      disabled={pending}
+                      onClick={() => approve.mutate(repo.id)}
+                      className="flex-1 rounded-full border-[1.5px] border-primary-deep/60 bg-primary/20 py-2 font-mono-label text-[12px] font-bold text-primary-deep disabled:opacity-40"
+                    >
+                      Approve
+                    </button>
+                    <button
+                      type="button"
+                      disabled={pending}
+                      onClick={() => reject.mutate(repo.id)}
+                      className="flex-1 rounded-full border-[1.5px] border-error/40 bg-error/10 py-2 font-mono-label text-[12px] font-bold text-error disabled:opacity-40"
+                    >
+                      Reject
+                    </button>
+                  </div>
+                </li>
+              ))}
+        </ul>
+
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full table-fixed border-collapse text-left">
             <thead>
               <tr className="bg-outline/5">
@@ -119,6 +164,7 @@ export function ApprovalQueue({
             </tbody>
           </table>
         </div>
+        </>
       )}
     </Card>
   );
