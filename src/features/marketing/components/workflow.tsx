@@ -58,7 +58,7 @@ export function Workflow() {
 
       <div className="flex flex-col md:flex-row justify-center gap-12 md:gap-[32px] text-left mx-auto max-w-[1500px]">
         {STEPS.map((step) => (
-          <div key={step.index} className={`flex flex-col w-[420px] ${step.offset}`}>
+          <div key={step.index} className={`flex w-full max-w-[420px] flex-col ${step.offset}`}>
             <div className={`font-page-title text-[96px] leading-none font-bold mb-4 md:mb-0 ${step.indexColor}`}>
               {step.index}
             </div>

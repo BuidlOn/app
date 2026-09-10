@@ -32,11 +32,14 @@ const config: Config = {
         secondary: "#7C5CFC", // Violet
         "secondary-dim": "#6E51DF",
         "on-secondary": "#FAF7F2",
+        /** Darkened violet, legible as text on cream and white. */
+        "secondary-deep": "#5A00C6",
 
         tertiary: "#00C2A8", // Teal (reward)
         "on-tertiary": "#161616",
         /** Legible teal ink for tinted teal chips and point values. */
         "on-tertiary-deep": "#007A68",
+        "tertiary-deep": "#007A68",
 
         accent: "#FF5A3C", // Coral — hard difficulty / high urgency
         "on-accent-deep": "#C2491C",
