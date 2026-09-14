@@ -79,7 +79,7 @@ export function AccountMenu() {
           sideOffset={10}
           className={cn(
             "z-50 min-w-[220px] rounded-buidl-md border-[1.5px] border-outline bg-surface p-1.5",
-            "shadow-[4px_4px_0_#161616]",
+            "shadow-brutal",
             "data-[state=open]:animate-fade-in",
           )}
         >

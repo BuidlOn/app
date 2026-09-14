@@ -64,6 +64,28 @@ const config: Config = {
         /** Points / earnings figures. */
         points: "#00806E",
 
+        /** Pale accent washes used as card and row backgrounds. */
+        "primary-wash": "#FFF3D6",
+        "secondary-wash": "#F7F4FF",
+        "tertiary-wash": "#E0F9F5",
+
+        /** Accent inks legible on their own 15-25% tint, not on a solid field. */
+        "on-primary-tint": "#7A5C05",
+        "on-secondary-tint": "#3F008E",
+
+        /** Contribution heatmap intensity ramp, level 1 to 4. */
+        "heat-1": "#EDE0FF",
+        "heat-2": "#D2BBFF",
+        "heat-3": "#A882FF",
+        "heat-4": "#5A00C6",
+
+        /** Quietest text tone, below on-surface-muted. */
+        "on-surface-faint": "#A4A095",
+        /** Neutral fill for inactive track and bar segments. */
+        "surface-muted": "#E6E4DF",
+        /** Ink lifted one step, for hover on ink-filled surfaces. */
+        "ink-soft": "#2B2B2B",
+
         error: "#EF4444",
         "on-error-deep": "#B42318",
       },
@@ -118,6 +140,9 @@ const config: Config = {
         "lift-primary": "8px 8px 0 #FFC53D",
         "lift-secondary": "8px 8px 0 #7C5CFC",
         "lift-tertiary": "8px 8px 0 #00C2A8",
+        // Flat drop used by the hero CTA (no x-offset)
+        "drop-heat": "0 4px 0 #A882FF",
+        "drop-heat-sm": "0 2px 0 #A882FF",
         // Mobile frame
         frame: "0 20px 60px rgba(0,0,0,0.15)",
         none: "none",

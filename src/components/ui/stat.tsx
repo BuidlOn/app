@@ -36,7 +36,7 @@ export function StatTile({
   return (
     <div
       className={cn(
-        "rounded-buidl-lg border-2 p-6 shadow-[4px_4px_0_#161616] flex flex-col gap-1.5 transition-transform hover:-translate-y-0.5 hover:-translate-x-0.5 hover:shadow-[6px_6px_0_#161616]",
+        "rounded-buidl-lg border-2 p-6 shadow-brutal flex flex-col gap-1.5 transition-transform hover:-translate-y-0.5 hover:-translate-x-0.5 hover:shadow-brutal-hover",
         highlight ? "border-outline bg-primary" : "border-outline bg-surface",
         className,
       )}

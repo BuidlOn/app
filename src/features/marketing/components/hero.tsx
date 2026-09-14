@@ -31,13 +31,13 @@ export function Hero() {
           <div className="flex flex-col items-center justify-center gap-[16px] sm:flex-row animate-slide-up w-full sm:w-auto">
             <Link
               href="/login"
-              className="flex w-full sm:w-auto items-center justify-center rounded-full bg-[#161616] px-[32px] py-[16px] font-mono-label text-[13px] font-bold tracking-[0.03em] text-white transition-all duration-150 shadow-[0_4px_0_#A882FF] hover:translate-y-[2px] hover:shadow-[0_2px_0_#A882FF] active:translate-y-[4px] active:shadow-none"
+              className="flex w-full sm:w-auto items-center justify-center rounded-full bg-ink px-[32px] py-[16px] font-mono-label text-[13px] font-bold tracking-[0.03em] text-white transition-all duration-150 shadow-drop-heat hover:translate-y-[2px] hover:shadow-drop-heat-sm active:translate-y-[4px] active:shadow-none"
             >
               Connect GitHub
             </Link>
             <Link
               href="/issues"
-              className="group w-full sm:w-auto flex items-center justify-center gap-2 rounded-full border-[1.5px] border-[#161616] bg-white px-[32px] py-[16px] font-mono-label text-[13px] font-bold tracking-[0.03em] text-[#161616] transition-all duration-150 shadow-[0_4px_0_rgba(22,22,22,0.1)] hover:translate-y-[2px] hover:shadow-[0_2px_0_rgba(22,22,22,0.1)] active:translate-y-[4px] active:shadow-none"
+              className="group w-full sm:w-auto flex items-center justify-center gap-2 rounded-full border-[1.5px] border-outline bg-white px-[32px] py-[16px] font-mono-label text-[13px] font-bold tracking-[0.03em] text-on-surface transition-all duration-150 shadow-[0_4px_0_rgba(22,22,22,0.1)] hover:translate-y-[2px] hover:shadow-[0_2px_0_rgba(22,22,22,0.1)] active:translate-y-[4px] active:shadow-none"
             >
               Browse active issues
               <span className="transition-transform group-hover:translate-x-1">→</span>

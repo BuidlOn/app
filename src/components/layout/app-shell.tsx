@@ -19,7 +19,7 @@ function SidebarFooter({ onNavigate }: { onNavigate?: () => void }) {
       <Link
         href="/repositories/new"
         onClick={onNavigate}
-        className="flex items-center justify-center gap-2 font-mono-label text-[12.5px] font-medium bg-primary text-on-background border-2 border-outline rounded-full py-[11px] shadow-[3px_3px_0_#161616] transition-all duration-120 hover:-translate-y-0.5 hover:-translate-x-0.5 hover:shadow-[4px_4px_0_#161616] active:translate-y-0.5 active:translate-x-0.5 active:shadow-[0_0_0_#161616] w-full"
+        className="flex items-center justify-center gap-2 font-mono-label text-[12.5px] font-medium bg-primary text-on-background border-2 border-outline rounded-full py-[11px] shadow-brutal-sm transition-all duration-120 hover:-translate-y-0.5 hover:-translate-x-0.5 hover:shadow-brutal active:translate-y-0.5 active:translate-x-0.5 active:shadow-none w-full"
       >
         + New Repository
       </Link>

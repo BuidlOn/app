@@ -51,7 +51,7 @@ export function LiveTicker() {
   if (isError || (!isLoading && paid <= 0)) return null;
 
   return (
-    <div className="mx-auto mb-[120px] flex w-fit animate-slide-up flex-col items-center justify-center gap-[12px] rounded-full border-[2px] border-[#161616] bg-[#161616] px-[32px] py-[16px] sm:flex-row">
+    <div className="mx-auto mb-[120px] flex w-fit animate-slide-up flex-col items-center justify-center gap-[12px] rounded-full border-[2px] border-outline bg-ink px-[32px] py-[16px] sm:flex-row">
       <span className="h-[8px] w-[8px] flex-shrink-0 animate-pulse rounded-full bg-tertiary shadow-[0_0_0_4px_rgba(0,194,168,0.2)]" />
       <span className="font-mono-label text-[12px] tracking-[0.04em] text-white/60">
         Total rewards paid
@@ -59,7 +59,7 @@ export function LiveTicker() {
       {isLoading ? (
         <Skeleton className="h-6 w-24 rounded bg-surface-variant/20" />
       ) : (
-        <span className="font-mono-label text-[16px] font-bold text-[#FFC53D]">
+        <span className="font-mono-label text-[16px] font-bold text-primary">
           ${display.toLocaleString("en-US")}
         </span>
       )}
