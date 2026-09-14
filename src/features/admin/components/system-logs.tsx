@@ -3,9 +3,9 @@ import { Card } from "@/components/ui/card";
 import type { LogEntry, LogLevel } from "../types";
 
 const LEVEL_TONE: Record<LogLevel, string> = {
-  INFO: "text-primary-deep",
-  SUCCESS: "text-secondary-deep",
-  WARN: "text-error",
+  INFO: "text-secondary",
+  SUCCESS: "text-tertiary",
+  WARN: "text-primary",
   ERROR: "text-error",
 };
 
@@ -16,9 +16,14 @@ export function SystemLogs({ logs }: { logs: LogEntry[] }) {
         <span className="font-mono-label text-[10px] uppercase tracking-widest text-white/50">
           Live system logs
         </span>
-        <span className="h-[6px] w-[6px] animate-pulse rounded-full bg-secondary-deep" />
+        <span className="h-[6px] w-[6px] animate-pulse rounded-full bg-tertiary" />
       </div>
       <div className="flex flex-col gap-[8px] font-mono-label text-[10.5px]">
+        {logs.length === 0 && (
+          <p className="py-2 text-white/40">
+            No activity logged yet. Events appear here as the platform runs.
+          </p>
+        )}
         {logs.map((log, i) => (
           <div key={i} className="flex gap-2">
             <span className="text-white/40">{log.time}</span>

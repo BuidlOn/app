@@ -59,7 +59,8 @@ const config: Config = {
         "on-background": "#161616",
         "on-surface": "#161616",
         "on-surface-variant": "#46433D",
-        "on-surface-muted": "#8A867C",
+        /** Darkened from the mockup's #8A867C, which failed WCAG AA (3.4:1). */
+        "on-surface-muted": "#747066",
 
         /** Points / earnings figures. */
         points: "#00806E",

@@ -9,7 +9,7 @@ export const metadata = { title: "403 – Access Denied | BuidlOn" };
 export default function ForbiddenPage() {
   return (
     <main className="grid-bg flex min-h-screen flex-col items-center justify-center gap-6 px-8 text-center">
-      <p className="font-mono-label text-[11px] uppercase tracking-widest text-error">
+      <p className="font-mono-label text-[11px] uppercase tracking-widest text-on-error-deep">
         403 · Forbidden
       </p>
       <h1 className="font-page-title text-[28px] font-bold tracking-tight text-on-surface">

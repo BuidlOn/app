@@ -4,7 +4,7 @@ export function Workbench() {
   return (
     <section className="mx-auto max-w-[1400px] px-container-padding relative z-10 mb-[64px]">
       <div className="flex flex-col items-center text-center gap-[12px] mb-[64px]">
-        <div className="font-mono-label text-[11px] font-bold tracking-[0.1em] uppercase text-secondary">
+        <div className="font-mono-label text-[11px] font-bold tracking-[0.1em] uppercase text-secondary-deep">
           ENGINEERED FOR DEVS
         </div>
         <h2 className="font-page-title text-[40px] font-bold tracking-[-0.02em] text-on-surface m-0">
@@ -20,7 +20,7 @@ export function Workbench() {
         <div className="border-l-[4px] border-secondary pl-[24px]">
           <div className="flex items-center gap-3 mb-[12px]">
             <h3 className="font-page-title text-[20px] font-bold text-on-surface m-0">Repository Explorer</h3>
-            <span className="font-mono-label text-[9px] font-bold text-secondary tracking-[0.05em] uppercase">READY</span>
+            <span className="font-mono-label text-[9px] font-bold text-secondary-deep tracking-[0.05em] uppercase">READY</span>
           </div>
           <p className="font-body text-[16px] leading-[1.6] text-on-surface-variant mb-[20px]">
             Advanced filtering for decentralized protocols, SDKs, and infrastructure layers. Find your niche in seconds.
@@ -36,7 +36,7 @@ export function Workbench() {
         <div className="border-l-[4px] border-tertiary pl-[24px]">
           <div className="flex items-center gap-3 mb-[12px]">
             <h3 className="font-page-title text-[20px] font-bold text-on-surface m-0">Issue Marketplace</h3>
-            <span className="font-mono-label text-[9px] font-bold text-tertiary tracking-[0.05em] uppercase">LIVE</span>
+            <span className="font-mono-label text-[9px] font-bold text-on-tertiary-deep tracking-[0.05em] uppercase">LIVE</span>
           </div>
           <p className="font-body text-[16px] leading-[1.6] text-on-surface-variant mb-[20px]">
             Dynamic pricing based on issue difficulty and urgency. Algorithmic bounty distribution with transparent tracking.
@@ -73,7 +73,7 @@ export function Workbench() {
           <p className="font-body text-[16px] leading-[1.6] text-on-surface-variant mb-[20px]">
             Instant multi-chain settlements in USDC or protocol tokens. Zero fees for verified active contributors.
           </p>
-          <div className="font-mono-label text-[10px] text-secondary tracking-[0.05em] font-bold">
+          <div className="font-mono-label text-[10px] text-secondary-deep tracking-[0.05em] font-bold">
             TX: 0x7c3b...ed4 ✓ verified
           </div>
         </div>

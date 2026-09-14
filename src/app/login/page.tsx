@@ -73,7 +73,7 @@ export default function LoginPage() {
       </div>
 
       <p className="mt-[28px] text-center text-[12.5px] text-on-surface-muted">
-        By continuing you agree to the <Link href="#" className="text-secondary hover:underline">Terms of Service</Link> and <Link href="#" className="text-secondary hover:underline">Privacy Policy</Link>.
+        By continuing you agree to the <Link href="#" className="text-secondary-deep underline">Terms of Service</Link> and <Link href="#" className="text-secondary-deep underline">Privacy Policy</Link>.
       </p>
     </main>
   );

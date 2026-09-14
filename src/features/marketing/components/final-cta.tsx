@@ -14,7 +14,7 @@ export function FinalCta() {
         {contributors > 0 && (
           <div className="flex items-center gap-2 mb-4">
             <span className="w-1.5 h-1.5 rounded-full bg-tertiary" />
-            <span className="font-mono-label text-[10px] font-bold text-secondary uppercase tracking-[0.1em]">
+            <span className="font-mono-label text-[10px] font-bold text-secondary-deep uppercase tracking-[0.1em]">
               {formatNumber(contributors)} developers already building
             </span>
           </div>
@@ -45,7 +45,7 @@ export function FinalCta() {
             <span className="text-on-surface-faint">✕</span> No KYC
           </span>
           <span className="flex items-center gap-1.5 font-mono-label text-[11px] font-bold text-on-surface-muted">
-            <span className="text-primary">⚡</span> Instant payouts
+            <span className="text-on-primary-tint">⚡</span> Instant payouts
           </span>
           <span className="flex items-center gap-1.5 font-mono-label text-[11px] font-bold text-on-surface-muted">
             <span className="text-on-surface-faint">◇</span> Open source

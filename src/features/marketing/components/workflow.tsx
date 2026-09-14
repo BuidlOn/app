@@ -2,7 +2,7 @@
 const STEPS = [
   {
     index: "01",
-    indexColor: "text-primary", // Yellow
+    indexColor: "text-on-primary-tint", // Yellow
     title: "Discover Issues",
     body: "Browse high-impact, verified issues matching your skills.",
     offset: "mt-0",
@@ -15,7 +15,7 @@ const STEPS = [
   },
   {
     index: "02",
-    indexColor: "text-secondary", // Purple
+    indexColor: "text-secondary-deep", // Purple
     title: "Commit & Push",
     body: "Build the solution and push to the connected repository.",
     offset: "md:mt-10",
@@ -28,7 +28,7 @@ const STEPS = [
   },
   {
     index: "03",
-    indexColor: "text-tertiary", // Green
+    indexColor: "text-on-tertiary-deep", // Green
     title: "Claim Rewards",
     body: "Earn on-chain payouts immediately upon PR merge, watch the counter below tick live.",
     offset: "md:mt-20",
