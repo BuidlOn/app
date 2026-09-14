@@ -1,11 +1,15 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDate, formatNumber } from "@/utils/format";
 import { useRewards } from "../hooks/use-rewards";
-import { ClaimRewardDialog } from "./claim-reward-dialog";
+const ClaimRewardDialog = dynamic(
+  () => import("./claim-reward-dialog").then((m) => m.ClaimRewardDialog),
+  { ssr: false },
+);
 import type { Reward, RewardStatus } from "@/types/domain";
 
 import { Card } from "@/components/ui/card";

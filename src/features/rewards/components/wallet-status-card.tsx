@@ -1,10 +1,14 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { StatusPip } from "@/components/ui/status-pip";
 import { Skeleton } from "@/components/ui/skeleton";
 import { truncateHash } from "@/utils/format";
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
-import { ConnectWalletDialog } from "./connect-wallet-dialog";
+const ConnectWalletDialog = dynamic(
+  () => import("./connect-wallet-dialog").then((m) => m.ConnectWalletDialog),
+  { ssr: false },
+);
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 

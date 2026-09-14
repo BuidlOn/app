@@ -1,11 +1,15 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { PageHeader } from "@/components/layout/page-header";
 import { Button } from "@/components/ui/button";
 import { RewardsSummaryGrid } from "./rewards-summary";
 import { SeasonRewardsTable } from "./season-rewards-table";
 import { WalletStatusCard } from "./wallet-status-card";
-import { ConnectWalletDialog } from "./connect-wallet-dialog";
+const ConnectWalletDialog = dynamic(
+  () => import("./connect-wallet-dialog").then((m) => m.ConnectWalletDialog),
+  { ssr: false },
+);
 
 export function RewardsView() {
   return (

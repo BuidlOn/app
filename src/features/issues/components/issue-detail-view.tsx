@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Icon } from "@/components/ui/icon";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -10,7 +11,10 @@ import { Card } from "@/components/ui/card";
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
 import { useIssueDetail } from "../hooks/use-issue-detail";
 import { useReleaseClaim } from "../hooks/use-claim-issue";
-import { ClaimIssueDialog } from "./claim-issue-dialog";
+const ClaimIssueDialog = dynamic(
+  () => import("./claim-issue-dialog").then((m) => m.ClaimIssueDialog),
+  { ssr: false },
+);
 import { IssueDetailSidebar } from "./issue-detail-sidebar";
 import type { IssueDetail } from "../types";
 
