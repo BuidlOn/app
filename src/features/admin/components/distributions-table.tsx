@@ -3,6 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { formatUsd } from "@/utils/format";
 import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/states";
 import type { DistributionRow } from "../types";
 
 export function DistributionsTable({
@@ -12,6 +13,8 @@ export function DistributionsTable({
   rows?: DistributionRow[];
   loading: boolean;
 }) {
+  const empty = !loading && rows && rows.length === 0;
+
   return (
     <Card className="overflow-hidden">
       <div className="flex items-center justify-between border-b-[1.5px] border-outline/10 px-[24px] py-[18px]">
@@ -21,6 +24,15 @@ export function DistributionsTable({
         </h3>
       </div>
         {/* Stacked cards below md. */}
+        {empty ? (
+          <EmptyState
+            inCard
+            icon="card"
+            title="No distributions yet"
+            body="Reward payouts appear here once a season closes and allocations are sent."
+          />
+        ) : (
+        <>
         <ul className="flex list-none flex-col gap-2 p-4 md:hidden">
           {loading || !rows
             ? Array.from({ length: 3 }).map((_, i) => (
@@ -122,6 +134,8 @@ export function DistributionsTable({
           </tbody>
         </table>
       </div>
+        </>
+        )}
     </Card>
   );
 }
