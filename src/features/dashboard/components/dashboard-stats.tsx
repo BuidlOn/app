@@ -15,7 +15,7 @@ export function DashboardStats({
         ? Array.from({ length: 4 }).map((_, i) => (
             <div
               key={i}
-              className="rounded-buidl-lg border-2 border-outline bg-surface p-6 shadow-[4px_4px_0_#161616] flex flex-col gap-1.5"
+              className="rounded-buidl-lg border-2 border-outline bg-surface p-6 shadow-brutal flex flex-col gap-1.5"
             >
               <Skeleton className="mb-1 h-4 w-24" />
               <Skeleton className="h-8 w-20" />

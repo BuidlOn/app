@@ -12,7 +12,13 @@ import { NextRequest, NextResponse } from "next/server";
  *  - Token present but signature invalid / expired → redirect to /login
  */
 
-const JWT_SECRET = process.env.JWT_SECRET ?? "dev-jwt-secret-change-in-production";
+/**
+ * Must match the backend's signing secret. There is deliberately no fallback:
+ * a default committed to this repo would be public, so an unset value fails
+ * closed (nobody reaches /admin) rather than open (anyone can mint a token
+ * signed with the known default and render the console shell).
+ */
+const JWT_SECRET = process.env.JWT_SECRET;
 
 /** Decode a base64url string into a Uint8Array (Edge-safe). */
 function base64urlDecode(str: string): Uint8Array {
@@ -27,6 +33,13 @@ function base64urlDecode(str: string): Uint8Array {
  * Returns the decoded payload on success, null on any failure.
  */
 async function verifyJwt(token: string): Promise<{ sub: string; role: string; exp: number } | null> {
+  if (!JWT_SECRET) {
+    console.error(
+      "[middleware] JWT_SECRET is not set — refusing all /admin access. " +
+        "Set it to the backend's signing secret in the deployment environment.",
+    );
+    return null;
+  }
   try {
     const parts = token.split(".");
     if (parts.length !== 3) return null;

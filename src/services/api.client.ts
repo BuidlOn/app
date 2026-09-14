@@ -2,13 +2,6 @@ import type { ApiResponse } from "@/types/api";
 
 export const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "";
 
-/**
- * Mocks are used when explicitly enabled or when no backend URL is configured.
- * This lets the frontend be developed independently of the backend.
- */
-export const USE_MOCKS =
-  process.env.NEXT_PUBLIC_USE_MOCKS === "true" || API_BASE_URL === "";
-
 export class ApiError extends Error {
   constructor(
     message: string,
@@ -28,6 +21,15 @@ interface RequestOptions extends Omit<RequestInit, "body"> {
 }
 
 function buildUrl(path: string, params?: RequestOptions["params"]) {
+  if (!API_BASE_URL) {
+    // Without this the URL constructor throws a bare "Invalid URL", which is
+    // impossible to trace back to a missing deployment variable.
+    throw new ApiError(
+      "NEXT_PUBLIC_API_BASE_URL is not set, so the app cannot reach the API.",
+      0,
+    );
+  }
+
   // Using `new URL(relativePath, base)` drops any path segments that exist on
   // the base (e.g. `new URL("issues", "https://api.example.com/v1/")` resolves
   // to `https://api.example.com/issues`, silently losing `/v1`). Instead we
@@ -48,6 +50,11 @@ function buildUrl(path: string, params?: RequestOptions["params"]) {
 
 const ACCESS_KEY = "buidlon.accessToken";
 const REFRESH_KEY = "buidlon.refreshToken";
+
+/** True when a session token is stored. Used to avoid guaranteed-401 fetches. */
+export function hasStoredSession(): boolean {
+  return getAccessToken() !== null;
+}
 
 function getAccessToken(): string | null {
   return typeof window !== "undefined"
@@ -160,9 +167,4 @@ export async function apiRequest<T>(
   }
 
   return payload.data;
-}
-
-/** Small helper to simulate network latency for the mock layer. */
-export function mockDelay<T>(data: T, ms = 400): Promise<T> {
-  return new Promise((resolve) => setTimeout(() => resolve(data), ms));
 }

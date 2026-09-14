@@ -155,7 +155,7 @@ export function InstallationRepoPicker({
                   disabled={repo.registered}
                   checked={repo.registered || selected.has(repo.fullName)}
                   onChange={() => toggle(repo.fullName)}
-                  className="h-[18px] w-[18px] shrink-0 accent-[#161616]"
+                  className="h-[18px] w-[18px] shrink-0 accent-ink"
                 />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-[14px] font-semibold text-on-surface">

@@ -9,7 +9,6 @@ import { DistributionsTable } from "./distributions-table";
 import { ActiveSeasonCard } from "./active-season-card";
 import { CreateSeasonForm } from "./create-season-form";
 import { SystemLogs } from "./system-logs";
-import { TREASURY_USD } from "../api/admin.api";
 
 export function AdminView() {
   const { data, isLoading, isError, refetch } = useAdminOverview();
@@ -63,7 +62,7 @@ export function AdminView() {
           ) : (
             <ActiveSeasonCard data={data.activeSeason} />
           )}
-          <CreateSeasonForm treasuryUsd={data?.treasuryUsd ?? TREASURY_USD} />
+          <CreateSeasonForm treasuryUsd={data?.treasuryUsd ?? 0} />
           {data && <SystemLogs logs={data.logs} />}
         </aside>
       </div>

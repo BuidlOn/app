@@ -3,6 +3,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { formatUsd } from "@/utils/format";
 import { Card } from "@/components/ui/card";
+import { EmptyState } from "@/components/ui/states";
 import type { DistributionRow } from "../types";
 
 export function DistributionsTable({
@@ -12,6 +13,8 @@ export function DistributionsTable({
   rows?: DistributionRow[];
   loading: boolean;
 }) {
+  const empty = !loading && rows && rows.length === 0;
+
   return (
     <Card className="overflow-hidden">
       <div className="flex items-center justify-between border-b-[1.5px] border-outline/10 px-[24px] py-[18px]">
@@ -20,7 +23,53 @@ export function DistributionsTable({
           Recent reward distributions
         </h3>
       </div>
-      <div className="overflow-x-auto">
+        {/* Stacked cards below md. */}
+        {empty ? (
+          <EmptyState
+            inCard
+            icon="card"
+            title="No distributions yet"
+            body="Reward payouts appear here once a season closes and allocations are sent."
+          />
+        ) : (
+        <>
+        <ul className="flex list-none flex-col gap-2 p-4 md:hidden">
+          {loading || !rows
+            ? Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className="h-[76px] rounded-[14px]" />
+              ))
+            : rows.map((row) => (
+                <li
+                  key={row.id}
+                  className="rounded-[14px] border-[1.5px] border-outline/15 bg-surface p-3.5"
+                >
+                  <div className="mb-2 flex items-start justify-between gap-3">
+                    <span className="truncate text-[12.5px] font-semibold">
+                      {row.recipient}
+                    </span>
+                    <span className="shrink-0 font-mono-label text-[12px] font-bold">
+                      {formatUsd(row.amountUsd)}
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between gap-3">
+                    <span className="truncate text-[11.5px] text-on-surface-variant">
+                      {row.seasonName}
+                    </span>
+                    <span
+                      className={`shrink-0 rounded-full border px-2 py-[2px] font-mono-label text-[10px] font-bold ${
+                        row.status === "PAID"
+                          ? "border-tertiary-deep/60 text-tertiary-deep"
+                          : "border-outline/20 text-on-surface-muted"
+                      }`}
+                    >
+                      {row.status}
+                    </span>
+                  </div>
+                </li>
+              ))}
+        </ul>
+
+      <div className="hidden overflow-x-auto md:block">
         <table className="w-full table-fixed border-collapse text-left">
           <thead>
             <tr className="bg-outline/5">
@@ -85,6 +134,8 @@ export function DistributionsTable({
           </tbody>
         </table>
       </div>
+        </>
+        )}
     </Card>
   );
 }

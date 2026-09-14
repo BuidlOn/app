@@ -1,6 +1,6 @@
 import type { IssueDifficulty } from "@/types/domain";
 
-export const DIFFICULTIES: IssueDifficulty[] = [
+export const DIFFICULTIES = [
   "Good First Issue",
   "Documentation",
   "Bug Fix",
@@ -8,7 +8,7 @@ export const DIFFICULTIES: IssueDifficulty[] = [
   "Critical Bug",
   "Security",
   "Architecture",
-];
+] as const satisfies readonly IssueDifficulty[];
 
 export const LANGUAGES = [
   "Rust",

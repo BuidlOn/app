@@ -24,13 +24,13 @@ const cardVariants = cva("rounded-buidl-lg bg-surface", {
     /** Accent offset shadow revealed on hover, with a small rise. */
     lift: {
       none: "",
-      ink: "transition-[transform,box-shadow] duration-150 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[4px_4px_0_#161616]",
+      ink: "transition-[transform,box-shadow] duration-150 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-brutal",
       primary:
-        "transition-[transform,box-shadow] duration-150 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[4px_4px_0_#FFC53D]",
+        "transition-[transform,box-shadow] duration-150 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-brutal-primary",
       secondary:
-        "transition-[transform,box-shadow] duration-150 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[4px_4px_0_#7C5CFC]",
+        "transition-[transform,box-shadow] duration-150 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-brutal-secondary",
       tertiary:
-        "transition-[transform,box-shadow] duration-150 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-[4px_4px_0_#00C2A8]",
+        "transition-[transform,box-shadow] duration-150 hover:-translate-y-1 hover:-translate-x-1 hover:shadow-brutal-tertiary",
     },
     /** Static accent offset shadow (no hover needed). */
     shadow: {

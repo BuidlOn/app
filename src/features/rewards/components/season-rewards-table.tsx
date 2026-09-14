@@ -1,11 +1,15 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useState } from "react";
 import { Icon } from "@/components/ui/icon";
 import { Skeleton } from "@/components/ui/skeleton";
 import { formatDate, formatNumber } from "@/utils/format";
 import { useRewards } from "../hooks/use-rewards";
-import { ClaimRewardDialog } from "./claim-reward-dialog";
+const ClaimRewardDialog = dynamic(
+  () => import("./claim-reward-dialog").then((m) => m.ClaimRewardDialog),
+  { ssr: false },
+);
 import type { Reward, RewardStatus } from "@/types/domain";
 
 import { Card } from "@/components/ui/card";
@@ -40,6 +44,49 @@ function RowAction({ reward, onClaim }: { reward: Reward; onClaim: (r: Reward) =
     return null; // The link icon is rendered separately in the row
   }
   return <span className="text-[14px] text-on-surface-muted">⏱</span>;
+}
+
+/** Mobile row: season and status on the left, amount and action on the right. */
+function RewardCard({
+  reward,
+  onClaim,
+}: {
+  reward: Reward;
+  onClaim: (r: Reward) => void;
+}) {
+  const meta = STATUS_META[reward.status];
+  return (
+    <li className="flex items-center justify-between gap-3 rounded-[14px] border-[1.5px] border-outline/15 bg-surface p-3.5">
+      <div className="min-w-0">
+        <div className="mb-1 truncate text-[13.5px] font-bold">{reward.season.name}</div>
+        <span
+          className={`rounded-full px-2 py-[3px] text-[10px] font-bold ${meta.bg} ${meta.text}`}
+        >
+          {meta.label}
+        </span>
+      </div>
+      <div className="shrink-0 text-right">
+        <div className="font-mono-label text-[13px] font-bold">
+          {reward.amountUsd > 0 ? `$${formatNumber(reward.amountUsd)}` : "--"}
+        </div>
+        {reward.status === "Ready" ? (
+          <button
+            type="button"
+            onClick={() => onClaim(reward)}
+            className="text-[11px] font-bold text-secondary"
+          >
+            Claim →
+          </button>
+        ) : (
+          <span className="font-mono-label text-[10.5px] text-on-surface-muted">
+            {reward.status === "Pending" || reward.status === "Validated"
+              ? "Pending"
+              : formatDate(reward.createdAt)}
+          </span>
+        )}
+      </div>
+    </li>
+  );
 }
 
 export function SeasonRewardsTable() {
@@ -89,7 +136,19 @@ export function SeasonRewardsTable() {
           </p>
         </div>
       ) : (
-        <div className="overflow-x-auto">
+        <>
+        {/* Five columns will not fit a phone; stack them as cards below md. */}
+        <ul className="flex list-none flex-col gap-2 p-4 md:hidden">
+          {isLoading || !data
+            ? Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} className="h-[70px] rounded-[14px]" />
+              ))
+            : data.map((reward) => (
+                <RewardCard key={reward.id} reward={reward} onClaim={openClaim} />
+              ))}
+        </ul>
+
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full table-fixed border-collapse text-left">
             <thead>
               <tr className="bg-outline/5">
@@ -178,6 +237,7 @@ export function SeasonRewardsTable() {
             </tbody>
           </table>
         </div>
+        </>
       )}
 
       <ClaimRewardDialog reward={selected} open={open} onOpenChange={setOpen} />

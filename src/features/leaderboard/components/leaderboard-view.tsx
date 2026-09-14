@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { Pagination } from "@/components/ui/pagination";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -8,6 +9,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Glyph } from "@/components/ui/icons";
 import { Label, Select } from "@/components/ui/input";
+import { EmptyState, ErrorState } from "@/components/ui/states";
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
 import {
   useLeaderboard,
@@ -18,7 +20,12 @@ import { StandingsTable } from "./standings-table";
 
 export function LeaderboardView() {
   const { data: user } = useCurrentUser();
-  const { data: seasons, isLoading: seasonsLoading } = useSeasons();
+  const {
+    data: seasons,
+    isLoading: seasonsLoading,
+    isError: seasonsError,
+    refetch: refetchSeasons,
+  } = useSeasons();
   const [seasonId, setSeasonId] = useState<string>("");
   const [page, setPage] = useState(1);
 
@@ -29,6 +36,10 @@ export function LeaderboardView() {
     seasonId: activeSeasonId,
     page,
   });
+
+  // Standings are keyed by season. With no season there is nothing to request,
+  // so the query stays disabled — that is an answer, not a pending load.
+  const noSeasons = !seasonsLoading && !seasonsError && (seasons?.length ?? 0) === 0;
 
   const rangeStart = data ? (data.page - 1) * data.limit + 1 : 0;
   const rangeEnd = data ? Math.min(data.page * data.limit, data.total) : 0;
@@ -43,8 +54,12 @@ export function LeaderboardView() {
             <Label htmlFor="season-select" className="mb-2 block">
               Active season
             </Label>
-            {seasonsLoading || !seasons ? (
+            {seasonsLoading ? (
               <Skeleton className="h-10 w-full" />
+            ) : !seasons || seasons.length === 0 ? (
+              <p className="rounded-full border-[1.5px] border-outline/15 px-4 py-2.5 text-center font-mono-label text-[12px] text-on-surface-muted">
+                No seasons yet
+              </p>
             ) : (
               <div className="relative">
                 <Select
@@ -74,31 +89,43 @@ export function LeaderboardView() {
         }
       />
 
-      <YourRankingCard seasonId={activeSeasonId} />
+      {activeSeasonId && <YourRankingCard seasonId={activeSeasonId} />}
 
       <Card as="section" className="overflow-hidden">
         <div className="border-b-[1.5px] border-outline/10 px-6 py-5">
           <h2 className="font-page-title text-[17px] font-bold">Global standings</h2>
         </div>
 
-        {isError ? (
-          <div className="p-12 text-center">
-            <Glyph name="shield" size={36} className="mb-4 text-error" />
-            <p className="mb-6 font-page-title text-[19px] font-bold text-on-surface">
-              Failed to load standings.
-            </p>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => refetch()}
-            >
-              Retry
-            </Button>
-          </div>
+        {seasonsError ? (
+          <ErrorState
+            inCard
+            title="Couldn't load seasons"
+            body="The season list didn't come back, so standings can't be shown."
+            onRetry={() => refetchSeasons()}
+          />
+        ) : isError ? (
+          <ErrorState
+            inCard
+            title="Couldn't load standings"
+            body="The leaderboard didn't respond. Check your connection and try again."
+            onRetry={() => refetch()}
+          />
+        ) : noSeasons ? (
+          <EmptyState
+            inCard
+            icon="calendar"
+            title="No season is running"
+            body="Standings open once an admin starts a season. Until then there is nothing to rank."
+            action={
+              <Button asChild size="sm">
+                <Link href="/issues">Browse open issues</Link>
+              </Button>
+            }
+          />
         ) : (
           <StandingsTable
             entries={data?.items}
-            loading={isLoading}
+            loading={seasonsLoading || isLoading}
             currentUsername={user?.githubUsername}
           />
         )}

@@ -1,6 +1,7 @@
 "use client";
 
 import { Skeleton } from "@/components/ui/skeleton";
+import { ErrorState } from "@/components/ui/states";
 import { formatNumber } from "@/utils/format";
 import { useRewardsSummary, useClaimAllRewards } from "../hooks/use-rewards";
 
@@ -8,9 +9,20 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 
 export function RewardsSummaryGrid() {
-  const { data, isLoading } = useRewardsSummary();
+  const { data, isLoading, isError, refetch } = useRewardsSummary();
   const claimAll = useClaimAllRewards();
   const hasUnclaimed = (data?.unclaimedUsd ?? 0) > 0;
+
+  // A failed summary must not sit on skeletons forever pretending to load.
+  if (isError) {
+    return (
+      <ErrorState
+        title="Couldn't load your earnings"
+        body="The rewards summary didn't come back. Your allocations are safe."
+        onRetry={() => refetch()}
+      />
+    );
+  }
 
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-3">

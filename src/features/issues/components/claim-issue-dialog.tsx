@@ -43,7 +43,7 @@ export function ClaimIssueDialog({ issue }: { issue: IssueDetail }) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button className="flex items-center gap-[8px] rounded-[12px] bg-[#161616] px-[24px] py-[10px] font-mono-label text-[13px] font-bold text-white transition-colors hover:bg-black/80">
+        <button className="flex items-center gap-[8px] rounded-[12px] bg-ink px-[24px] py-[10px] font-mono-label text-[13px] font-bold text-white transition-colors hover:bg-black/80">
           Apply for issue
           <Icon name="bolt" className="text-[16px]" filled />
         </button>
@@ -80,7 +80,7 @@ export function ClaimIssueDialog({ issue }: { issue: IssueDetail }) {
           <button
             type="button"
             onClick={() => setOpen(false)}
-            className="flex-1 rounded-[12px] border border-[#161616]/20 bg-white py-[12px] font-mono-label text-[13px] font-bold text-[#161616] transition-colors hover:bg-[#161616]/5"
+            className="flex-1 rounded-[12px] border border-outline/20 bg-white py-[12px] font-mono-label text-[13px] font-bold text-on-surface transition-colors hover:bg-ink/5"
           >
             Cancel
           </button>
@@ -88,7 +88,7 @@ export function ClaimIssueDialog({ issue }: { issue: IssueDetail }) {
             type="button"
             onClick={handleClaim}
             disabled={claim.isPending}
-            className="flex-1 rounded-[12px] bg-[#161616] py-[12px] font-mono-label text-[13px] font-bold text-white transition-colors hover:bg-black/80 disabled:opacity-60"
+            className="flex-1 rounded-[12px] bg-ink py-[12px] font-mono-label text-[13px] font-bold text-white transition-colors hover:bg-black/80 disabled:opacity-60"
           >
             {claim.isPending ? "Applying..." : "Agree & apply"}
           </button>

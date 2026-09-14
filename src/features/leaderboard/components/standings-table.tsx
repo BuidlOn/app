@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { Icon } from "@/components/ui/icon";
 import { Avatar } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatNumber } from "@/utils/format";
+import { Button } from "@/components/ui/button";
+import { EmptyState } from "@/components/ui/states";
+import { formatCompactNumber, formatNumber } from "@/utils/format";
 import { RankTrendIndicator } from "./rank-trend";
 import type { LeaderboardEntry } from "@/types/domain";
 
@@ -119,6 +120,57 @@ function SkeletonRow() {
   );
 }
 
+function StandingCard({
+  entry,
+  isMe,
+}: {
+  entry: LeaderboardEntry;
+  isMe: boolean;
+}) {
+  return (
+    <li
+      className={cn(
+        "flex items-center gap-3 rounded-[14px] border-[1.5px] px-3.5 py-3",
+        isMe ? "border-outline bg-secondary/[0.08]" : "border-outline/15 bg-surface",
+      )}
+    >
+      <span
+        className={cn(
+          "w-5 shrink-0 font-mono-label text-[13px] font-bold",
+          isMe && "text-secondary",
+        )}
+      >
+        {String(entry.rank).padStart(2, "0")}
+      </span>
+      <Avatar
+        src={entry.user.avatarUrl}
+        alt={entry.user.name ?? entry.user.githubUsername}
+        size={32}
+      />
+      <div className="min-w-0 flex-1">
+        <Link
+          href={`/u/${entry.user.githubUsername}`}
+          className={cn("block truncate text-[13px] font-bold", isMe && "text-secondary")}
+        >
+          {entry.user.githubUsername}
+          {isMe && " · YOU"}
+        </Link>
+        <p className="truncate text-[10.5px] text-on-surface-muted">
+          {entry.user.reputationLevel}
+        </p>
+      </div>
+      <span
+        className={cn(
+          "shrink-0 font-mono-label text-[12px] font-bold",
+          isMe && "text-secondary",
+        )}
+      >
+        {formatCompactNumber(entry.points)}
+      </span>
+    </li>
+  );
+}
+
 export function StandingsTable({
   entries,
   loading,
@@ -128,8 +180,45 @@ export function StandingsTable({
   loading: boolean;
   currentUsername?: string;
 }) {
+  // A finished query with zero rows is a real answer, not a loading state.
+  if (!loading && entries && entries.length === 0) {
+    return (
+      <EmptyState
+        inCard
+        icon="leaderboard"
+        title="No standings yet"
+        body="Nobody has scored points in this season so far. Merge a pull request and you will be the first on the board."
+        action={
+          <Button asChild size="sm">
+            <Link href="/issues">Browse open issues</Link>
+          </Button>
+        }
+      />
+    );
+  }
+
   return (
-    <div className="overflow-x-auto">
+    <>
+      {/* Below md a five-column table cannot breathe; stack it as cards. */}
+      <div className="flex flex-col gap-2 p-4 md:hidden">
+        {loading || !entries ? (
+          Array.from({ length: 6 }).map((_, i) => (
+            <Skeleton key={i} className="h-[58px] rounded-[14px]" />
+          ))
+        ) : (
+          <ul className="flex list-none flex-col gap-2 p-0">
+            {entries.map((entry) => (
+              <StandingCard
+                key={entry.user.id}
+                entry={entry}
+                isMe={entry.user.githubUsername === currentUsername}
+              />
+            ))}
+          </ul>
+        )}
+      </div>
+
+      <div className="hidden overflow-x-auto md:block">
       <table className="w-full border-collapse text-left">
         <thead>
           <tr className="bg-outline/5">
@@ -158,6 +247,7 @@ export function StandingsTable({
               ))}
         </tbody>
       </table>
-    </div>
+      </div>
+    </>
   );
 }

@@ -34,7 +34,31 @@ export function RecentContributions({
           </p>
         </div>
       ) : (
-        <div className="overflow-x-auto">
+        <>
+        {/* Stacked cards below md; four columns cannot fit a phone. */}
+        <ul className="flex list-none flex-col gap-2 p-4 md:hidden">
+          {contributions.map((c) => (
+            <li
+              key={c.id}
+              className="rounded-[14px] border-[1.5px] border-outline/15 bg-surface p-3.5"
+            >
+              <div className="mb-1.5 truncate font-mono-label text-[11px] text-on-surface-muted">
+                {c.repository.fullName}
+              </div>
+              <div className="mb-2.5 text-[13.5px] font-semibold leading-snug text-on-surface">
+                {c.issue.title}
+              </div>
+              <div className="flex items-center justify-between gap-3">
+                <StatusBadge status={c.status} size="sm" />
+                <span className="font-mono-label text-[12.5px] font-bold text-primary-deep">
+                  {c.pointsAwarded ? `${c.pointsAwarded} pts` : "—"}
+                </span>
+              </div>
+            </li>
+          ))}
+        </ul>
+
+        <div className="hidden overflow-x-auto md:block">
           <table className="w-full table-fixed border-collapse text-left">
             <thead>
               <tr className="bg-outline/5">
@@ -75,6 +99,7 @@ export function RecentContributions({
             </tbody>
           </table>
         </div>
+        </>
       )}
     </Card>
   );

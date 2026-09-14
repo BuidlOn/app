@@ -30,11 +30,11 @@ export default function AuthCallbackPage() {
   }, [router]);
 
   return (
-    <main className="grid-bg flex min-h-screen flex-col items-center justify-center gap-4 px-container-padding">
-      <p className="font-mono-label text-mono-label uppercase tracking-widest text-primary-fixed">
+    <main className="flex min-h-screen flex-col items-center justify-center gap-3 bg-background px-6">
+      <p className="font-mono-label text-[11px] uppercase tracking-[0.1em] text-on-surface-muted">
         Authentication
       </p>
-      <p className="font-body text-on-surface-variant">Signing you in…</p>
+      <p className="font-page-title text-[19px] font-bold text-on-surface">Signing you in…</p>
     </main>
   );
 }

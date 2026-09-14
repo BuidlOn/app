@@ -3,34 +3,45 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { cn } from "@/lib/utils";
-import { Icon } from "@/components/ui/icon";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Glyph } from "@/components/ui/icons";
+import { Input, Textarea } from "@/components/ui/input";
+import { FormField } from "@/components/ui/form-field";
+import { Skeleton } from "@/components/ui/skeleton";
+import { PageHeader } from "@/components/layout/page-header";
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
 import { useUpdateProfile, useUpdateWallet } from "../hooks/use-settings";
+import type { User } from "@/types/domain";
 
-const labelClass = "mb-2 block font-mono-label text-[10.5px] uppercase tracking-widest text-on-surface-muted";
-const fieldClass =
-  "w-full border-[1.5px] border-outline/15 bg-white px-[14px] py-[10px] text-[13.5px] text-on-surface outline-none transition-colors placeholder:text-outline-variant focus:border-primary";
+/** Accepts bare hosts ("yoursite.dev") as well as full URLs. */
+const WEBSITE_PATTERN = /^(https?:\/\/)?[\w-]+(\.[\w-]+)+(\/\S*)?$/;
 
 const profileSchema = z.object({
-  name: z.string().max(80).optional(),
-  bio: z.string().max(280, "Bio must be 280 characters or fewer.").optional(),
-  country: z.string().max(60).optional(),
-  website: z.string().max(120).optional(),
-  skills: z.string().optional(),
+  name: z.string().trim().max(80, "Display name must be 80 characters or fewer."),
+  bio: z.string().trim().max(280, "Bio must be 280 characters or fewer."),
+  country: z.string().trim().max(60, "Country must be 60 characters or fewer."),
+  website: z
+    .string()
+    .trim()
+    .max(120, "Website must be 120 characters or fewer.")
+    .refine(
+      (value) => value === "" || WEBSITE_PATTERN.test(value),
+      "Enter a valid website, e.g. yoursite.dev",
+    ),
+  skills: z.string().trim().max(200, "Keep the skills list under 200 characters."),
 });
 type ProfileForm = z.infer<typeof profileSchema>;
 
 const walletSchema = z.object({
   walletAddress: z
     .string()
-    .regex(/^0x[a-fA-F0-9]{40}$/, "Invalid EVM wallet address")
+    .trim()
+    .regex(/^0x[a-fA-F0-9]{40}$/, "Enter a valid EVM wallet address (0x + 40 hex chars).")
+    // An empty value is allowed so a saved address can be removed.
     .or(z.literal("")),
 });
 type WalletForm = z.infer<typeof walletSchema>;
-
 
 function SectionCard({
   title,
@@ -43,40 +54,50 @@ function SectionCard({
 }) {
   return (
     <Card className="overflow-hidden">
-      <div className="border-b-[1.5px] border-outline/10 px-[28px] py-[20px]">
-        <h3 className="m-0 font-page-title text-[17px] font-bold text-on-surface">
-          {title}
-        </h3>
-        <p className="m-0 mt-1 text-[13px] text-on-surface-variant">
-          {description}
-        </p>
+      <div className="border-b-[1.5px] border-outline/10 px-6 py-5 sm:px-7">
+        <h2 className="font-page-title text-[17px] font-bold text-on-surface">{title}</h2>
+        <p className="mt-1 text-[13px] text-on-surface-variant">{description}</p>
       </div>
-      <div className="p-[28px]">{children}</div>
+      <div className="p-6 sm:p-7">{children}</div>
     </Card>
   );
 }
 
 export function SettingsView() {
-  const { data: user, isLoading } = useCurrentUser();
+  const { data: user, isLoading, isError, refetch } = useCurrentUser();
 
-  if (isLoading || !user) {
+  if (isLoading) {
     return (
-      <div className="mx-auto flex max-w-[720px] flex-col gap-8 p-4 sm:p-container-padding">
+      <div className="mx-auto flex max-w-[720px] flex-col gap-8">
         <Skeleton className="h-10 w-48" />
-        <Skeleton className="h-[400px] w-full rounded-[20px]" />
-        <Skeleton className="h-[200px] w-full rounded-[20px]" />
+        <Skeleton className="h-[420px] w-full rounded-buidl-lg" />
+        <Skeleton className="h-[220px] w-full rounded-buidl-lg" />
       </div>
     );
   }
 
+  if (isError || !user) {
+    return (
+      <Card className="mx-auto flex max-w-md flex-col items-center gap-4 p-10 text-center">
+        <Glyph name="shield" size={32} className="text-on-surface-muted" />
+        <div>
+          <h2 className="font-page-title text-[19px] font-bold">Couldn&apos;t load settings</h2>
+          <p className="mt-1 text-[13.5px] text-on-surface-variant">
+            We couldn&apos;t reach your account. Check your connection and try again.
+          </p>
+        </div>
+        <Button type="button" variant="secondary" size="sm" onClick={() => refetch()}>
+          Retry
+        </Button>
+      </Card>
+    );
+  }
+
+  // Remount on identity change so defaultValues re-seed from the fresh user.
   return <SettingsForms key={user.id} initial={user} />;
 }
 
-function SettingsForms({
-  initial,
-}: {
-  initial: NonNullable<ReturnType<typeof useCurrentUser>["data"]>;
-}) {
+function SettingsForms({ initial }: { initial: User }) {
   const updateProfile = useUpdateProfile();
   const updateWallet = useUpdateWallet();
 
@@ -93,137 +114,134 @@ function SettingsForms({
 
   const walletForm = useForm<WalletForm>({
     resolver: zodResolver(walletSchema),
-    defaultValues: {
-      walletAddress: initial.walletAddress ?? "",
-    },
+    defaultValues: { walletAddress: initial.walletAddress ?? "" },
   });
 
-  const onSubmitProfile = profileForm.handleSubmit((values) => {
+  const profileErrors = profileForm.formState.errors;
+  const walletErrors = walletForm.formState.errors;
+
+  const onSubmitProfile = profileForm.handleSubmit((values) =>
     updateProfile.mutate({
-      name: values.name?.trim() || null,
-      bio: values.bio?.trim() || null,
-      country: values.country?.trim() || null,
-      website: values.website?.trim() || null,
-      skills: (values.skills ?? "")
+      // Empty means "clear it": the backend treats null as a removal.
+      name: values.name || null,
+      bio: values.bio || null,
+      country: values.country || null,
+      website: values.website || null,
+      skills: values.skills
         .split(",")
         .map((s) => s.trim())
         .filter(Boolean),
-    });
-  });
+    }),
+  );
 
-  const onSubmitWallet = walletForm.handleSubmit((values) => {
-    updateWallet.mutate(values.walletAddress.trim());
-  });
+  const onSubmitWallet = walletForm.handleSubmit((values) =>
+    updateWallet.mutate(values.walletAddress.trim()),
+  );
 
   return (
-    <div className="mx-auto max-w-[720px] p-4 sm:p-container-padding">
-      <div className="mb-8">
-        <h1 className="m-0 font-page-title text-[32px] font-bold tracking-tight text-on-surface">
-          Settings
-        </h1>
-        <p className="m-0 mt-2 text-[15px] text-on-surface-variant">
-          Manage your public profile and payout wallet.
-        </p>
-      </div>
+    <div className="mx-auto flex max-w-[720px] flex-col gap-6">
+      <PageHeader
+        title="Settings"
+        description="Manage your public profile and payout wallet."
+      />
 
-      <div className="flex flex-col gap-6">
-        <form onSubmit={onSubmitProfile} noValidate>
-          <SectionCard
-            title="Profile"
-            description="This information appears on your public contributor profile."
-          >
-            <div className="flex flex-col gap-[18px]">
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <label htmlFor="name" className={labelClass}>Display name</label>
-                  <input id="name" className={cn(fieldClass, "rounded-[12px]")} {...profileForm.register("name")} />
-                </div>
-                <div>
-                  <label htmlFor="country" className={labelClass}>Country</label>
-                  <input id="country" className={cn(fieldClass, "rounded-[12px]")} {...profileForm.register("country")} />
-                </div>
-              </div>
-              <div>
-                <label htmlFor="website" className={labelClass}>Website</label>
-                <input id="website" placeholder="yoursite.dev" className={cn(fieldClass, "rounded-[12px]")} {...profileForm.register("website")} />
-              </div>
-              <div>
-                <label htmlFor="bio" className={labelClass}>Bio</label>
-                <textarea
-                  id="bio"
-                  rows={3}
-                  className={cn(fieldClass, "resize-none rounded-[12px]", profileForm.formState.errors.bio ? "border-error focus:border-error" : "")}
-                  {...profileForm.register("bio")}
+      <form onSubmit={onSubmitProfile} noValidate>
+        <SectionCard
+          title="Profile"
+          description="This information appears on your public contributor profile."
+        >
+          <div className="flex flex-col gap-[18px]">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <FormField label="Display name" error={profileErrors.name?.message}>
+                {(field) => <Input {...field} {...profileForm.register("name")} />}
+              </FormField>
+
+              <FormField label="Country" error={profileErrors.country?.message}>
+                {(field) => <Input {...field} {...profileForm.register("country")} />}
+              </FormField>
+            </div>
+
+            <FormField
+              label="Website"
+              error={profileErrors.website?.message}
+              hint="Shown on your public profile."
+            >
+              {(field) => (
+                <Input
+                  {...field}
+                  placeholder="yoursite.dev"
+                  {...profileForm.register("website")}
                 />
-                {profileForm.formState.errors.bio && (
-                  <p className="mt-1.5 font-mono-label text-[10.5px] uppercase text-error">
-                    {profileForm.formState.errors.bio.message}
-                  </p>
-                )}
-              </div>
-              <div>
-                <label htmlFor="skills" className={labelClass}>Skills</label>
-                <input id="skills" placeholder="Rust, Solidity, TypeScript" className={cn(fieldClass, "rounded-[12px]")} {...profileForm.register("skills")} />
-              </div>
-              <div className="mt-2 flex justify-end">
-                <button
-                  type="submit"
-                  disabled={updateProfile.isPending}
-                  className="rounded-[12px] bg-[#161616] px-6 py-3 font-mono-label text-[13px] font-bold text-white transition-colors hover:bg-black/80 disabled:opacity-60"
-                >
-                  {updateProfile.isPending ? "Saving..." : "Save profile"}
-                </button>
-              </div>
-            </div>
-          </SectionCard>
-        </form>
+              )}
+            </FormField>
 
-        <form onSubmit={onSubmitWallet} noValidate>
-          <SectionCard
-            title="Payout Wallet"
-            description="Your rewards will be sent to this EVM address."
-          >
-            <div className="flex flex-col gap-[18px]">
-              <div>
-                <label htmlFor="walletAddress" className={labelClass}>
-                  Wallet Address
-                </label>
-                <div className="relative">
-                  <Icon
-                    name="Wallet"
-                    className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant"
-                  />
-                  <input
-                    id="walletAddress"
-                    placeholder="0x..."
-                    className={cn(
-                      fieldClass,
-                      "rounded-[12px] pl-[42px]",
-                      walletForm.formState.errors.walletAddress ? "border-error focus:border-error" : ""
-                    )}
-                    {...walletForm.register("walletAddress")}
-                  />
-                </div>
-                {walletForm.formState.errors.walletAddress && (
-                  <p className="mt-1.5 font-mono-label text-[10.5px] uppercase text-error">
-                    {walletForm.formState.errors.walletAddress.message}
-                  </p>
-                )}
-              </div>
-              <div className="mt-2 flex justify-end">
-                <button
-                  type="submit"
-                  disabled={updateWallet.isPending}
-                  className="rounded-[12px] bg-[#161616] px-6 py-3 font-mono-label text-[13px] font-bold text-white transition-colors hover:bg-black/80 disabled:opacity-60"
-                >
-                  {updateWallet.isPending ? "Saving..." : "Save wallet"}
-                </button>
-              </div>
+            <FormField
+              label="Bio"
+              error={profileErrors.bio?.message}
+              hint="Up to 280 characters."
+            >
+              {(field) => (
+                <Textarea rows={3} {...field} {...profileForm.register("bio")} />
+              )}
+            </FormField>
+
+            <FormField
+              label="Skills"
+              error={profileErrors.skills?.message}
+              hint="Comma separated."
+            >
+              {(field) => (
+                <Input
+                  {...field}
+                  placeholder="Rust, Solidity, TypeScript"
+                  {...profileForm.register("skills")}
+                />
+              )}
+            </FormField>
+
+            <div className="mt-2 flex justify-end">
+              <Button type="submit" variant="ink" size="sm" disabled={updateProfile.isPending}>
+                {updateProfile.isPending ? "Saving..." : "Save profile"}
+              </Button>
             </div>
-          </SectionCard>
-        </form>
-      </div>
+          </div>
+        </SectionCard>
+      </form>
+
+      <form onSubmit={onSubmitWallet} noValidate>
+        <SectionCard
+          title="Payout wallet"
+          description="Your rewards will be sent to this EVM address. Never share your private keys."
+        >
+          <FormField
+            label="Wallet address"
+            error={walletErrors.walletAddress?.message}
+            hint="An EVM address starting with 0x."
+          >
+            {(field) => (
+              <div className="relative">
+                <Glyph
+                  name="card"
+                  size={16}
+                  className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant opacity-50"
+                />
+                <Input
+                  {...field}
+                  placeholder="0x..."
+                  className="pl-10 font-mono-label"
+                  {...walletForm.register("walletAddress")}
+                />
+              </div>
+            )}
+          </FormField>
+
+          <div className="mt-5 flex justify-end">
+            <Button type="submit" variant="ink" size="sm" disabled={updateWallet.isPending}>
+              {updateWallet.isPending ? "Saving..." : "Save wallet"}
+            </Button>
+          </div>
+        </SectionCard>
+      </form>
     </div>
   );
 }
-

@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
  * is how the designs get e.g. an ink button with a teal shadow.
  */
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-buidl-pill border-ink font-mono-label font-medium tracking-[0.03em] transition-[transform,box-shadow,background-color,color] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-background active:shadow-none disabled:pointer-events-none disabled:opacity-50",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-buidl-pill border-2 font-mono-label font-medium tracking-[0.03em] transition-[transform,box-shadow,background-color,color] duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-background active:shadow-none disabled:pointer-events-none disabled:opacity-50",
   {
     variants: {
       variant: {

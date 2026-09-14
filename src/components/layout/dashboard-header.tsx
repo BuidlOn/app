@@ -2,10 +2,10 @@
 
 import Link from "next/link";
 import { Glyph } from "@/components/ui/icons";
-import { Avatar } from "@/components/ui/avatar";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BrandMark } from "./brand-mark";
+import { AccountMenu } from "./account-menu";
 import { useCurrentUser } from "@/features/auth/hooks/use-current-user";
 import { formatNumber } from "@/utils/format";
 
@@ -80,23 +80,7 @@ export function DashboardHeader({
 
         <div className="hidden h-7 w-px bg-outline/[0.12] sm:block" />
 
-        {isLoading || !user ? (
-          <div className="flex items-center gap-2.5">
-            <Skeleton className="h-[34px] w-[34px] rounded-full" />
-            <Skeleton className="hidden h-3 w-20 lg:block" />
-          </div>
-        ) : (
-          <Link href="/profile" className="flex items-center gap-2.5 text-on-surface">
-            <Avatar
-              src={user.avatarUrl}
-              alt={user.name ?? user.githubUsername}
-              size={34}
-            />
-            <span className="hidden font-mono-label text-[13px] font-medium lg:inline">
-              {user.githubUsername}
-            </span>
-          </Link>
-        )}
+        <AccountMenu />
       </div>
     </header>
   );

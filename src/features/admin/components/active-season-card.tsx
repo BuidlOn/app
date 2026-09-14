@@ -1,4 +1,3 @@
-import { Icon } from "@/components/ui/icon";
 import { formatDate, formatCompactNumber } from "@/utils/format";
 import { Card } from "@/components/ui/card";
 import type { ActiveSeasonSummary } from "../types";

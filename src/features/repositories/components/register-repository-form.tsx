@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -13,7 +14,12 @@ import { Button } from "@/components/ui/button";
 import { Input, Label } from "@/components/ui/input";
 import { PageHeader } from "@/components/layout/page-header";
 import { useRegisterRepository } from "../hooks/use-repositories";
-import { InstallationRepoPicker } from "./installation-repo-picker";
+// Only rendered when GitHub redirects back with ?installation_id=, which most
+// visits never do, so keep its bundle out of the initial load.
+const InstallationRepoPicker = dynamic(
+  () => import("./installation-repo-picker").then((m) => m.InstallationRepoPicker),
+  { ssr: false },
+);
 
 const schema = z.object({
   url: z
