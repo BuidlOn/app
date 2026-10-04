@@ -44,6 +44,6 @@ export interface AdminOverview {
   treasuryUsd: number;
   approvalQueue: RepoApproval[];
   recentDistributions: DistributionRow[];
-  activeSeason: ActiveSeasonSummary;
+  activeSeason: ActiveSeasonSummary | null;
   logs: LogEntry[];
 }

@@ -2,7 +2,26 @@ import { formatDate, formatCompactNumber } from "@/utils/format";
 import { Card } from "@/components/ui/card";
 import type { ActiveSeasonSummary } from "../types";
 
-export function ActiveSeasonCard({ data }: { data: ActiveSeasonSummary }) {
+export function ActiveSeasonCard({ data }: { data?: ActiveSeasonSummary | null }) {
+  if (!data) {
+    return (
+      <Card className="relative overflow-hidden border-[2px] border-ink p-[24px]">
+        <div className="mb-[14px] flex items-center gap-[8px]">
+          <span className="h-[8px] w-[8px] rounded-full bg-outline/30" />
+          <span className="font-mono-label text-[10.5px] font-bold uppercase tracking-widest text-on-surface-muted">
+            Season status
+          </span>
+        </div>
+        <h4 className="m-0 mb-1 font-page-title text-[21px] font-bold text-on-surface">
+          No active season
+        </h4>
+        <p className="m-0 text-[13px] text-on-surface-variant">
+          There is no season currently running. Create a new season using the form below to begin tracking contributions and allocating rewards.
+        </p>
+      </Card>
+    );
+  }
+
   const { season, progressPercent, allocatedUsd } = data;
 
   return (
