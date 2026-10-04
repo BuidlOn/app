@@ -22,12 +22,12 @@ export default function NotFound() {
           
           {/* Subtitle using the mono font */}
           <h2 className="mt-6 font-fragment-mono text-lg uppercase tracking-[0.2em] text-secondary sm:text-xl">
-            // HEAD Detached
+            {"// HEAD Detached"}
           </h2>
           
           {/* Body */}
           <p className="mt-6 max-w-md font-body text-lg text-on-surface">
-            We checked the main branch, searched the stash, and reviewed all pull requests, but we couldn't find the page you're looking for.
+            We checked the main branch, searched the stash, and reviewed all pull requests, but we couldn&apos;t find the page you&apos;re looking for.
           </p>
           
           {/* Actions */}
