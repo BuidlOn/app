@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { persistAuthTokens } from "@/services/api.client";
+import { LoadingScreen } from "@/components/ui/loading-screen";
 
 /**
  * Receives the JWT pair that the backend appends to its OAuth redirect
@@ -30,11 +31,11 @@ export default function AuthCallbackPage() {
   }, [router]);
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-3 bg-background px-6">
-      <p className="font-mono-label text-[11px] uppercase tracking-[0.1em] text-on-surface-muted">
-        Authentication
-      </p>
-      <p className="font-page-title text-[19px] font-bold text-on-surface">Signing you in…</p>
+    <main>
+      <LoadingScreen
+        label="Signing you in"
+        detail="Verifying your GitHub account and setting up your session."
+      />
     </main>
   );
 }
