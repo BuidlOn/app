@@ -89,6 +89,18 @@ const config: Config = {
 
         error: "#EF4444",
         "on-error-deep": "#B42318",
+
+        /**
+         * Brand logo palette. Deliberately outside the cream/ink system: the
+         * mark carries a fixed identity across surfaces, so it is not remapped
+         * to Sunbeam/Violet/Teal. `-inverse` is the variant for ink grounds;
+         * the spark is shared by both.
+         */
+        "logo-body": "#1E2738",
+        "logo-wing": "#3D566E",
+        "logo-spark": "#4BAFCF",
+        "logo-body-inverse": "#F5F0E6",
+        "logo-wing-inverse": "#7C93AB",
       },
       borderWidth: {
         hairline: "1.5px",

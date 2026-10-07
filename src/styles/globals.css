@@ -45,3 +45,96 @@
     @apply animate-pulse-slow rounded-buidl-md bg-surface-variant;
   }
 }
+
+/*
+ * Logo assembly. The mark is seven flat polygons, so the loading screen builds
+ * it from its own facets rather than fading the whole thing in. Each facet
+ * scales up from its own centre, which needs `fill-box` — the default
+ * `view-box` origin would scale every path from the top-left of the viewBox
+ * and send them flying apart.
+ */
+@keyframes facet-in {
+  0% {
+    opacity: 0;
+    transform: scale(0.55) translateY(7px);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(1.06) translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+/* Slow lift once assembled, so a long wait does not look like a frozen screen. */
+@keyframes mark-breathe {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.logo-facet {
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: facet-in 0.42s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.logo-breathe {
+  animation: mark-breathe 3.6s ease-in-out infinite;
+  /*
+   * Holds until the mark has fully assembled, otherwise the whole svg drifts
+   * upward while the last facets are still popping in. Six facets stagger out
+   * over 300ms and the last runs 420ms, so everything has landed by 720ms.
+   */
+  animation-delay: 0.8s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /*
+   * Honour the OS setting globally. Animations resolve to their end state
+   * instead of being removed, so the mark still paints and skeletons still
+   * read as placeholders.
+   */
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .logo-facet {
+    opacity: 1;
+    animation: none !important;
+  }
+
+  .logo-breathe {
+    animation: none !important;
+  }
+}
+
+/*
+ * Indeterminate progress track. Travels rather than fills, so it never implies
+ * a percentage we do not actually know.
+ */
+@keyframes loader-sweep {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(300%);
+  }
+}
+
+.loader-sweep {
+  animation: loader-sweep 1.4s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+  animation-delay: 0.78s;
+}
